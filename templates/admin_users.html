@@ -1,0 +1,168 @@
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>👥 Quản lý người dùng</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    #searchInput {
+      width: 300px;
+      margin-bottom: 20px;
+    }
+    td input {
+      width: 100%;
+      border: none;
+      background: transparent;
+    }
+    .online {
+      color: green;
+      font-weight: bold;
+    }
+    .offline {
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <a href="/solverviet_control_x2025" class="btn btn-secondary mb-3">
+  ⬅️ Quay về điều hướng
+</a>
+
+  <h2 class="mb-4">👥 Quản lý người dùng</h2>
+<div class="d-flex align-items-center gap-2 mb-3">
+  <span class="fs-5">👤 Tổng người dùng:</span>
+  <span id="userCountDisplay" class="badge bg-primary fs-5">{{ user_count }}</span>
+</div>
+
+  <input id="searchInput" class="form-control" type="text" placeholder="🔍 Tìm kiếm theo tên người dùng..." onkeyup="filterTable()">
+
+ 
+
+<table class="table table-bordered table-hover align-middle text-center" id="userTable">
+  <thead class="table-dark">
+  <tr>
+    <th class="text-nowrap">Tên người dùng</th>
+    <th class="text-nowrap">ID</th>
+    <th class="text-nowrap">Hạn SOLVER</th>
+    <th class="text-nowrap">Hạn LITE</th>
+    <th class="text-nowrap">Không giới hạn GPT</th> 
+    <th class="text-nowrap">Số lượt GPT còn</th>
+    <th class="text-nowrap">Số lượt Lite</th>
+    <th class="text-nowrap">Trạng thái</th>
+    <th class="text-nowrap" style="width: 80px;">Lưu</th>
+    <th class="text-nowrap" style="width: 90px;">Khoá / Mở</th>
+  </tr>
+</thead>
+  <tbody>
+    {% for info in users %}
+<tr>
+  <td>
+    <form method="POST" action="/admin_users/update" class="d-flex flex-column gap-1">
+      <input type="hidden" name="username" value="{{ info.username }}">
+    {{ info.username }}
+
+  </td>
+  <td>{{ info.get("user_id", "Không có") }}</td>
+  <td>
+  <input name="vip_gpt" value="{{ info.vip_gpt_display or '' }}" placeholder="yyyy-mm-dd hh:mm:ss">
+  <select name="vip_gpt_type" class="form-select form-select-sm mt-1">
+    <option value="">Không có</option>
+    <option value="5day" {% if info.get("vip_gpt") == "5day" %}selected{% endif %}>5 ngày</option>
+    <option value="15day" {% if info.get("vip_gpt") == "15day" %}selected{% endif %}>15 ngày</option>
+    <option value="30day" {% if info.get("vip_gpt") == "30day" %}selected{% endif %}>30 ngày</option>
+  </select>
+</td>
+
+
+  <td><input name="vip_lite" value="{{ info.vip_lite_display or 'Không có' }}">
+
+  <td>
+      <input type="checkbox" name="gpt_unlimited" {% if info.get("gpt_unlimited") %}checked{% endif %}>
+  </td>
+  <td>
+{% if info.gpt_remaining == "∞" %}
+  <span style="color: green;">∞</span>
+{% elif info.gpt_remaining %}
+  {{ info.gpt_remaining }}
+{% else %}
+  <span class="text-muted">Không có</span>
+{% endif %}
+
+</td>
+<td>
+{% if info.lite_remaining %}
+  {{ info.lite_remaining }}
+{% else %}
+  <span class="text-muted">Không có</span>
+{% endif %}
+
+</td>
+<td>
+
+    {% if info.get("online") %}
+      <span class="online">Đang hoạt động</span>
+    {% else %}
+      <span class="offline">Ngoại tuyến</span>
+    {% endif %}
+  </td>
+
+  <td>
+      <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+    </form>
+  </td>
+  <td>
+    <form method="POST" action="/admin_users/toggle_block">
+      <input type="text" name="new_username" value="{{ info.username }}">
+
+      {% if info.get("is_blocked") %}
+        <button type="submit" class="btn btn-sm btn-success">Mở khoá</button>
+      {% else %}
+        <button type="submit" class="btn btn-sm btn-danger">Khoá</button>
+      {% endif %}
+    </form>
+  </td>
+</tr>
+
+
+    {% endfor %}
+  </tbody>
+</table>
+
+    </form>
+  </div>
+
+  <script>
+    function filterTable() {
+      const input = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#userTable tbody tr");
+      rows.forEach(row => {
+        const username = row.cells[0].querySelector('input').value.toLowerCase();
+        row.style.display = username.includes(input) ? "" : "none";
+      });
+    }
+  </script>
+  <script>
+  const countTarget = {{ user_count }};
+  const display = document.getElementById("userCountDisplay");
+  let current = 0;
+
+  const animate = setInterval(() => {
+    if (current < countTarget) {
+      current++;
+      display.textContent = current;
+    } else {
+      clearInterval(animate);
+    }
+  }, 15);  // tốc độ tăng (ms)
+</script>
+</body>
+</html>

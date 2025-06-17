@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SolverViet Chat</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #121212;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      padding: 15px 20px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      background-color: #1e1e1e;
+    }
+
+    .search-bar {
+      padding: 10px 20px;
+    }
+
+    .search-bar input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 20px;
+      background-color: #2a2a2a;
+      border: none;
+      color: white;
+      font-size: 1rem;
+    }
+
+    .avatar-row {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .friend-avatar {
+      text-align: center;
+      cursor: pointer;
+      width: 70px;
+    }
+
+    .avatar-default {
+      width: 64px;
+      height: 64px;
+      background-color: #3a3a3a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: white;
+      margin-bottom: 5px;
+      position: relative;
+    }
+
+    .status-dot {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 10px;
+      height: 10px;
+      background-color: #00ff00;
+      border: 2px solid #121212;
+      border-radius: 50%;
+    }
+    .header {
+    padding: 20px 28px; /* tăng padding */
+    font-size: 2rem;     /* tăng kích cỡ chữ logo */
+    font-weight: bold;
+    background-color: #0e0e0e;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #00aaff; /* line xanh to hơn 1 chút */
+    }
+
+    .logo {
+    font-size: 2rem;      /* logo bự hẳn */
+    }
+    .back-link {
+    font-size: 1.5rem;   /* “quay lại” nhìn rõ hơn tí */
+    }
+    .back-link {
+  font-size: 1.2rem;
+  color: #00aaff;
+  text-decoration: none;
+  margin-left: auto;
+  padding: 6px 12px;
+  border: 1px solid #00aaff;
+  border-radius: 8px;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.back-link:hover {
+  background-color: #00aaff;
+  color: #fff;
+}
+
+  </style>
+  <style>
+  #show-requests-btn:hover {
+    background-color: #0088cc;
+    box-shadow: 0 0 14px #0088cc;
+  }
+  
+  #friend-requests-popup button:hover {
+    background-color: #0088cc;
+  }
+</style>
+<style>
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff3b3b;
+  color: white;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+  font-weight: bold;
+  z-index: 10;
+}
+
+.image-popup {
+  font-size: 0.7rem;
+  background-color: #00aaff;
+  color: white;
+  border-radius: 6px;
+  padding: 2px 6px;
+  margin-top: 4px;
+  animation: fadeIn 0.5s ease-in-out;
+  white-space: nowrap;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+<style>
+  #avatar-modal {
+    display: none;
+    cursor: zoom-out;
+  }
+</style>
+<style>
+.privacy-tab-btn {
+  background: #2a2a2a;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+.privacy-tab-btn:hover {
+  background: #ffaa00;
+  color: black;
+}
+</style>
+
+</head>
+<body>
+<div class="header">
+  <div class="logo">Solver<span style="color:#00aaff">Viet</span></div>
+
+    <!-- Nút Home -->
+    <a href="/" class="back-link">Home</a>
+  </div>
+</div>
+
+
+
+<div class="search-bar-container" style="display: flex; align-items: center; padding: 10px 20px; gap: 14px; flex-direction: row-reverse;">
+
+  <!-- Ô input tìm kiếm -->
+  <div class="search-bar" style="flex: 1;">
+    <input id="search-input" type="text" placeholder="Tìm bạn hoặc đoạn chat..." 
+      style="width: 100%; padding: 12px; border-radius: 20px; background-color: #2a2a2a; border: none; color: white; font-size: 1rem;">
+  </div>
+
+<!-- Avatar chính chủ + tên rút gọn -->
+<div style="text-align: center;">
+  <div style="position: relative; cursor: pointer; margin-bottom: 4px;" title="Bạn là {{ fullname or username }}"onclick="openProfile()">
+    <img src="{{ user_avatar if user_avatar else url_for('static', filename='logos/logo.png') }}"
+     onerror="this.onerror=null; this.src='{{ url_for('static', filename='logos/logo.png') }}';"
+     style="width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 2px solid #00aaff;" />
+
+    <div class="status-dot" style="position:absolute; bottom: 2px; right: 2px; width: 10px; height: 10px; background-color: {{ 'green' if is_online else '#888' }}; border: 2px solid #121212; border-radius: 50%;"></div>
+  </div>
+
+  <!-- Tên có cắt nếu dài -->
+  <div style="font-size: 0.9rem; color: #ccc; max-width: 66px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+    {{ (fullname or username) }}
+  </div>
+{% if bio %}
+  <div style="font-size: 0.75rem; color: #00aaff; margin-top: 4px; max-width: 72px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+     {{ bio[:70] }}{% if bio|length > 70 %}...{% endif %}
+  </div>
+{% endif %}
+
+
+</div>
+
+
+</div>
+
+<div id="search-results" style="padding: 10px 20px; color: white;"></div>
+
+
+
+  <div class="avatar-row" id="friend-list">
+  </div>
+  
+  <div id="no-friends-message" style="text-align: center; width: 100%; margin-top: 120px; display: none;">
+  <h2 style="color: #888; font-weight: 500;">
+    Chọn 1 người bạn để bắt đầu cuộc trò chuyện<br>
+    hoặc tìm bạn bè trên thanh tìm kiếm.
+  </h2>
+  <div id="friend-suggestions" style="text-align: center; margin-top: 20px; display: none;">
+  <h3 style="color: #ccc;"> Có thể bạn sẽ muốn kết bạn với:</h3>
+  <div id="suggested-users" style="margin-top: 12px;"></div>
+</div>
+
+</div>
+<div id="friend-requests-popup" 
+     style="display:none; 
+            position:fixed; 
+            bottom:80px; 
+            right:20px; 
+            background:#222; 
+            color:white; 
+            padding:15px 20px; 
+            border-radius:12px; 
+            max-width:320px; 
+            max-height:420px; 
+            overflow-y:auto; 
+            box-shadow: 0 0 15px #00aaff; 
+            font-family: 'Segoe UI', sans-serif;
+            z-index: 10000;">
+  <h4 style="margin-top:0; margin-bottom:12px; font-weight:600; font-size:1.2rem;">Lời mời kết bạn</h4>
+  <div id="friend-requests-list" style="font-size: 0.95rem;"></div>
+  <button onclick="closeFriendRequests()" 
+          style="margin-top:15px; 
+                 background:#00aaff; 
+                 border:none; 
+                 color:#fff;
+                 padding:8px 16px; 
+                 border-radius:6px; 
+                 cursor:pointer; 
+                 font-weight:600;
+                 transition: background-color 0.3s ease;">
+    Đóng
+  </button>
+</div>
+
+<!-- Nút icon hiện lời mời kết bạn -->
+<button id="show-requests-btn" 
+        title="Lời mời kết bạn" 
+        style="position:fixed; 
+               bottom:20px; 
+               right:20px; 
+               background:#00aaff; 
+               border:none; 
+               color:white; 
+               padding:12px 14px; 
+               border-radius:50%; 
+               cursor:pointer; 
+               box-shadow: 0 0 10px #00aaff; 
+               font-size: 18px; 
+               display: flex; 
+               align-items: center; 
+               justify-content: center; 
+               z-index: 10001; 
+               transition: background-color 0.3s ease;">
+  <i class="fas fa-user-plus" aria-hidden="true"></i>
+</button>
+
+  <script>
+    function goToChat(username) {
+      window.location.href = "/chat/" + username;
+    }
+    const searchInput = document.querySelector('.search-bar input');
+const searchResults = document.getElementById('search-results');
+const friendRequestsPopup = document.getElementById('friend-requests-popup');
+const friendRequestsList = document.getElementById('friend-requests-list');
+const showRequestsBtn = document.getElementById('show-requests-btn');
+
+showRequestsBtn.addEventListener('click', () => {
+  loadFriendRequests();
+  friendRequestsPopup.style.display = 'block';
+});
+
+function closeFriendRequests() {
+  friendRequestsPopup.style.display = 'none';
+}
+
+// Tìm kiếm bạn bè theo input
+searchInput.addEventListener('input', () => {
+  const query = searchInput.value.trim();
+  if (query.length < 2) {
+    searchResults.innerHTML = '';
+    return;
+  }
+  fetch(`/users/search?q=${encodeURIComponent(query)}`)
+    .then(res => res.json())
+    .then(users => {
+      if (users.length === 0) {
+        searchResults.innerHTML = 'Không tìm thấy người dùng nào.';
+        return;
+      }
+ searchResults.innerHTML = users.map(u => `
+  <div onclick="showUserPopup('${u.username}', '${u.name}', '${u.avatar_url}')" 
+       style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid #444; cursor:pointer;">
+    <img src="${u.avatar_url}" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid #00aaff;">
+    <div>
+      <div style="font-weight:600;">${u.name || u.username}</div>
+      <div style="font-size: 0.85rem; color: #aaa;">@${u.username}</div>
+    </div>
+  </div>
+`).join('');
+
+    })
+    .catch(err => {
+      searchResults.innerHTML = 'Lỗi khi tìm kiếm.';
+      console.error(err);
+    });
+});
+
+// Gửi lời mời kết bạn
+function sendFriendRequest(toUsername) {
+  fetch('/friends/request', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ to_user: toUsername })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showFriendToast("💌 Đã gửi lời mời kết bạn!");
+      searchInput.value = '';
+      searchResults.innerHTML = '';
+    } else {
+      alert('Lỗi: ' + data.message);
+    }
+  });
+}
+
+// Load lời mời đến
+function loadFriendRequests() {
+  fetch('/friends/requests')
+    .then(res => res.json())
+    .then(requests => {
+      if (requests.length === 0) {
+        friendRequestsList.innerHTML = 'Không có lời mời kết bạn.';
+        return;
+      }
+      friendRequestsList.innerHTML = requests.map(r => `
+        <div style="display:flex; justify-content:space-between; padding:5px 0; border-bottom:1px solid #444;">
+          <span>${r.from_name} (${r.from_username})</span>
+          <div>
+            <button onclick="acceptFriendRequest('${r.from_username}')" style="background:#28a745; border:none; color:white; border-radius:4px; cursor:pointer; margin-right:5px;">Chấp nhận</button>
+            <button onclick="rejectFriendRequest('${r.from_username}')" style="background:#dc3545; border:none; color:white; border-radius:4px; cursor:pointer;">Từ chối</button>
+          </div>
+        </div>
+      `).join('');
+    });
+}
+
+// Chấp nhận lời mời
+function acceptFriendRequest(fromUsername) {
+  fetch('/friends/requests/accept', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ from_user: fromUsername })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert('Đã chấp nhận lời mời!');
+      loadFriendRequests();
+      addFriendAvatar(fromUsername, data.from_name);
+    } else {
+      alert('Lỗi: ' + data.message);
+    }
+  });
+}
+
+// Từ chối lời mời
+function rejectFriendRequest(fromUsername) {
+  fetch('/friends/requests/reject', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ from_user: fromUsername })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert('Đã từ chối lời mời!');
+      loadFriendRequests();
+    } else {
+      alert('Lỗi: ' + data.message);
+    }
+  });
+}
+
+function addFriendAvatar(username, displayName, unreadCount = 0, imageOnly = false, isOnline = false, hideAvatar = false, avatar = '') {
+
+  const avatarRow = document.getElementById('friend-list');
+  const friendDiv = document.createElement('div');
+  friendDiv.className = 'friend-avatar';
+  friendDiv.setAttribute('onclick', `goToChat('${username}')`);
+
+  const defaultUrl = '/static/logos/logo.png';
+  const avatarUrl = hideAvatar ? defaultUrl : `/static/images/avatars/${username}_avatar.png`;
+
+
+  // 👇 xác định màu chấm
+  const statusColor = isOnline ? '#00ff00' : '#888';
+
+  friendDiv.innerHTML = `
+    <div class="avatar-default" style="padding: 0;">
+      <img src="${avatarUrl}" 
+           onerror="this.onerror=null; this.src='${defaultUrl}';" 
+           style="width: 64px; height: 64px; border-radius: 50%; object-fit: cover;" />
+      <div class="status-dot" style="background-color: ${statusColor};"></div>
+      ${unreadCount > 0 && !imageOnly ? `<div class="badge">${unreadCount > 99 ? '+99' : '+' + unreadCount}</div>` : ''}
+    </div>
+    <div class="friend-name" data-username="${username}">
+    ${displayName}
+  </div>
+  ${imageOnly ? `<div class="image-popup">📷 ${displayName} đã gửi 1 ảnh</div>` : ''}
+
+  `;
+
+  avatarRow.appendChild(friendDiv);
+}
+
+
+
+let oldFriendList = [];
+
+function loadFriendList() {
+  fetch('/friends/list')
+    .then(res => res.json())
+    .then(friends => {
+      const container = document.getElementById('friend-list');
+      const noFriendsMsg = document.getElementById('no-friends-message');
+      if (friends.length < 10) {
+        noFriendsMsg.style.display = 'block';
+      } else {
+        noFriendsMsg.style.display = 'none';
+      }
+      
+
+
+      // So sánh danh sách cũ và mới → nếu giống nhau thì không làm gì
+      const oldUsernames = oldFriendList.map(f => f.username || f);
+      const newUsernames = friends.map(f => f.username || f);
+
+      if (JSON.stringify(oldUsernames) === JSON.stringify(newUsernames)) return;
+
+      // Cập nhật lại giao diện
+      container.innerHTML = '';
+      friends.forEach(f => {
+      const displayName = localStorage.getItem('friend_name_' + (f.username || f)) || f.display_name || f.username;
+
+addFriendAvatar(f.username || f, displayName, f.unread || 0, f.image_only || false, f.is_online || false, f.hide_avatar || false);
+
+      });
+
+      // Gán lại danh sách cũ
+      oldFriendList = friends;
+
+      // Sau khi render xong thì cập nhật tên custom
+      document.querySelectorAll('.friend-name').forEach(el => {
+        const username = el.dataset.username;
+        const customName = localStorage.getItem('friend_name_' + username);
+        if (customName) el.textContent = customName;
+      });
+    });
+}
+
+
+
+// Gọi loadFriendList định kỳ mỗi 15 giây
+setInterval(loadFriendList, 15000);
+
+// Gọi ngay khi load trang
+loadFriendList();
+
+  </script>
+<div id="user-popup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+  background:#fff; padding:20px; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,0.3); z-index:9999; min-width:260px; text-align:center;">
+  <img id="popup-avatar" src="" style="width:80px; height:80px; border-radius:50%; border:2px solid #00aaff; object-fit:cover;">
+  <h3 id="popup-name" style="margin-top:10px; font-size:20px;"></h3>
+  <p id="popup-username" style="color:gray; margin-bottom:15px;"></p>
+  <button id="popup-add-btn" class="btn btn-primary">Kết bạn</button>
+  <br><br>
+  <button onclick="closePopup()" style="border:none; background:none; color:#aaa; cursor:pointer;">❌ Đóng</button>
+</div>
+<script>
+  function showUserPopup(username, name, avatarUrl) {
+    const avatarElem = document.getElementById('popup-avatar');
+        avatarElem.src = avatarUrl;
+        avatarElem.onclick = function () {
+          document.getElementById('avatar-modal-img').src = avatarUrl;
+          document.getElementById('avatar-modal').style.display = 'flex';
+        };
+
+    document.getElementById('popup-name').innerText = name || username;
+    document.getElementById('popup-username').innerText = '@' + username;
+    document.getElementById('popup-add-btn').onclick = function() {
+      sendFriendRequest(username);
+      closePopup();
+    };
+    document.getElementById('user-popup').style.display = 'block';
+  }
+
+  function closePopup() {
+    document.getElementById('user-popup').style.display = 'none';
+  }
+</script>
+<div id="avatar-modal" onclick="this.style.display='none'" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background-color:rgba(0,0,0,0.8); z-index:99999; justify-content:center; align-items:center;">
+  <img id="avatar-modal-img" src="" 
+       style="max-width:90%; max-height:90%; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,0.4);">
+</div>
+<!-- Overlay phủ nền -->
+<div id="profile-overlay" onclick="closeProfile()" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh;
+     background: rgba(0,0,0,0.5); z-index:9998;"></div>
+
+<div id="profile-popup" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%,-50%); background:#1e1e1e; padding:20px; border-radius:12px;
+     box-shadow:0 0 20px #00aaff; color:white; z-index:9999; width:320px; position:relative;">
+
+
+  <!-- Bánh răng ở góc trái -->
+  <i class="bi bi-gear-fill"
+   onclick="openPrivacySettings()"
+   title="Cài đặt riêng tư"
+   style="position: absolute; top: 18px; left: 16px; font-size: 20px; color: white; cursor: pointer; opacity: 0.85;">
+</i>
+
+
+  <!-- Tiêu đề căn giữa -->
+  <h3 style="text-align: center; margin-top:0;"> Hồ sơ cá nhân</h3>
+
+
+  <!-- Avatar -->
+  <div style="text-align:center; margin-bottom: 16px;">
+    <img src="{{ user_avatar if user_avatar else url_for('static', filename='logos/logo.png') }}"
+      onerror="this.onerror=null; this.src='{{ url_for('static', filename='logos/logo.png') }}';"
+      style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
+             border: 2px solid #00aaff; box-shadow: 0 0 8px #00aaff; cursor: zoom-in;"
+      onclick="showImageModal(this.src)" />
+  </div>
+
+  <!-- User ID (readonly + copy) -->
+
+
+  <label>Họ tên:</label>
+  <input id="edit-fullname" type="text" style="width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:none;">
+  <label>Mã ID:</label>
+<div style="display: flex; gap: 6px; align-items: center; margin-bottom: 10px; position: relative;">
+  <input id="user-id" value="{{ user_id }}" readonly
+    style="flex: 1; padding: 8px; border-radius: 6px; border: none; background: #2a2a2a; color: white;" />
+  
+  <!-- Nút sao chép với SVG -->
+  <button onclick="copyUserId()" title="Sao chép ID"
+    style="padding: 6px 10px; background: #00aaff; border: none; border-radius: 6px; cursor: pointer;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white" viewBox="0 0 16 16">
+      <path d="M10 1.5A1.5 1.5 0 0 1 11.5 3v1h-1V3a.5.5 0 0 0-.5-.5H5A1.5 1.5 0 0 0 3.5 4v8A1.5 1.5 0 0 0 5 13.5h5A1.5 1.5 0 0 0 11.5 12v-1h1v1A2.5 2.5 0 0 1 10 14.5H5A2.5 2.5 0 0 1 2.5 12V4A2.5 2.5 0 0 1 5 1.5h5z"/>
+      <path d="M13.5 4.5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0-.5.5v8a.5.5 0 0 0 .5.5h5a.5.5 0 0 0 .5-.5v-8z"/>
+    </svg>
+  </button>
+
+  <!-- Tooltip ẩn mặc định -->
+  <div id="copy-tooltip" style="
+    position: absolute;
+    right: 0;
+    top: -30px;
+    background: #00cc88;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  ">
+    ✅ Đã sao chép!
+  </div>
+</div>
+
+
+
+  <label>Trường học:</label>
+  <input id="edit-school" type="text" style="width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:none;">
+
+  <label>Ngày sinh:</label>
+  <input id="edit-birthday" type="date" style="width:100%; padding:8px; margin-bottom:10px; border-radius:6px; border:none;">
+
+  <label>Mô tả (tuỳ chọn):</label>
+  <textarea id="edit-bio" style="width:100%; padding:8px; height:60px; border-radius:6px; border:none;"></textarea>
+
+  <div style="text-align:right; margin-top:12px;">
+    <button onclick="saveProfile()" style="background:#00aaff; border:none; padding:8px 14px; border-radius:6px; color:white;">Lưu</button>
+    <button onclick="closeProfile()" style="margin-left:10px; background:none; border:none; color:#aaa;">Đóng</button>
+  </div>
+</div>
+<!-- Popup Cài đặt Riêng tư -->
+<div id="privacy-popup" onclick="event.stopPropagation()" style="display:none; position:fixed; top:50%; left:50%;
+     transform:translate(-50%,-50%); background:#1e1e1e; padding:20px; border-radius:12px;
+     box-shadow:0 0 20px #00aaff; color:white; z-index:9999; width:340px;">
+  
+  <h3 style="margin-top:0; margin-bottom: 16px;"> Cài đặt riêng tư</h3>
+
+  <label><input type="checkbox" id="hide-online"> Ẩn trạng thái hoạt động</label><br>
+  <label><input type="checkbox" id="hide-info"> Ẩn thông tin cá nhân</label><br>
+  <label><input type="checkbox" id="hide-profile"> Ẩn toàn bộ tài khoản</label><br>
+  <label><input type="checkbox" id="hide-avatar"> Ẩn ảnh đại diện</label><br>
+<label><input type="checkbox" id="hide-all"> Ẩn danh hoàn toàn (ẩn mọi thứ)</label><br>
+
+  <hr style="margin: 16px 0; border-color: #444;">
+
+  <div>
+    <strong> Danh sách đã chặn:</strong>
+    <ul id="blocked-users-list" style="list-style:none; padding-left:0; font-size: 0.95rem; margin-top: 10px;"></ul>
+  </div>
+
+  <div style="text-align:right; margin-top:16px;">
+    <button onclick="savePrivacySettings()" style="background:#00aaff; border:none; padding:8px 14px; border-radius:6px; color:white;">Lưu</button>
+    <button onclick="closePrivacySettings()" style="margin-left:10px; background:none; border:none; color:#aaa;">Đóng</button>
+  </div>
+</div>
+
+<script>
+function openProfile() {
+  fetch('/get_profile')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("edit-fullname").value = data.fullname || '';
+      document.getElementById("edit-school").value = data.school || '';
+      document.getElementById("edit-birthday").value = data.birthday || '';
+      document.getElementById("edit-bio").value = data.bio || '';
+      document.getElementById("profile-popup").style.display = 'block';
+      document.getElementById("profile-overlay").style.display = 'block';
+    });
+}
+
+function closeProfile() {
+  document.getElementById("profile-popup").style.display = "none";
+  document.getElementById("privacy-popup").style.display = "none";
+  document.getElementById("profile-overlay").style.display = "none";
+}
+
+
+function saveProfile() {
+  const fullname = document.getElementById("edit-fullname").value;
+  const school = document.getElementById("edit-school").value;
+  const birthday = document.getElementById("edit-birthday").value;
+  const bio = document.getElementById("edit-bio").value;
+
+  fetch('/update_profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fullname, school, birthday, bio })
+  }).then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showProfileToast("✅ Hồ sơ đã được lưu thành công!");
+      closeProfile();
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showProfileToast("❌ Lỗi khi lưu hồ sơ: " + data.message, false);
+    }
+  }).catch(() => {
+    showProfileToast("❌ Không thể kết nối đến máy chủ!", false);
+  });
+}
+
+</script>
+<!-- Modal ảnh phóng to -->
+<div id="image-modal" style="
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;"
+  onclick="hideImageModal()">
+  
+  <img id="modal-image"
+       src=""
+       style="max-width: 90%;
+              max-height: 90%;
+              border-radius: 12px;
+              box-shadow: 0 0 12px #00aaff;">
+</div>
+
+<script>
+  function showImageModal(src) {
+    document.getElementById("modal-image").src = src;
+    document.getElementById("image-modal").style.display = "flex";
+  }
+
+  function hideImageModal() {
+    document.getElementById("image-modal").style.display = "none";
+  }
+</script>
+<script>
+function copyUserId() {
+  const input = document.getElementById("user-id");
+  const tooltip = document.getElementById("copy-tooltip");
+
+  navigator.clipboard.writeText(input.value).then(() => {
+    tooltip.style.display = "block";
+    setTimeout(() => {
+      tooltip.style.display = "none";
+    }, 1500);
+  });
+}
+function showProfileToast(message, success = true) {
+  const toast = document.getElementById("profile-toast");
+  toast.innerText = message;
+  toast.style.backgroundColor = success ? "#00cc88" : "#ff4444";
+  toast.style.display = "block";
+  toast.style.opacity = "1";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 300);
+  }, 2200);
+}
+
+</script>
+<!-- Thông báo nhỏ gọn -->
+<div id="profile-toast" style="
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #00cc88;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  display: none;
+  z-index: 99999;
+  transition: opacity 0.3s ease;">
+</div>
+<script>
+function openPrivacySettings() {
+  document.getElementById("profile-popup").style.display = "none";
+  document.getElementById("privacy-popup").style.display = "block";
+  document.getElementById("profile-overlay").style.display = "block";
+
+  // GỌI API để lấy dữ liệu riêng tư đã lưu
+  fetch("/get_profile")
+    .then(res => res.json())
+    .then(data => {
+      const privacy = data.privacy || {};
+      document.getElementById("hide-online").checked = privacy.hide_online || false;
+      document.getElementById("hide-avatar").checked = privacy.hide_avatar || false;
+      document.getElementById("hide-profile").checked = privacy.hide_profile || false;
+      document.getElementById("hide-info").checked = privacy.hide_info || false;
+      document.getElementById("hide-all").checked = privacy.hide_all || false;
+    });
+
+  // GỌI API để hiển thị danh sách đã chặn
+  fetch("/blocked_users")
+    .then(res => res.json())
+    .then(users => {
+      const list = document.getElementById("blocked-users-list");
+      list.innerHTML = "";
+      if (users.length === 0) {
+        list.innerHTML = "<li style='color: #aaa;'>Không có ai bị chặn</li>";
+        return;
+      }
+      users.forEach(u => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <span>@${u}</span>
+          <button onclick="unblockUser('${u}')" 
+                  style="margin-left:10px; background:#ff4444; border:none; color:white; padding:4px 8px; border-radius:4px;">
+            Bỏ chặn
+          </button>`;
+        list.appendChild(li);
+      });
+    });
+}
+
+
+function backToProfile() {
+  document.getElementById("privacy-popup").style.display = "none";
+  document.getElementById("profile-popup").style.display = "block";
+}
+</script>
+<script>
+function switchPrivacyTab(tabId) {
+  document.querySelectorAll('.privacy-tab').forEach(el => el.style.display = 'none');
+  document.getElementById('privacy-tab-' + tabId).style.display = 'block';
+
+  // Highlight tab
+  document.querySelectorAll('.privacy-tab-btn').forEach(btn => btn.style.background = '');
+  event.target.style.background = '#ffaa00';
+}
+
+function backToProfile() {
+  document.getElementById("privacy-popup").style.display = "none";
+  document.getElementById("profile-popup").style.display = "block";
+}
+
+function blockUser() {
+  let name = document.getElementById("block-username").value.trim();
+  if (name) {
+    const li = document.createElement("li");
+    li.innerHTML = name + ` <button onclick="this.parentElement.remove()" style="margin-left:8px;">❌</button>`;
+    document.getElementById("blocked-users").appendChild(li);
+    document.getElementById("block-username").value = "";
+  }
+}
+
+function confirmCleanup() {
+  const user = document.getElementById("cleanup-username").value.trim();
+  if (user && confirm(`Bạn có chắc muốn xoá sạch đoạn chat và ảnh với "${user}" không?`)) {
+    alert(`🗑 Đã đánh dấu để xoá dữ liệu với ${user}`);
+  }
+}
+function savePrivacySettings() {
+  const data = {
+    hide_online: document.getElementById("hide-online").checked,
+    hide_avatar: document.getElementById("hide-avatar").checked,
+    hide_profile: document.getElementById("hide-profile").checked,
+    hide_info: document.getElementById("hide-info").checked,
+    hide_all: document.getElementById("hide-all").checked,
+    blocked_users: Array.from(document.querySelectorAll("#blocked-users li")).map(li => li.innerText.replace(" ❌", "").trim())
+  };
+
+  fetch("/update_privacy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  }).then(res => res.json()).then(resp => {
+    if (resp.success) {
+      showPrivacyToast("Đã lưu cài đặt riêng tư!");
+      closeProfile();
+    } else {
+      showPrivacyToast("Lỗi khi lưu: " + resp.error, false);
+    }
+  });
+}
+function unblockUser(username) {
+  if (confirm(`Bạn muốn bỏ chặn @${username}?`)) {
+    fetch("/unblock_user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: username })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        openPrivacySettings(); // Refresh danh sách
+        showPrivacyToast("Đã bỏ chặn @" + username);
+      }
+    });
+  }
+}
+
+function showPrivacyToast(message, isSuccess = true) {
+  const toast = document.getElementById("privacy-toast");
+  toast.innerText = (isSuccess ? "✅ " : "❌ ") + message;
+  toast.style.background = isSuccess ? "#00cc88" : "#ff4444";
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 3000);
+}
+let unblockTarget = "";
+
+function unblockUser(username) {
+  unblockTarget = username;
+  document.getElementById("unblock-user-name").textContent = "@" + username;
+  document.getElementById("unblockConfirmModal").style.display = "flex";
+}
+
+function closeUnblockConfirm() {
+  document.getElementById("unblockConfirmModal").style.display = "none";
+}
+
+function confirmUnblock() {
+  fetch("/unblock_user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ target: unblockTarget })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      showUnblockToast();
+      closeUnblockConfirm();
+      openPrivacySettings(); // Refresh lại danh sách
+    }
+  });
+}
+
+function showUnblockToast() {
+  const toast = document.getElementById("unblock-toast");
+  toast.style.display = "block";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => {
+      toast.style.display = "none";
+      toast.style.opacity = "1";
+    }, 600);
+  }, 2000);
+}
+function showFriendToast(message) {
+  const toast = document.getElementById("friend-toast");
+  toast.innerText = message;
+  toast.style.display = "block";
+  toast.style.opacity = "1";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 300);
+  }, 2500); // Hiện 2.5s
+}
+
+</script>
+<!-- Toast hiện thông báo -->
+<div id="privacy-toast" style="position: fixed; bottom: 24px; right: 24px; background: #00cc88;
+     color: white; padding: 10px 16px; border-radius: 8px; font-size: 0.95rem;
+     box-shadow: 0 4px 12px rgba(0,0,0,0.4); display: none; z-index: 99999;">
+  ✅ Đã lưu cài đặt riêng tư!
+</div>
+<div id="unblockConfirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+
+  <div style="background:white; padding:20px; border-radius:12px; max-width:400px; width:90%; position:relative;">
+    <h5>Xác nhận bỏ chặn</h5>
+    <p>Bạn có chắc muốn bỏ chặn <span id="unblock-user-name" style="font-weight:bold;"></span>?</p>
+    <div style="text-align:right;">
+      <button class="btn btn-secondary me-2" onclick="closeUnblockConfirm()">Huỷ</button>
+      <button class="btn btn-danger" onclick="confirmUnblock()">Bỏ chặn</button>
+    </div>
+    <button onclick="closeUnblockConfirm()" style="position:absolute; top:10px; right:14px; border:none; background:none; font-size:20px;">&times;</button>
+  </div>
+</div>
+<div id="unblock-toast" style="
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  background:#00c853;
+  color:white;
+  padding:12px 24px;
+  border-radius:10px;
+  font-weight:500;
+  font-size:1rem;
+  z-index:99999;
+  box-shadow:0 6px 20px rgba(0,0,0,0.25);
+">
+  ✅ Đã bỏ chặn thành công.
+</div>
+<div id="friend-toast" style="
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #00aaff;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 99999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+">
+  💌 Đã gửi lời mời kết bạn!
+</div>
+
+</body>
+</html>

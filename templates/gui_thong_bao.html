@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Gửi Thông Báo - SolverViet</title>
+  <link rel="icon" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
+
+  <!-- Header -->
+  <div class="bg-white py-6 shadow">
+    <h1 class="text-3xl font-bold text-center text-blue-700">🧭 TRUNG TÂM QUẢN TRỊ SOLVERVIET</h1>
+  </div>
+
+  <!-- Form Container -->
+  <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+    <h2 class="text-xl font-bold text-green-600 mb-4 border-b border-green-300 pb-2">📨 Gửi Thông Báo Đến Người Dùng</h2>
+
+    <form method="POST">
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1">📌 Tiêu đề thông báo *</label>
+        <input name="title" required placeholder="Ví dụ: Cập nhật VIP" class="w-full p-3 rounded bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1">📝 Nội dung *</label>
+        <textarea name="content" rows="5" required placeholder="Chi tiết nội dung thông báo..." class="w-full p-3 rounded bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-blue-400"></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1">🆔 ID người dùng (nếu gửi riêng lẻ)</label>
+        <input name="user_id" placeholder="Chỉ cần nhập nếu không tick gửi toàn bộ" class="w-full p-3 rounded bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-blue-400">
+      </div>
+
+      <div class="mb-4">
+        <label class="inline-flex items-center">
+          <input type="checkbox" name="gui_all" class="mr-2">
+          ✅ Gửi cho toàn bộ người dùng
+        </label>
+      </div>
+
+      <div class="flex justify-between mt-6">
+  <a href="/solverviet_control_x2025" class="text-sm text-blue-600 hover:underline">← Quay về điều hướng</a>
+
+  <div class="flex gap-4">
+    <button type="reset" class="bg-gray-200 hover:bg-gray-300 text-black px-6 py-2 rounded">Nhập lại</button>
+    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded font-semibold">🚀 Gửi thông báo</button>
+  </div>
+</div>
+
+    </form>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-600 text-sm mt-10 pb-6">
+    <p>📞 Zalo hỗ trợ: <a href="tel:0865645752" class="text-blue-500">0865645752</a> |
+       📧 Email: <a href="mailto:phatth.viettel@gmail.com" class="text-blue-500">phatth.viettel@gmail.com</a></p>
+    <p class="mt-1">SolverViet &copy; 2025. All rights reserved.</p>
+  </footer>
+</body>
+</html>

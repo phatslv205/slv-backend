@@ -1,0 +1,34 @@
+[
+  {
+    "role": "user",
+    "content": "hihihihi"
+  },
+  {
+    "role": "assistant",
+    "content": "Chào bạn! Bạn có câu hỏi gì cần tôi giúp đỡ không? 😊"
+  },
+  {
+    "role": "user",
+    "content": "bạn biết gì không"
+  },
+  {
+    "role": "assistant",
+    "content": "Mình là AI phiên bản Lite của SolveViet, mình được lập trình để giúp bạn trả lời các câu hỏi cơ bản về toán học, khoa học, văn học, lịch sử, địa lý, và nhiều lĩnh vực khác. Bạn có thể hỏi mình bất cứ điều gì bạn quan tâm. Hãy chia sẻ câu hỏi của bạn để mình có thể hỗ trợ nhé! 😊"
+  },
+  {
+    "role": "user",
+    "content": "tui học giỏi lắm á nha"
+  },
+  {
+    "role": "assistant",
+    "content": "Chúc mừng bạn về việc học giỏi! Nếu có bất kỳ câu hỏi nào hoặc cần sự trợ giúp trong việc học, đừng ngần ngại hỏi mình nhé. Mình sẽ cố gắng hỗ trợ bạn trong khả năng của mình. Hãy tiếp tục phấn đấu và giữ vững thành công trong học tập nhé! 😊📚"
+  },
+  {
+    "role": "user",
+    "content": "hihi"
+  },
+  {
+    "role": "assistant",
+    "content": "Chào bạn! Nếu có bất kỳ câu hỏi nào, đừng ngần ngại hỏi mình nhé. Mình sẽ cố gắng giúp đỡ bạn trong khả năng của mình. 😊🌟"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "all": false,
+  "gpt_chat": false,
+  "chat_ai_lite": false,
+  "chat_ai_lite_daily": false,
+  "chat_lite": false,
+  "solver_edu": false,
+  "home": false
+
+}

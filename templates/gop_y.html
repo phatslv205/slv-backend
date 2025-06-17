@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title> Góp Ý / Báo Lỗi - SolverViet</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
+
+  <!-- Header -->
+  <div class="bg-white py-6 shadow">
+    <h1 class="text-3xl font-bold text-center text-red-600">TRUNG TÂM HỖ TRỢ SOLVERVIET</h1>
+  </div>
+
+  <!-- Form Container -->
+  <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+    <h2 class="text-xl font-bold text-red-600 mb-4 border-b border-red-300 pb-2">📢 Góp Ý / Báo Lỗi Cho SolverViet</h2>
+    <a href="/" class="inline-block mb-4 text-sm text-blue-500 hover:underline">← Quay lại trang chủ</a>
+
+    <p class="text-sm text-gray-600 mb-6">Đây là biểu mẫu dành cho người dùng gặp sự cố, lỗi hệ thống hoặc cần hỗ trợ nhanh chóng từ quản trị viên SolverViet. Hãy điền thông tin chính xác để chúng tôi có thể phản hồi sớm nhất.</p>
+
+    {% if not success %}
+    <form method="POST" action="/gop-y" enctype="multipart/form-data">
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Bạn muốn gửi gì?</label>
+        <select name="category" required class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+          <option value="">-- Chọn loại góp ý --</option>
+          <option value="Gợi ý thêm tính năng">Gợi ý thêm tính năng</option>
+          <option value="Báo lỗi"> Báo lỗi</option>
+          <option value="Góp ý nội dung">Góp ý nội dung</option>
+          <option value="Khiếu nại"> Khiếu nại</option>
+          <option value="Khác"> Khác?</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Họ và tên *</label>
+        <input type="text" name="full_name" required class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Mã ID người dùng SolverViet</label>
+        <input type="text" name="user_id" placeholder="VD: d360e94a-..." class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Email nhận phản hồi *</label>
+        <input type="email" name="user_email" required placeholder="your.email@example.com" class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Nội dung góp ý hoặc báo lỗi *</label>
+        <textarea name="message" rows="6" required placeholder="Nhập nội dung tại đây..." class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400"></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Đính kèm hình ảnh (tối đa 5 ảnh)</label>
+        <input type="file" id="image-input" name="images" accept="image/*" multiple class="w-full p-2 bg-gray-100 border border-gray-300 rounded" />
+        <div id="image-preview" class="mt-2 flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="flex justify-end gap-4 mt-6">
+        <button type="reset" class="bg-gray-200 hover:bg-gray-300 text-black px-6 py-2 rounded">Nhập lại</button>
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold">Gửi</button>
+      </div>
+    </form>
+    {% else %}
+    <div class="bg-green-100 text-green-800 p-6 mt-6 rounded-xl border border-green-300 text-center text-lg shadow">
+      {% if category == "Gợi ý thêm tính năng" %}
+   Cảm ơn bạn đã gợi ý cho SolverViet tính năng mới, hệ thống đã ghi nhận.  
+  Hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để nhận phản hồi của SolverViet và trải nghiệm tốt hơn nhé!
+{% elif category == "Báo lỗi" %}
+  Cảm ơn bạn đã báo lỗi giúp SolverViet cải thiện hệ thống. Đội ngũ sẽ kiểm tra và xử lý sớm nhất.  
+  Hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để nhận phản hồi của SolverViet sớm nhất nhé.
+{% elif category == "Góp ý nội dung" %}
+  Cảm ơn bạn đã góp ý nội dung, chúng tôi rất trân trọng điều đó.  
+  Bạn hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để nhận cập nhật phản hồi của SolverViet nhé.
+{% elif category == "Khiếu nại" %}
+ Chúng tôi rất tiếc về trải nghiệm không tốt. Chúng tôi sẽ xử lý khiếu nại sớm nhất có thể.  
+ Bạn hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để không bỏ lỡ phản hồi của SolverViet nhé!
+{% else %}
+   Cảm ơn bạn đã liên hệ với SolverViet. Hệ thống đã ghi nhận phản hồi của bạn.  
+  Bạn sẽ nhận phản hồi qua <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> nếu cần thiết.
+{% endif %}
+
+      <p class="mt-3 italic text-sm text-gray-600">Trân trọng chào bạn.</p>
+  <a href="/" class="inline-flex items-center justify-center mt-6 px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition duration-200">
+  ← Quay lại trang chủ
+</a>
+
+
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center text-gray-600 text-sm mt-10 pb-6">
+    <p>📞 Zalo hỗ trợ: <a href="tel:0865645752" class="text-blue-500">0865645752</a> | 📧 Email: <a href="mailto:phatth.viettel@gmail.com" class="text-blue-500">phatth.viettel@gmail.com</a></p>
+    <p class="mt-1">SolverViet &copy; 2025. All rights reserved.</p>
+  </footer>
+
+  <!-- JS xử lý preview ảnh -->
+  <script>
+    const input = document.getElementById("image-input");
+    const preview = document.getElementById("image-preview");
+    let files = [];
+
+    if (input) {
+      input.addEventListener("change", () => {
+        const selected = Array.from(input.files);
+        const total = files.length + selected.length;
+
+        if (total > 5) {
+          alert("❌ Bạn chỉ được gửi tối đa 5 ảnh!");
+          input.value = "";
+          return;
+        }
+
+        selected.forEach(file => {
+          if (!file.type.startsWith("image/")) return;
+
+          const reader = new FileReader();
+          reader.onload = e => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "relative w-24 h-24 border rounded overflow-hidden";
+
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "object-cover w-full h-full";
+
+            const del = document.createElement("button");
+            del.innerText = "✕";
+            del.className = "absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-bl";
+            del.onclick = () => {
+              preview.removeChild(wrapper);
+              files = files.filter(f => f !== file);
+              updateInputFiles();
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(del);
+            preview.appendChild(wrapper);
+
+            files.push(file);
+            updateInputFiles();
+          };
+          reader.readAsDataURL(file);
+        });
+
+        input.value = "";
+      });
+
+      function updateInputFiles() {
+        const dataTransfer = new DataTransfer();
+        files.forEach(f => dataTransfer.items.add(f));
+        input.files = dataTransfer.files;
+      }
+    }
+  </script>
+
+</body>
+</html>

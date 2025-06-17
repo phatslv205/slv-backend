@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng ký - SolveVietMath</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: url("https://i.imgur.com/hPXQoPi.png");
+      background-size: 60px 60px;
+      background-color: white;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 60px;
+    }
+    .register-box {
+      background: rgba(255,255,255,0.97);
+      padding: 36px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 0 24px rgba(0,0,0,0.25);  /* đổ bóng sâu hơn */
+      border: 1px solid #ccc;                /* có viền rõ hơn */
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      position: relative;
+    }
+    input {
+      width: 100%;
+      padding: 12px 40px 12px 12px;
+      box-sizing: border-box;  
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      margin-bottom: 15px;
+    }
+    .eye-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #666;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 17px;
+      border: none;
+      border-radius: 8px;
+      background-color: #007acc;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .error-msg {
+      color: red;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .link {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .link a {
+      color: #007acc;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <h2 style="text-align: center;">
+  <span style="color:#007acc; font-size: 22px; font-weight: bold;">SolverViet</span><br>
+   Đăng ký
+</h2>
+
+
+    {% if error %}
+      <div class="error-msg">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" action="/register">
+      <label for="fullname">Tên trang cá nhân:</label>
+  <input type="text" id="fullname" name="fullname" placeholder="Nhập tên bạn muốn đặt cho trang cá nhân" required>
+
+  <label for="username">Tên đăng nhập:</label>
+  <input type="text" id="username" name="username" placeholder="Tên đăng nhập" required>
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" placeholder="Email" required>
+
+  <label for="password">Mật khẩu:</label>
+  <div class="input-group">
+    <input name="password" id="password" type="password" placeholder="Mật khẩu phải gồm chữ hoa, chữ thường, số và ký tự đặc biệt. Tối thiểu 8 ký tự." required>
+    <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('password')"></i>
+  </div>
+
+  <label for="confirm_password">Xác nhận lại mật khẩu:</label>
+  <div class="input-group">
+    <input name="confirm_password" id="confirm_password" type="password" placeholder="Xác Nhận Lại Mật Khẩu" required>
+    <i class="fa-solid fa-eye eye-icon" onclick="togglePassword('confirm_password')"></i>
+  </div>
+      <label for="phone">Số điện thoại (nếu có):</label>
+<input type="text" name="phone" placeholder="">
+
+
+      <div class="input-group">
+
+    <div style="margin-bottom: 15px;">
+      <label style="display: grid; grid-template-columns: auto 1fr; align-items: start; gap: 10px; font-size: 14px; color: #333;">
+        <input type="checkbox" id="want_verification" name="want_verification" style="margin-top: 4px;">
+        <div>
+          <strong style="color: #000;">Tôi muốn xác thực tài khoản.</strong><br>
+          <small style="color: #666;">Khuyến khích nên xác thực để tránh mất tài khoản hoặc bị người khác chiếm dụng.</small>
+        </div>
+      </label>
+    </div>
+
+              
+     
+      </div>
+
+   <div class="terms-checkbox" style="margin-bottom: 15px;">
+  <label style="display: inline-flex; align-items: center; font-size: 14px; color: #ddd; gap: 6px; white-space: nowrap;">
+    <input type="checkbox" id="agree_terms_register" style="margin: 0;">
+    Tôi đã đọc và đồng ý với
+    <a href="#" onclick="openTermsModal()" style="color: #007acc; text-decoration: none;">Điều khoản sử dụng</a>
+  </label>
+  <div id="terms-error" style="color:#aa0000; font-size: 13px; margin-top: 5px; display: none;">
+    ⚠️ Vui lòng đồng ý với Điều khoản sử dụng trước khi đăng ký.
+  </div>
+</div>
+ 
+      <button type="submit">Đăng ký</button>
+    </form>
+
+    <div class="link">
+      Đã có tài khoản? <a href="/login">Đăng nhập</a>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      field.type = field.type === "password" ? "text" : "password";
+    }
+
+   
+  </script>
+  <!-- Modal Điều khoản sử dụng -->
+<div id="termsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000088; z-index:9999;">
+  <div style="background:white; max-width:700px; margin:40px auto; padding:20px; border-radius:12px; max-height:85vh; overflow-y:auto;">
+    <h2> Điều khoản sử dụng – SolverViet</h2>
+    <p><strong>1. Mục đích:</strong>SolverViet là một nền tảng học tập ứng dụng trí tuệ nhân tạo nhằm hỗ trợ người dùng giải bài tập, luyện tập kiến thức và mở rộng tư duy trong nhiều lĩnh vực. Việc sử dụng hệ thống ngoài phạm vi học tập (ví dụ: spam, phá hoại, khai thác sai mục đích...) là hành vi bị cấm. Người dùng cần đảm bảo các hành vi sử dụng đều nằm trong giới hạn giáo dục, nghiên cứu cá nhân và có trách nhiệm.</p>
+    <p><strong>2. Bảo mật tài khoản:</strong> Khi đăng ký tài khoản, người dùng cần cung cấp thông tin chính xác. Việc sử dụng thông tin giả mạo hoặc dùng danh tính người khác để tạo tài khoản là vi phạm điều khoản. Người dùng phải bảo mật thông tin đăng nhập của mình. Mọi rủi ro phát sinh từ việc lộ mật khẩu hoặc dùng chung tài khoản đều do người dùng tự chịu trách nhiệm.
+
+Nếu bạn gặp vấn đề về bảo mật, bạn có thể liên hệ hệ thống hỗ trợ<a href="/feedback">[TẠI ĐÂY]</a></p>
+    <p><strong>3. Giới hạn sử dụng AI miễn phí:</strong>Mỗi người dùng được cung cấp số lượt sử dụng AI miễn phí nhất định. Khi hết lượt, bạn cần nâng cấp gói dịch vụ để tiếp tục sử dụng. Hệ thống sẽ hiển thị thông báo rõ ràng và không tự động trừ phí.
+
+Việc tạo tài khoản clone để tránh giới hạn hoặc tìm cách vượt qua hệ thống kiểm tra lượt dùng sẽ bị hệ thống ghi nhận và khóa tài khoản.</p>
+    <p><strong>4. Gói dịch vụ VIP và thanh toánn:</strong>Khi bạn nâng cấp gói VIP, hệ thống sẽ cấp quyền tương ứng với thời hạn ghi rõ. Thời hạn sẽ bắt đầu tính từ lúc thanh toán thành công. SolverViet không hoàn tiền đối với các gói đã sử dụng một phần hoặc đã kích hoạt. Trong trường hợp lỗi kỹ thuật, bạn có thể gửi yêu cầu hỗ trợ <a href="/feedback">[TẠI ĐÂY]</a></p> để được xem xét cá nhân.
+
+
+    <p><strong>5. Chống gian lận và tự động hoá:</strong> Việc sử dụng phần mềm, bot, tiện ích mở rộng hoặc bất kỳ công cụ tự động nào nhằm tương tác với hệ thống, spam AI hoặc vượt giới hạn tính năng đều bị nghiêm cấm. Hệ thống có thể tạm khóa hoặc vĩnh viễn vô hiệu hóa tài khoản mà không cần cảnh báo nếu phát hiện hành vi nghi ngờ.</p>
+    <p><strong>6. Quyền riêng tư:</strong>SolverViet cam kết bảo mật thông tin cá nhân và không chia sẻ với bên thứ ba. Tuy nhiên, hệ thống có thể ghi lại lịch sử sử dụng (số lượt AI, IP truy cập, hành vi đáng ngờ...) để phục vụ cho việc nâng cấp chất lượng và đảm bảo an toàn hệ thống.
+Người dùng có thể yêu cầu xoá dữ liệu cá nhân của mình bằng cách gửi yêu cầu<a href="/feedback">[TẠI ĐÂY]</a></p>
+    <p><strong>7.Chống khai thác, dò xét hệ thống trái phép</strong> SolverViet nghiêm cấm mọi hành vi tạo tài khoản để kiểm tra tính năng, sao chép ý tưởng, phân tích giao diện hoặc đánh giá nội bộ nhằm mục đích phát triển nền tảng đối thủ hoặc cạnh tranh không lành mạnh.
+Mọi hành vi như vậy sẽ bị hệ thống tự động ghi log, ngăn truy cập, và xử lý bằng các biện pháp phù hợp. Chúng tôi không khuyến khích việc sử dụng hệ thống với bất kỳ mục đích khai thác kỹ thuật nào.</p>
+    <p><strong>8.Trách nhiệm khi sử dụng nội dung từ AI:</strong>AI của SolverViet cung cấp các gợi ý mang tính tham khảo. Mọi quyết định sử dụng, sao chép, áp dụng hoặc nộp lại nội dung cho giáo viên hoặc nơi khác đều thuộc về người dùng. SolverViet không chịu trách nhiệm nếu nội dung được sử dụng sai mục đích, gây ảnh hưởng đến kết quả học tập hay cá nhân.</p>
+    <p><strong>9. Điều chỉnh nội dung và điều khoản:</strong> SolverViet có quyền thay đổi bất kỳ phần nào của giao diện, tính năng, chính sách hoạt động hoặc điều khoản sử dụng mà không cần báo trước. Việc bạn tiếp tục sử dụng hệ thống sau thay đổi đồng nghĩa với việc bạn đồng ý với các điều khoản mới.</p>
+    <p><strong>10. Vi phạm và xử lý:</strong> Mọi hành vi bị xác định là vi phạm điều khoản sử dụng sẽ bị hệ thống tự động xử lý: bao gồm giới hạn chức năng, thu hồi quyền truy cập, hoặc vô hiệu hoá tài khoản vĩnh viễn. Các quyết định xử lý sẽ dựa trên dữ liệu hệ thống và không cần báo trước.Nếu bạn cho rằng có sự hiểu lầm hoặc tài khoản bị xử lý sai, hãy gửi yêu cầu giải trình <a href="/feedback">[TẠI ĐÂY]</a></p>
+    <p><strong>11. Hỗ trợ khôi phục mật khẩu:</strong> Hệ thống SolverViet chỉ hỗ trợ tính năng "Quên mật khẩu" cho những tài khoản đã xác thực qua email. Các tài khoản chưa xác thực sẽ không được hỗ trợ trong trường hợp mất mật khẩu hoặc yêu cầu lấy lại tài khoản.</p>
+
+    <div style="text-align:right; margin-top: 20px;">
+      <button onclick="closeTermsModal()" style="padding: 8px 20px; background: #007acc; color: white; border: none; border-radius: 8px;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openTermsModal() {
+    document.getElementById("termsModal").style.display = "block";
+  }
+  function closeTermsModal() {
+    document.getElementById("termsModal").style.display = "none";
+  }
+</script>
+<script>
+  const form = document.querySelector("form");
+  const checkbox = document.getElementById("agree_terms_register");
+  const errorBox = document.getElementById("terms-error");
+
+  form.addEventListener("submit", function(e) {
+    if (!checkbox.checked) {
+      e.preventDefault();
+      errorBox.style.display = "block";
+      checkbox.focus();
+    }
+  });
+
+  checkbox.addEventListener("change", function() {
+    if (checkbox.checked) {
+      errorBox.style.display = "none";
+    }
+  });
+</script>
+<script>
+  const provinceSelect = document.getElementById("province");
+  const schoolContainer = document.getElementById("school-container");
+
+  provinceSelect.addEventListener("change", () => {
+    schoolContainer.style.display = provinceSelect.value ? "block" : "none";
+  });
+</script>
+
+</body>
+</html>

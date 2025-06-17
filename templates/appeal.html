@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title> Khiếu nại tài khoản bị khóa - SolverViet</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
+
+  <!-- Header -->
+  <div class="bg-white py-6 shadow">
+    <h1 class="text-3xl font-bold text-center text-red-600">KHIẾU NẠI KHÓA TÀI KHOẢN</h1>
+  </div>
+
+  <!-- Form Container -->
+  <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
+    <h2 class="text-xl font-bold text-red-600 mb-4 border-b border-red-300 pb-2">🚫 Tài khoản của bạn đã bị khóa?</h2>
+    <a href="/login" class="inline-block mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">← Về trang đăng nhập</a>
+
+    <p class="text-sm text-gray-600 mb-6">
+      Nếu bạn cho rằng tài khoản của mình bị khóa nhầm hoặc không rõ lý do, hãy điền vào biểu mẫu bên dưới để chúng tôi xem xét. 
+      Đội ngũ hỗ trợ SolverViet sẽ kiểm tra và phản hồi sớm nhất có thể qua email của bạn.
+    </p>
+
+    {% if not success %}
+    <form method="POST" action="/appeal" enctype="multipart/form-data">
+        <input type="hidden" name="category" value="Khiếu nại tài khoản">
+
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Họ và tên *</label>
+        <input type="text" name="full_name" required class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Mã ID tài khoản SolverViet (nếu nhớ)</label>
+        <input type="text" name="user_id" placeholder="VD: d360e94a-..." class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+        <p class="text-xs italic text-gray-500 mt-1 mb-4">
+        Nếu không nhớ mã ID tài khoản, bạn có thể điền tên đăng nhập, mật khẩu bạn từng dùng hoặc số điện thoại để chúng tôi xác minh nhanh hơn.
+        </p>
+
+      </div>
+      <div class="mb-4">
+            <label class="block text-sm font-semibold mb-1"> Tên đăng nhập (nếu không nhớ ID)</label>
+            <input type="text" name="username" placeholder="Tên đăng nhập bạn thường dùng" class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+            </div>
+
+            <div class="mb-4">
+            <label class="block text-sm font-semibold mb-1"> Mật khẩu bạn từng dùng (ước chừng)</label>
+            <input type="text" name="password_hint" placeholder="Nhập gần đúng mật khẩu nếu nhớ" class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+            </div>
+
+            <div class="mb-4">
+            <label class="block text-sm font-semibold mb-1"> Số điện thoại liên hệ (nếu có)</label>
+            <input type="text" name="phone" placeholder="VD: 0865..." class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+            </div>
+
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Email nhận phản hồi *</label>
+        <input type="email" name="email" required placeholder="your.email@example.com" class="w-full p-3 rounded bg-gray-100 border border-gray-300">
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Nội dung khiếu nại *</label>
+        <textarea name="message" rows="6" required placeholder="Vui lòng nêu rõ lý do bạn cho rằng tài khoản bị khóa nhầm..." class="w-full p-3 rounded bg-gray-100 border border-gray-300"></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="block text-sm font-semibold mb-1"> Đính kèm hình ảnh minh hoạ (nếu có, tối đa 5 ảnh)</label>
+        <input type="file" id="image-input" name="images" accept="image/*" multiple class="w-full p-2 bg-gray-100 border border-gray-300 rounded" />
+        <div id="image-preview" class="mt-2 flex flex-wrap gap-2"></div>
+      </div>
+
+      <div class="flex justify-end gap-4 mt-6">
+        <button type="reset" class="bg-gray-200 hover:bg-gray-300 text-black px-6 py-2 rounded">Nhập lại</button>
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded font-semibold">Gửi khiếu nại</button>
+      </div>
+    </form>
+    {% else %}
+    <div class="bg-green-100 text-green-800 p-6 mt-6 rounded-xl border border-green-300 text-center text-lg shadow">
+   Trước hết, chúng tôi xin gửi lời xin lỗi chân thành về sự bất tiện bạn đang gặp phải.
+
+  <br><br>
+  Hệ thống đã tiếp nhận yêu cầu khiếu nại của bạn. Đội ngũ SolverViet sẽ kiểm tra kỹ lưỡng và phản hồi sớm nhất qua địa chỉ email bạn đã cung cấp.
+
+  <br><br>
+  Chúng tôi luôn trân trọng mọi phản hồi và cam kết mang đến trải nghiệm công bằng, minh bạch cho tất cả người dùng.
+
+  <br><br>
+  <a href="/login" class="inline-block mt-4 px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">← Về trang đăng nhập</a>
+</div>
+    {% endif %}
+  </div>
+
+  <footer class="text-center text-gray-600 text-sm mt-10 pb-6">
+    <p>📞 Zalo hỗ trợ: <a href="tel:0865645752" class="text-blue-500">0865645752</a> | 📧 Email: <a href="mailto:phatth.viettel@gmail.com" class="text-blue-500">solverviet@gmail.com</a></p>
+    <p class="mt-1">SolverViet &copy; 2025. All rights reserved.</p>
+  </footer>
+
+  <!-- JS preview ảnh -->
+  <script>
+    const input = document.getElementById("image-input");
+    const preview = document.getElementById("image-preview");
+    let files = [];
+
+    if (input) {
+      input.addEventListener("change", () => {
+        const selected = Array.from(input.files);
+        const total = files.length + selected.length;
+
+        if (total > 5) {
+          alert("❌ Bạn chỉ được gửi tối đa 5 ảnh!");
+          input.value = "";
+          return;
+        }
+
+        selected.forEach(file => {
+          if (!file.type.startsWith("image/")) return;
+
+          const reader = new FileReader();
+          reader.onload = e => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "relative w-24 h-24 border rounded overflow-hidden";
+
+            const img = document.createElement("img");
+            img.src = e.target.result;
+            img.className = "object-cover w-full h-full";
+
+            const del = document.createElement("button");
+            del.innerText = "✕";
+            del.className = "absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-bl";
+            del.onclick = () => {
+              preview.removeChild(wrapper);
+              files = files.filter(f => f !== file);
+              updateInputFiles();
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(del);
+            preview.appendChild(wrapper);
+
+            files.push(file);
+            updateInputFiles();
+          };
+          reader.readAsDataURL(file);
+        });
+
+        input.value = "";
+      });
+
+      function updateInputFiles() {
+        const dataTransfer = new DataTransfer();
+        files.forEach(f => dataTransfer.items.add(f));
+        input.files = dataTransfer.files;
+      }
+    }
+  </script>
+
+</body>
+</html>

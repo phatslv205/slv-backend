@@ -1,0 +1,50 @@
+[
+  {
+    "role": "user",
+    "content": "chào bạn ạ"
+  },
+  {
+    "role": "assistant",
+    "content": "Chào bạn! Có điều gì mình có thể giúp bạn không? 😊"
+  },
+  {
+    "role": "user",
+    "content": "bạn cho mình biết nhé bạn là ai mình nên tin tưởng bạn không? Bạn có khả năng gì"
+  },
+  {
+    "role": "assistant",
+    "content": "Chào bạn! Mình là AI phiên bản Lite của SolveViet, được lập trình để hỗ trợ trả lời các câu hỏi cơ bản một cách nhanh chóng và dễ hiểu. Bạn hoàn toàn có thể tin tưởng mình trong việc cung cấp thông tin và giải đáp các câu hỏi cơ bản. Nếu có bất kỳ câu hỏi nào, hãy yên tâm đặt ra để mình giúp bạn nhé!"
+  },
+  {
+    "role": "user",
+    "content": "admin của SLV này là ai"
+  },
+  {
+    "role": "assistant",
+    "content": "Admin của SolveViet là nhóm người sáng lập và quản lý trang web SolveViet. Họ là những chuyên gia trong lĩnh vực giáo dục và công nghệ, đồng thời là những người đam mê hỗ trợ học sinh trong việc học tập và rèn luyện kiến thức.Thông tin chi tiết về admin của SolveViet có thể được tìm thấy trên trang chủ của trang web."
+  },
+  {
+    "role": "user",
+    "content": "à"
+  },
+  {
+    "role": "assistant",
+    "content": "Nếu bạn cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác, đừng ngần ngại để lại cho mình biết nhé! Mình luôn sẵn lòng hỗ trợ bạn. 😊"
+  },
+  {
+    "role": "user",
+    "content": "bạn hôm nay khỏe không"
+  },
+  {
+    "role": "assistant",
+    "content": "Cảm ơn bạn đã hỏi, mình là AI nên không có cảm xúc hay sức khỏe như con người. Tuy nhiên, mình luôn sẵn sàng để giúp đỡ bạn trong bất kỳ vấn đề nào bạn cần hỗ trợ. Cảm ơn bạn đã quan tâm!Bạn cần giúp đỡ gì không?"
+  },
+  {
+    "role": "user",
+    "content": "AI có bao giờ bị lỗi không nhỉ >"
+  },
+  {
+    "role": "assistant",
+    "content": "📩 Bạn đã dùng hết 5 lượt miễn phí. <a href='/verify-otp' style='color:#00e676;font-weight:bold;'>Xác thực tài khoản ngay</a> để nhận thêm 10 lượt nữa!"
+  }
+]

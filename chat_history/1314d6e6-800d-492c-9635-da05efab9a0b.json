@@ -1,0 +1,10 @@
+[
+  {
+    "role": "user",
+    "content": "bạn ơi"
+  },
+  {
+    "role": "assistant",
+    "content": "Chào bạn! Có điều gì bạn cần trợ giúp không? Hãy chia sẻ với mình nhé!"
+  }
+]

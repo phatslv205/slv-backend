@@ -1,0 +1,98 @@
+[
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Bạn cần giúp đỡ về vấn đề gì ạ? Hãy nêu câu hỏi cụ thể để mình có thể hỗ trợ bạn nhé!",
+    "role": "assistant"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "Bạn có thắc mắc gì hay cần giúp đỡ về vấn đề nào không? Hãy nêu câu hỏi cụ thể để mình có thể hỗ trợ bạn nhé!",
+    "role": "assistant"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "Haha, mình cảm giác như bạn đang troll mình á! 😝 Nhưng không sao, nếu bạn có câu hỏi hay cần tư vấn gì thì cứ nói nha, mình luôn sẵn sàng giúp đỡ!",
+    "role": "assistant"
+  },
+  {
+    "content": "alo nè",
+    "role": "user"
+  },
+  {
+    "content": "Alo alo! Nghe rõ trả lời luôn nè! 😄 Bạn cần giúp gì không? Cứ nói mình biết nhé!",
+    "role": "assistant"
+  },
+  {
+    "content": "hé lô",
+    "role": "user"
+  },
+  {
+    "content": "Hé lô bạn! 😄 Có gì muốn tám hay cần giúp đỡ thì cứ nói mình biết nha!",
+    "role": "assistant"
+  },
+  {
+    "content": "chàooo",
+    "role": "user"
+  },
+  {
+    "content": "Chàooo bạn! 😄 Có chuyện gì hot không, chia sẻ mình nghe với nào!",
+    "role": "assistant"
+  },
+  {
+    "content": "aaaa",
+    "role": "user"
+  },
+  {
+    "content": "Có vẻ bạn đang phấn khích quá nhỉ! 😆 Có gì thú vị không, kể mình nghe với!",
+    "role": "assistant"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "🚫 Bạn đã dùng hết 100 lượt GPT hôm nay. Vui lòng quay lại vào ngày mai hoặc nâng cấp gói.",
+    "role": "assistant"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "🚫 Bạn đã dùng hết 100 lượt GPT hôm nay. Vui lòng quay lại vào ngày mai hoặc nâng cấp gói.",
+    "role": "assistant"
+  },
+  {
+    "content": "aa",
+    "role": "user"
+  },
+  {
+    "content": "🚫 Bạn đã dùng hết 100 lượt GPT hôm nay. Vui lòng quay lại vào ngày mai hoặc nâng cấp gói.",
+    "role": "assistant"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "🚫 Bạn đã dùng hết 100 lượt GPT hôm nay. Vui lòng quay lại vào ngày mai hoặc nâng cấp gói.",
+    "role": "assistant"
+  },
+  {
+    "role": "user",
+    "content": "adasd"
+  },
+  {
+    "role": "assistant",
+    "content": "🚫 Bạn đã dùng hết 100 lượt GPT hôm nay. Vui lòng quay lại vào ngày mai hoặc nâng cấp gói."
+  }
+]

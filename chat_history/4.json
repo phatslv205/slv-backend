@@ -1,0 +1,70 @@
+[
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "🔒 Bạn đã dùng hết 5 lượt miễn phí trong ngày hôm nay. Vui lòng quay lại vào ngày mai hoặc nâng cấp AI Lite/Solver để tiếp tục sử dụng.",
+    "role": "assistant"
+  },
+  {
+    "content": "alo",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Có điều gì mình có thể giúp bạn không? Hãy đặt câu hỏi hoặc chia sẻ vấn đề bạn đang gặp phải.",
+    "role": "assistant"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "Xin lỗi, bạn có thể giải thích rõ hơn vấn đề hoặc câu hỏi của mình được không? Mình sẽ cố gắng hỗ trợ bạn!",
+    "role": "assistant"
+  },
+  {
+    "content": "bạn ơi",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Có vấn đề gì mình có thể giúp bạn không? Hãy đặt câu hỏi hoặc chia sẻ thêm thông tin để mình có thể hỗ trợ bạn tốt hơn nhé!",
+    "role": "assistant"
+  },
+  {
+    "content": "hi",
+    "role": "user"
+  },
+  {
+    "content": "hi",
+    "role": "user"
+  },
+  {
+    "content": "hi",
+    "role": "user"
+  },
+  {
+    "content": "alo",
+    "role": "user"
+  },
+  {
+    "content": "🚫 Bạn đã dùng hết lượt GPT trong ngày hoặc gói đã hết hạn.",
+    "role": "assistant"
+  },
+  {
+    "content": "hé lơ",
+    "role": "user"
+  },
+  {
+    "content": "Hé lô! 😄 Có chuyện gì vui hay cần giúp đỡ thì cứ nói tui biết nha!",
+    "role": "assistant"
+  },
+  {
+    "role": "user",
+    "content": "yahaya"
+  },
+  {
+    "role": "assistant",
+    "content": "Yahaya! 😆 Nghe vui quá nhỉ! Có gì hay ho thì chia sẻ với tui đi nào!"
+  }
+]

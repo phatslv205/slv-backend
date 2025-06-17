@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat - SolverViet</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@4.6.4/dist/index.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f7f9fc;
+      color: #333;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-header {
+      padding: 12px 20px;
+      background-color: #ffffff;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-body {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .chat-footer {
+      padding: 10px 20px;
+      background-color: #ffffff;
+      border-top: 1px solid #ddd;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .message {
+      max-width: 70%;
+      margin-bottom: 14px;
+      padding: 12px 16px;
+      border-radius: 18px;
+      position: relative;
+      word-break: break-word;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .message.me {
+      align-self: flex-end;
+      background-color: #daf0ff;
+      color: #000;
+    }
+    .message.friend {
+      align-self: flex-start;
+      background-color: #ffffff;
+      border: 1px solid #eee;
+    }
+    .message-time {
+      font-size: 0.75rem;
+      color: #888;
+      margin-top: 4px;
+      text-align: right;
+    }
+    .input-box {
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 24px;
+    padding: 14px 18px;
+    font-size: 1rem;
+    height: 48px;
+    outline: none;
+    }
+
+    .input-box:focus {
+      border-color: #00aaff;
+    }
+    .icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  color: #007bff;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+    img.preview-img {
+      max-width: 120px;
+      max-height: 120px;
+      border-radius: 10px;
+      margin-right: 10px;
+      margin-top: 5px;
+      object-fit: cover;
+      cursor: zoom-in;
+    }
+    small.text-warning {
+  font-size: 0.75rem;
+  color: #ffc107;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-message {
+  animation: fadeIn 0.3s ease;
+}
+.icon-btn {
+  transition: transform 0.15s ease;
+}
+
+.icon-btn:active {
+  transform: scale(0.85);
+}
+.icon-btn {
+  transition: transform 0.15s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+}
+
+.icon-btn:active {
+  transform: scale(0.85);
+}
+.emoji-picker {
+  z-index: 99999 !important;
+}
+
+@keyframes flyUpFade {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.flying-emoji {
+  position: fixed;
+  font-size: 24px;
+  pointer-events: none;
+  animation: flyUpFade 1s ease forwards;
+  user-select: none;
+  z-index: 100000;
+}
+.chat-header a.btn, .chat-header button.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 6px 14px;
+  transition: all 0.3s ease;
+  color: #333 !important;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+}
+
+
+.chat-header a.btn:hover, .chat-header button.btn:hover {
+  background-color: #e6e6e6;
+  color: #000 !important;
+  border-color: #bbb;
+}
+
+/* Chế độ tối */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.dark-mode .chat-header,
+body.dark-mode .chat-footer {
+  background-color: #1e1e1e;
+  border-color: #333;
+  color: #e0e0e0;
+}
+
+body.dark-mode .chat-body {
+  background-color: #181818;
+  color: #e0e0e0;
+}
+
+body.dark-mode .message.friend {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.dark-mode .message.me {
+  background-color: #3a3a3a;
+  color: #fff;
+}
+
+body.dark-mode .input-box {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+/* Các nút và icon trong dark mode */
+body.dark-mode .btn-light {
+  background-color: #333 !important;
+  color: #ddd !important;
+  border-color: #555 !important;
+}
+.reply-box {
+  background: #eef5ff;
+  border-left: 3px solid #00aaff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+body.dark-mode .chat-header a.btn,
+body.dark-mode .chat-header button.btn {
+  background-color: #333;
+  color: #eee !important;
+  border: 1px solid #555;
+}
+
+body.dark-mode .chat-header a.btn:hover,
+body.dark-mode .chat-header button.btn:hover {
+  background-color: #444;
+  color: #fff !important;
+  border-color: #666;
+}
+#chat-settings-popup {
+  display: none;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+.system-message {
+  background-color: #ffecec;
+  color: #d10000;
+  text-align: center;
+  padding: 10px 16px;
+  margin: 12px auto;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  max-width: 80%;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+
+  </style>
+</head>
+<body>
+
+
+<div class="chat-header">
+  <div style="display: flex; align-items: center; gap: 16px;">
+    <!-- Bên trái: Tên + trạng thái -->
+    <div style="display: flex; flex-direction: column;">
+      <strong id="friend-name">
+  {{ friend.fullname if friend.fullname else friend.name if friend.name else friend_username }}
+</strong>
+
+      <span style="font-size: 0.8rem; color: #888;">
+        <span style="color: {{ 'green' if 'Đang hoạt động' in friend_status else '#888' }}"></span>
+   {{ friend_status }}
+      </span>
+    </div>
+
+    <!-- Nút đổi tên & chế độ sáng/tối -->
+  <div style="display: flex; gap: 6px;">
+  <!-- Nút Đổi Tên -->
+  <button id="edit-name-btn" class="btn btn-sm btn-outline-primary" title="Đặt biệt danh">
+    <i class="bi bi-pencil-square"></i>
+  </button>
+   <!-- Nút bánh răng -->
+<button id="chat-settings-btn" class="btn btn-sm btn-light" title="Cài đặt đoạn chat">
+  <i class="bi bi-gear-fill"></i>
+</button>
+
+  <!-- Popup đổi tên -->
+  <div id="rename-popup" style="display:none; padding: 10px;">
+    <input type="text" id="new-nickname" placeholder="Nhập biệt danh mới..." class="form-control" style="max-width: 200px; display: inline-block;">
+    <button onclick="saveNickname()" class="btn btn-sm btn-success">Lưu</button>
+    <button onclick="hideRenamePopup()" class="btn btn-sm btn-secondary">Hủy</button>
+  </div>
+
+  <!-- Nút dark mode -->
+  <button id="theme-toggle-btn" class="btn btn-sm btn-light" title="Chuyển giao diện">
+    <i id="theme-icon" class="bi bi-moon-fill"></i>
+  </button>
+</div>
+
+  </div>
+
+  <!-- Bên phải: Album & Quay lại -->
+  <div>
+    <button type="button" onclick="openAlbumModal()" class="btn btn-sm btn-light">📸 Album ảnh</button>
+    <a href="/friends" class="btn btn-sm btn-light me-2">← Quay lại</a>
+  </div>
+</div>
+
+
+
+  <div class="chat-body" id="chat-body">
+    {% for msg in messages %}
+      <div class="message {% if msg.sender == username %}me{% else %}friend{% endif %}">
+        {% if msg.image_urls %}
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            {% for img in msg.image_urls %}
+              <img src="{{ img }}?v={{ loop.index0 }}"
+                class="preview-img"
+                loading="lazy"
+                onclick="showImageModal(this.src)"
+                onerror="this.style.display='none';">
+
+            {% endfor %}
+          </div>
+        {% endif %}
+        {% if msg.reply_to %}
+  <div class="reply-box" data-reply-sender="{{ msg.reply_to.sender }}">
+     Trả lời <strong class="reply-name">{{ msg.reply_to.sender }}</strong>: {{ msg.reply_to.text }}
+  </div>
+{% endif %}
+
+
+        {% if msg.text %}
+          <div class="message-text">{{ msg.text }}</div>
+        {% endif %}
+        <div class="message-time">{{ msg.time }}</div>
+        {% if msg.days_left %}
+        <div class="text-danger mt-1" style="font-size: 0.75rem;">
+            ⚠️ Tin nhắn này và ảnh sẽ tự động bị xoá sau {{ msg.days_left }} ngày nữa.
+        </div>
+        {% endif %}
+
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="preview-container" class="px-3 pb-2" style="display: none;"></div>
+
+ <form id="chat-form" enctype="multipart/form-data" class="chat-footer">
+  <input type="text" id="chat-input" name="text" class="input-box" placeholder="Nhập tin nhắn...">
+
+  
+  <!-- Nút emoji (phải để riêng) -->
+  <button type="button" id="emoji-btn" class="icon-btn">
+    <i class="bi bi-emoji-smile"></i>
+  </button>
+
+  <!-- Nút gửi -->
+  <button type="submit" class="icon-btn">
+    <i class="bi bi-send-fill"></i>
+  </button>
+
+  <!-- Nút gửi ảnh bọc trong label -->
+  <label class="icon-btn">
+    <i class="bi bi-image"></i>
+    <input type="file" name="images" multiple accept="image/*" onchange="previewMultiple(this)" hidden>
+  </label>
+</form>
+
+
+</div>
+
+  <!-- Modal phóng to ảnh -->
+  <div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
+    <span onclick="closeImageModal()" style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
+    <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+  </div>
+
+  <script>
+
+    window.addEventListener('load', function() {
+  const friendUsername = '{{ friend_username }}'; // server truyền biến này vào
+  let nameEl = document.getElementById('friend-name'); // ← Đổi const thành let
+  const editBtn = document.getElementById('edit-name-btn');
+
+
+  // Load tên bí danh từ localStorage nếu có
+const savedName = localStorage.getItem('friend_name_' + friendUsername);
+if (friendName === friendUsername) {
+  // Nếu backend không còn biệt danh (chỉ còn username gốc)
+  localStorage.removeItem('friend_name_' + friendUsername);
+} else if (savedName) {
+  nameEl.textContent = savedName;
+}
+
+
+  editBtn.addEventListener('click', () => {
+    // Tạo input thay thế tên
+    const currentName = nameEl.textContent;
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = currentName;
+    input.className = 'form-control form-control-sm d-inline-block';
+    input.style.width = 'auto';
+    nameEl.replaceWith(input);
+    input.focus();
+
+    function save() {
+      const newName = input.value.trim() || currentName;
+      localStorage.setItem('friend_name_' + friendUsername, newName);
+      const newSpan = document.createElement('strong');
+      newSpan.id = 'friend-name';
+      newSpan.textContent = newName;
+      input.replaceWith(newSpan);
+      // Cập nhật biến nameEl lại để tương tác tiếp
+      nameEl = newSpan;
+    }
+
+    input.addEventListener('blur', save);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        save();
+      }
+    });
+  });
+});
+
+    let totalFiles = [];
+
+    function previewMultiple(input) {
+      const container = document.getElementById("preview-container");
+      const newFiles = Array.from(input.files);
+      totalFiles = totalFiles.concat(newFiles);
+
+      if (totalFiles.length > 5) {
+        alert("🚫 Tối đa 5 ảnh!");
+        totalFiles = totalFiles.slice(0, 5);
+      }
+
+      container.innerHTML = "";
+      container.style.display = "flex";
+
+      totalFiles.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "preview-img";
+          container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const dataTransfer = new DataTransfer();
+      totalFiles.forEach(file => dataTransfer.items.add(file));
+      input.files = dataTransfer.files;
+    }
+
+    function showImageModal(src) {
+      document.getElementById("modalImage").src = src;
+      document.getElementById("imageModal").style.display = "flex";
+    }
+
+    function closeImageModal() {
+      document.getElementById("imageModal").style.display = "none";
+      document.getElementById("modalImage").src = "";
+    }
+
+    document.getElementById("chat-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const formData = new FormData();
+      const input = document.getElementById("chat-input");
+      formData.append("text", input.value);
+
+      formData.append("reply_to", replyingTo ? JSON.stringify(replyingTo) : "");
+
+      totalFiles.forEach(file => formData.append("images", file));
+
+      fetch("/chat/send/{{ friend_username }}", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          const chatBody = document.getElementById("chat-body");
+          const div = document.createElement("div");
+          div.className = "message me animated-message";
+          if (data.message.reply_to) {
+            const replyDiv = document.createElement("div");
+            replyDiv.style.fontSize = "0.85rem";
+            replyDiv.style.borderLeft = "3px solid #00aaff";
+            replyDiv.style.paddingLeft = "8px";
+            replyDiv.style.marginBottom = "6px";
+            replyDiv.style.color = "#555";
+
+            const sender = data.message.reply_to.sender;
+            const alias = localStorage.getItem('friend_name_' + sender) || sender;
+
+            replyDiv.innerHTML = `Trả lời <strong>${alias}</strong>: ${data.message.reply_to.text}`;
+            div.appendChild(replyDiv);
+          }} else if (data.error === "BẠN ĐÃ BỊ CHẶN") {
+    alert("🚫 Bạn đã bị chặn, không thể gửi tin nhắn.");
+          if (data.message.image_urls) {
+            const imgGroup = document.createElement("div");
+            imgGroup.style.display = "flex";
+            imgGroup.style.flexWrap = "wrap";
+            imgGroup.style.gap = "8px";
+
+            data.message.image_urls.forEach(url => {
+              const img = document.createElement("img");
+              img.src = url;
+              img.className = "preview-img";
+              img.onclick = () => showImageModal(url);
+              imgGroup.appendChild(img);
+            });
+
+            div.appendChild(imgGroup);
+          }
+
+          if (data.message.text) {
+            const textDiv = document.createElement("div");
+            textDiv.className = "message-text";
+            textDiv.textContent = data.message.text;
+            div.appendChild(textDiv);
+          }
+
+          const timeDiv = document.createElement("div");
+          timeDiv.className = "message-time";
+          timeDiv.textContent = data.message.time;
+          div.appendChild(timeDiv);
+
+          chatBody.appendChild(div);
+
+          setTimeout(() => {
+            chatBody.scrollTop = chatBody.scrollHeight;
+            }, 50);
+            form.reset();
+            input.value = "";
+
+            replyingTo = null;
+          totalFiles = [];
+          document.getElementById("reply-preview")?.remove();
+          document.getElementById("preview-container").innerHTML = "";
+          document.getElementById("preview-container").style.display = "none";
+        }
+      });
+    });
+  </script>
+  <div id="albumModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background-color: rgba(0,0,0,0.8); z-index:9999; overflow:auto; padding: 20px;">
+  <span onclick="closeAlbumModal()" style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
+  <h4 style="color: white; margin-bottom: 20px;">📸 Album ảnh</h4>
+
+  <div id="albumImages" style="display: flex; flex-wrap: wrap; gap: 10px;"></div>
+  <div style="text-align:center; margin-top: 20px;">
+  <button id="loadMoreBtn" onclick="loadMoreImages()" class="btn btn-light btn-sm">Tải thêm ảnh</button>
+</div>
+
+</div>
+<script>
+let allImages = [];
+let loadedCount = 0;
+const BATCH_SIZE = 30;
+
+function openAlbumModal() {
+  document.getElementById("albumModal").style.display = "block";
+  if (allImages.length === 0) {
+    fetch("/api/album-images?friend={{ friend_username }}")
+
+      .then(res => res.json())
+      .then(data => {
+        allImages = data;
+        loadedCount = 0;
+        document.getElementById("albumImages").innerHTML = "";
+        loadMoreImages();
+      });
+  }
+}
+function loadMoreImages() {
+  const container = document.getElementById("albumImages");
+  const nextBatch = allImages.slice(loadedCount, loadedCount + BATCH_SIZE);
+  nextBatch.forEach(img => {
+    const imageEl = document.createElement("img");
+    imageEl.onclick = () => showImageModal(img.url);
+
+    imageEl.src = img.url + "?v=" + Math.random();
+    imageEl.onerror = function () {
+    this.style.display = "none"; // ẩn luôn ảnh bị lỗi
+    };
+
+    imageEl.style.width = "120px";
+    imageEl.style.height = "120px";
+    imageEl.style.objectFit = "cover";
+    imageEl.style.borderRadius = "8px";
+    imageEl.loading = "lazy";
+    container.appendChild(imageEl);
+  });
+  loadedCount += BATCH_SIZE;
+  if (loadedCount >= allImages.length) {
+    document.getElementById("loadMoreBtn").style.display = "none";
+  }
+}
+// Đóng album khi bấm dấu ❌
+function closeAlbumModal() {
+  document.getElementById("albumModal").style.display = "none";
+  allImages = [];
+  loadedCount = 0;
+  document.getElementById("albumImages").innerHTML = "";
+  document.getElementById("loadMoreBtn").style.display = "block";
+}
+
+// Tùy chọn: đóng khi bấm ra ngoài
+window.addEventListener("click", function (event) {
+  const modal = document.getElementById("albumModal");
+  if (event.target === modal) closeAlbumModal();
+});
+
+</script>
+<!-- Modal xem ảnh lớn -->
+<div id="imageModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+     background-color: rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:10000;">
+  <span onclick="closeImageModal()" style="position:absolute; top:20px; right:30px; color:white; font-size:30px; cursor:pointer;">&times;</span>
+  <img id="modalImage" src="" style="max-width:90%; max-height:90%; border-radius:10px;">
+</div>
+
+<script>
+function showImageModal(src) {
+  document.getElementById("modalImage").src = src;
+  document.getElementById("imageModal").style.display = "flex";
+}
+
+function closeImageModal() {
+  document.getElementById("imageModal").style.display = "none";
+  document.getElementById("modalImage").src = "";
+}
+</script>
+<script>
+    let replyingTo = null;
+    document.getElementById('reply-preview')?.remove();
+window.addEventListener('load', function() {
+  const chatBody = document.getElementById("chat-body");
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  const emojiBtn = document.getElementById('emoji-btn');
+  const inputBox = document.querySelector('input[name="text"]');
+  const picker = new EmojiButton({
+    theme: 'auto',
+    position: 'top-start'
+  });
+
+  emojiBtn.addEventListener('click', () => {
+    picker.togglePicker(emojiBtn);
+  });
+
+  picker.on('emoji', emoji => {
+    inputBox.value += emoji;
+    inputBox.focus();
+  });
+});
+const emojiBtn = document.getElementById('emoji-btn');
+
+emojiBtn.addEventListener('click', (e) => {
+  // Tạo icon mặt cười
+  const flyingEmoji = document.createElement('div');
+  flyingEmoji.className = 'flying-emoji';
+  flyingEmoji.textContent = '😄';
+
+  // Vị trí nút emoji trên màn hình
+  const rect = emojiBtn.getBoundingClientRect();
+  flyingEmoji.style.left = rect.left + rect.width / 2 + 'px';
+  flyingEmoji.style.top = rect.top + 'px';
+
+  document.body.appendChild(flyingEmoji);
+
+  // Tự động xoá sau khi animation kết thúc
+  flyingEmoji.addEventListener('animationend', () => {
+    flyingEmoji.remove();
+  });
+});
+window.addEventListener('load', () => {
+  const themeToggleBtn = document.getElementById('theme-toggle-btn');
+  const themeIcon = document.getElementById('theme-icon');
+
+  // Hàm cập nhật icon theo theme
+  function updateIcon(isDark) {
+    if (isDark) {
+      themeIcon.className = 'bi bi-sun-fill'; // Mặt trời cho dark mode
+    } else {
+      themeIcon.className = 'bi bi-moon-fill'; // Mặt trăng cho light mode
+    }
+  }
+
+  // Lấy trạng thái theme từ localStorage hoặc mặc định light
+  let isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+  // Áp dụng theme lúc load trang
+  if (isDarkMode) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+  updateIcon(isDarkMode);
+
+  // Bấm nút toggle
+  themeToggleBtn.addEventListener('click', () => {
+    isDarkMode = !isDarkMode;
+    localStorage.setItem('darkMode', isDarkMode);
+    document.body.classList.toggle('dark-mode', isDarkMode);
+    updateIcon(isDarkMode);
+  });
+});
+document.querySelectorAll('.message').forEach(msg => {
+  msg.addEventListener('click', () => {
+    const msgText = msg.querySelector('.message-text')?.textContent;
+    const msgSender = msg.classList.contains('me') ? "{{ username }}" : "{{ friend_username }}";
+    if (msgText) {
+      replyingTo = {
+        text: msgText,
+        sender: msgSender
+      };
+
+      // ❗ Xoá khung trả lời cũ nếu có
+      document.getElementById('reply-preview')?.remove();
+
+      const preview = document.createElement('div');
+      preview.innerHTML = `
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div>
+            Trả lời:<strong>${msgSender}</strong>: ${msgText}
+          </div>
+          <button onclick="cancelReply()" style="border:none; background:none; color:#888; font-size:1rem;">❌</button>
+        </div>
+      `;
+      preview.className = "reply-box";
+      preview.style.marginBottom = '10px';
+      preview.id = "reply-preview";
+      document.querySelector('.chat-footer').prepend(preview);
+    }
+  });
+});
+
+
+function cancelReply() {
+  replyingTo = null;
+  document.getElementById('reply-preview')?.remove();
+}
+</script>
+<script>
+document.getElementById("chat-input").addEventListener("keydown", function (event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();  // Chặn xuống dòng mặc định
+    document.querySelector("#chat-form button[type='submit']").click();  // Kích hoạt nút gửi
+  }
+});
+</script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.reply-box').forEach(box => {
+    const username = box.dataset.replySender;
+    const customName = localStorage.getItem('friend_name_' + username);
+    if (customName) {
+      const nameEl = box.querySelector('.reply-name');
+      if (nameEl) nameEl.textContent = customName;
+    }
+  });
+});
+</script>
+<script>
+  const friendUsername = "{{ friend_username }}";
+  let nameEl = document.getElementById('friend-name');
+  const editBtn = document.getElementById('edit-name-btn');
+
+  editBtn.addEventListener("click", () => {
+    const currentName = nameEl.textContent;
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = currentName;
+    input.id = "friend-name";
+    input.style.maxWidth = "150px";
+    input.style.padding = "2px 6px";
+    input.style.borderRadius = "6px";
+    input.style.border = "1px solid #ccc";
+    input.style.background = "#111";
+    input.style.color = "#fff";
+
+    // Khi nhấn Enter hoặc blur thì lưu
+    input.addEventListener("blur", save);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        input.blur();
+      }
+    });
+
+    nameEl.replaceWith(input);
+    input.focus();
+
+    function save() {
+      const newName = input.value.trim();
+      const newSpan = document.createElement("strong");
+      newSpan.id = "friend-name";
+
+      if (newName === "") {
+        localStorage.removeItem("friend_name_" + friendUsername);
+        newSpan.textContent = "{{ friend.fullname if friend.fullname else friend.name if friend.name else friend_username }}";
+      }else {
+              localStorage.setItem("friend_name_" + friendUsername, newName);
+        newSpan.textContent = newName;
+      }
+
+      // Gửi request lên server nếu cần (không bắt buộc nếu lưu local)
+      fetch("/rename", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target_username: friendUsername,
+          nickname: newName
+        })
+      });
+
+      input.replaceWith(newSpan);
+      nameEl = newSpan;
+    }
+  });
+</script>
+<script>
+  window.addEventListener('load', function() {
+    const friendUsername = "{{ friend_username }}";
+    const savedName = localStorage.getItem('friend_name_' + friendUsername);
+    const nameEl = document.getElementById('friend-name');
+
+    // Nếu có biệt danh được lưu thì hiển thị nó
+    if (savedName && savedName !== "") {
+      nameEl.textContent = savedName;
+    }
+  });
+</script>
+<script>
+  document.getElementById("edit-name-btn").addEventListener("click", function () {
+    const friendUsername = "{{ friend_username }}";
+    const currentName = document.getElementById("friend-name").textContent;
+    const newName = prompt("Nhập biệt danh mới cho người này:", currentName);
+
+    if (newName !== null) {
+      const nameElement = document.getElementById("friend-name");
+
+      if (newName.trim() === "") {
+        // Nếu xóa biệt danh → về tên fullname hoặc username gốc
+        localStorage.removeItem("friend_name_" + friendUsername);
+        nameElement.textContent = "{{ friend.fullname if friend.fullname else friend.name if friend.name else friend_username }}";
+      } else {
+        // Lưu biệt danh mới
+        localStorage.setItem("friend_name_" + friendUsername, newName.trim());
+        nameElement.textContent = newName.trim();
+      }
+    }
+  });
+</script>
+<!-- Popup cài đặt đoạn chat -->
+<div id="chat-settings-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+  background-color: rgba(0,0,0,0.6); z-index:9999; justify-content: center; align-items: center;">
+
+  <div style="background:white; padding:20px; border-radius:12px; max-width:400px; width:90%; position:relative;">
+    <h5>Cài đặt đoạn chat với {{ friend_username }}</h5>
+    <ul style="list-style:none; padding:0;">
+      <li><button class="btn btn-outline-danger w-100 mb-2" onclick="confirmDeleteChat()"> Xóa toàn bộ đoạn chat.</button></li>
+      <li><button class="btn btn-outline-secondary w-100 mb-2" onclick="blockUser()"> Chặn người này.</button></li>
+      <li><button class="btn btn-outline-warning w-100 mb-2" onclick="reportUser()"> Tố cáo hành vi sai phạm.</button></li>
+      <li><button class="btn btn-outline-dark w-100 mb-2" onclick="reportBug()"> Báo lỗi chat.</button></li>
+    </ul>
+    <button onclick="closeChatSettings()" style="position:absolute; top:10px; right:10px; border:none; background:none; font-size:20px;">&times;</button>
+  </div>
+</div>
+<script>
+document.getElementById("chat-settings-btn").addEventListener("click", () => {
+  document.getElementById("chat-settings-popup").style.display = "flex";
+});
+
+function closeChatSettings() {
+  document.getElementById("chat-settings-popup").style.display = "none";
+}
+
+function confirmDeleteChat() {
+  document.getElementById("deleteChatModal").style.display = "block";
+}
+
+function closeDeleteModal() {
+  document.getElementById("deleteChatModal").style.display = "none";
+}
+
+function performDeleteChat() {
+  fetch("/chat/delete/{{ friend_username }}", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        document.getElementById("deleteChatModal").style.display = "none";
+        showToastSuccess();  // ✨ Hiện toast
+        setTimeout(() => location.reload(), 1600); // chờ 1.6s rồi reload
+      }
+    });
+}
+
+
+function blockUser() {
+  document.getElementById("blockConfirmModal").style.display = "flex";
+}
+
+function closeBlockConfirm() {
+  document.getElementById("blockConfirmModal").style.display = "none";
+}
+
+function confirmBlockUser() {
+  fetch("/block_user", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ target: "{{ friend_username }}" })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      closeBlockConfirm();
+      showBlockToast();
+    }
+  });
+}
+
+function showBlockToast() {
+  const toast = document.getElementById("block-toast");
+  toast.style.display = "block";
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => {
+      toast.style.display = "none";
+      toast.style.opacity = "1";
+    }, 500);
+  }, 2000);
+}
+
+
+function reportUser() {
+  const reason = prompt("Mô tả lý do bạn muốn tố cáo người này:");
+  if (reason) {
+    fetch("/report_user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target: "{{ friend_username }}", reason })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        alert("Đã gửi tố cáo.");
+        closeChatSettings();
+      }
+    });
+  }
+}
+
+function reportBug() {
+  const desc = prompt("Bạn gặp lỗi gì? Hãy mô tả:");
+  if (desc) {
+    fetch("/report_bug", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ page: "chat.html", description: desc })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        alert("Cảm ơn bạn đã báo lỗi!");
+        closeChatSettings();
+      }
+    });
+  }
+}
+function showToastSuccess() {
+  const toast = document.getElementById("toast-success");
+  toast.style.display = "block";
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 1500);
+}
+
+</script>
+<!-- Modal xác nhận xoá đoạn chat -->
+<div id="deleteChatModal" class="modal" style="display:none; position:fixed; z-index:10000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-content" style="background-color:#fff; margin: 10% auto; padding: 20px; border: 1px solid #888; width: 90%; max-width: 400px; border-radius: 12px; position: relative;">
+    <h5 class="mb-3">🗑️ Xác nhận xoá đoạn chat?</h5>
+    <p style="font-size: 0.95rem;">Bạn sẽ xoá toàn bộ tin nhắn văn bản và phản hồi trong đoạn chat này.<br>Ảnh trong album sẽ được giữ lại.</p>
+    <div style="text-align: right;">
+      <button class="btn btn-secondary me-2" onclick="closeDeleteModal()">Huỷ</button>
+      <button class="btn btn-danger" onclick="performDeleteChat()">Xoá ngay</button>
+    </div>
+    <button onclick="closeDeleteModal()" style="position:absolute; top:10px; right:14px; border:none; background:none; font-size:20px;">&times;</button>
+  </div>
+</div>
+<!-- Thông báo nhỏ sau khi xoá -->
+<div id="toast-success" style="
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #00c853;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 1rem;
+  z-index: 99999;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+">
+  ✅ Đã xoá đoạn chat!
+</div>
+<!-- Popup xác nhận chặn -->
+<div id="blockConfirmModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center;">
+  
+  <div style="background:white; padding:20px; border-radius:12px; max-width:400px; width:90%; position:relative;">
+    <h5>Xác nhận chặn</h5>
+    <p>Bạn có chắc muốn chặn người này?</p>
+    <div style="text-align:right;">
+      <button class="btn btn-secondary me-2" onclick="closeBlockConfirm()">Huỷ</button>
+      <button class="btn btn-danger" onclick="confirmBlockUser()">Chặn</button>
+    </div>
+    <button onclick="closeBlockConfirm()" style="position:absolute; top:10px; right:14px; border:none; background:none; font-size:20px;">&times;</button>
+  </div>
+</div>
+<!-- Toast -->
+<div id="block-toast" style="
+  display:none;
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  background:#00c853;
+  color:white;
+  padding:12px 24px;
+  border-radius:10px;
+  font-weight:500;
+  font-size:1rem;
+  z-index:99999;
+  box-shadow:0 6px 20px rgba(0,0,0,0.25);
+">
+  ✅ Đã chặn người này thành công.
+</div>
+
+</body>
+</html>

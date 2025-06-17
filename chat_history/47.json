@@ -1,0 +1,74 @@
+[
+  {
+    "content": "ây đô",
+    "role": "user"
+  },
+  {
+    "content": "Hỏi về \"ây đô\" là gì vậy bạn? Bạn có thể nói rõ hơn được không?",
+    "role": "assistant"
+  },
+  {
+    "content": "aaa",
+    "role": "user"
+  },
+  {
+    "content": "Xin lỗi, mình không hiểu câu hỏi của bạn lắm. Bạn có thể giải thích rõ hơn được không?",
+    "role": "assistant"
+  },
+  {
+    "content": "alo",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Có điều gì mình có thể giúp bạn không? Hãy đặt câu hỏi hoặc chia sẻ vấn đề bạn đang quan tâm nhé!",
+    "role": "assistant"
+  },
+  {
+    "content": "bạn ơi",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Có vấn đề gì bạn cần trợ giúp ạ? Hãy chia sẻ hoặc đặt câu hỏi, mình sẽ cố gắng giúp bạn!",
+    "role": "assistant"
+  },
+  {
+    "content": "alo",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Bạn cần giúp đỡ về vấn đề gì ạ? Hãy chia sẻ hoặc đặt câu hỏi, mình sẽ cố gắng hỗ trợ bạn!",
+    "role": "assistant"
+  },
+  {
+    "content": "tạo hình tròn",
+    "role": "user"
+  },
+  {
+    "content": "Để tạo hình tròn, bạn cần vẽ một đường tròn bằng cách sử dụng compas hoặc vẽ công nghệ. Đầu tiên, đặt compas ở tâm của hình tròn (điểm trung tâm) và điều chỉnh độ dài của compas bằng bán kính của hình tròn. Sau đó, vẽ đường tròn bằng cách di chuyển compas xung quanh tâm của hình tròn.",
+    "role": "assistant"
+  },
+  {
+    "content": "alo",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Có vấn đề gì mình có thể giúp bạn không? Hãy chia sẻ hoặc đặt câu hỏi, mình sẽ cố gắng giúp bạn!",
+    "role": "assistant"
+  },
+  {
+    "role": "user",
+    "content": "Alo Alo Gửi"
+  },
+  {
+    "role": "assistant",
+    "content": "Chào bạn! Có vấn đề gì mình có thể giúp bạn không? Hãy chia sẻ hoặc đặt câu hỏi, mình sẽ cố gắng giúp bạn!"
+  },
+  {
+    "role": "user",
+    "content": "Căn Bậc 25 là bao nhiêu ok"
+  },
+  {
+    "role": "assistant",
+    "content": "Căn bậc 25 bằng 5. Để tính căn bậc 25, bạn lấy căn bậc 2 của 25, tức là căn bậc 2 của 25 = 5. Vậy kết quả là 5."
+  }
+]

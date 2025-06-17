@@ -1,0 +1,96 @@
+""<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>📨 Quản lý Góp Ý - SolverViet</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script>
+    function toggleReplyBox(id) {
+      const box = document.getElementById('reply-' + id);
+      box.classList.toggle('hidden');
+    }
+  </script>
+</head>
+<body class="bg-gray-950 text-gray-100 font-sans">
+  <div class="max-w-6xl mx-auto py-10 px-4">
+    <h1 class="text-4xl font-bold text-red-500 mb-10 text-center">📬 Danh sách góp ý / báo lỗi</h1>
+  <a href="/solverviet_control_x2025" class="btn btn-secondary mb-3">
+  ⬅️ Quay về điều hướng
+</a>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-gray-800">
+      {% if feedback_entries %}
+        <div class="space-y-8">
+          {% for entry in feedback_entries %}
+            <div class="border border-gray-700 rounded-lg p-6 bg-gray-850 transition hover:shadow-xl">
+              <div class="flex justify-between items-center text-sm text-gray-400">
+                <div>🕒 <span class="text-white">{{ entry.time }}</span></div>
+                <div class="italic text-xs">#{{ loop.index }}</div>
+              </div>
+
+              <div class="mt-2 space-y-1">
+                <div class="text-lg font-bold text-white">👤 {{ entry.name }}</div>
+                {% if entry.type %}
+                <div class="text-sm">
+                  📂 
+                  <span class="inline-block px-2 py-1 rounded 
+                    {% if entry.type == 'Khiếu nại tài khoản' %}
+                      bg-red-600 text-white
+                    {% else %}
+                      bg-gray-700 text-gray-200
+                    {% endif %}
+                  ">
+                    {{ entry.type }}
+                  </span>
+                </div>
+              {% endif %}
+
+                <div class="text-sm">📧 <span class="text-blue-400">{{ entry.email }}</span></div>
+                <div class="text-sm">🔐 Username: <span class="text-yellow-300">{{ entry.username }}</span></div>
+                <div class="text-sm">🆔 ID: <code class="text-green-400">{{ entry.user_id }}</code></div>
+              </div>
+                   
+              {% if entry.message %}
+                <div class="mt-4 text-gray-200 text-base whitespace-pre-wrap border-l-4 border-blue-500 pl-4">
+                  ✍️ {{ entry.message }}
+                </div>
+              {% endif %}
+               {% if entry.image_paths %}
+              <div class="mt-4 flex flex-wrap gap-4">
+                {% for img in entry.image_paths %}
+                  <div class="border border-gray-700 rounded-lg overflow-hidden">
+                   <img src="{{ img }}" alt="ảnh góp ý" class="max-w-xs max-h-[240px] object-contain rounded shadow hover:scale-105 transition-transform duration-300" />
+
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+
+
+             <div class="mt-4 flex gap-2">
+              <button onclick="toggleReplyBox({{ loop.index }})" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">📩 Phản hồi</button>
+
+              <form method="POST" action="/bo-qua" onsubmit="return confirm('Bạn có chắc muốn bỏ qua góp ý này?')">
+                <input type="hidden" name="entry_index" value="{{ loop.index }}">
+                <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-red-600 transition">❌ Bỏ qua</button>
+              </form>
+            </div>
+
+              <div id="reply-{{ loop.index }}" class="hidden mt-4">
+                <form method="POST" action="/phan-hoi" class="space-y-2">
+              <input type="hidden" name="user_email" value="{{ entry.email }}">
+              <input type="hidden" name="user_id" value="{{ entry.user_id }}">
+              <input type="hidden" name="entry_index" value="{{ loop.index }}">
+              <textarea name="reply_content" rows="4" placeholder="Nội dung phản hồi..." class="w-full p-3 bg-gray-800 text-white border border-gray-600 rounded resize-none" required></textarea>
+              <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">🚀 Gửi phản hồi</button>
+            </form>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-center text-gray-400">Không có góp ý nào được gửi.</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

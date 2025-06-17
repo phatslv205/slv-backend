@@ -1,0 +1,198 @@
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Đăng nhập - SolverViet</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #121212;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .login-box {
+      background-color: #ffffff;
+      padding: 36px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      color: #1a202c;
+    }
+
+    h2 {
+      text-align: center;
+      line-height: 1.4;
+    }
+    h2 span {
+      display: block;
+    }
+    .login-box input {
+  width: 100%;
+  padding: 12px 40px 12px 12px;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f9fafb;
+  color: #1a202c;
+  font-size: 15px;
+}
+
+    .input-group {
+      position: relative;
+    }
+    .eye-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #ccc;
+    }
+    button.login-btn {
+      width: 100%;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .text-center {
+      text-align: center;
+      font-size: 13px;
+      margin-top: 12px;
+    }
+    .text-center a {
+      color: #4ea6ff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body style="margin:0; padding:0; background-color:#f3f4f6; font-family:'Segoe UI', sans-serif; display:flex; justify-content:center; align-items:center; min-height:100vh; color:#1a202c;">
+
+  <div class="login-box">
+    <h2>
+      <span style="color:#4ea6ff; font-weight: bold;">SolverViet</span>
+      <span> Đăng nhập</span>
+    </h2>
+    {% if error %}
+  <div style="background-color: #ff4c4c33; border: 1px solid #ff4c4c; color: #ff4c4c; padding: 10px; border-radius: 6px; margin-top: 16px; text-align: center; font-size: 14px;">
+    {{ error|safe }}
+  </div>
+{% endif %}
+    <div class="login-box">
+    <form method="POST" id="form-login">
+      <div class="input-group">
+        <input type="text" name="username" placeholder="Tên đăng nhập" required>
+      </div>
+      <div class="input-group">
+        <input type="password" name="password" id="password" placeholder="Mật khẩu" required>
+        <span class="eye-icon" onclick="togglePassword()">
+          <i id="eyeIcon" data-lucide="eye"></i>
+        </span>
+      </div>
+ <div style="text-align: right; margin-top: -8px; margin-bottom: 12px;">
+  <a href="/forgot-password" style="color: #4ea6ff; font-size: 13px; text-decoration: none;">Quên mật khẩu?</a>
+</div>
+
+
+
+      
+      <button class="login-btn" type="submit">Đăng nhập</button>
+      <div class="text-center">Chưa có tài khoản? <a href="/register">Đăng ký</a></div>
+      <div class="text-center" style="margin-top:16px;">
+        <a href="#" onclick="openTermsModal()"> Điều khoản sử dụng</a>
+      </div>
+    </form>
+
+{% if message %}
+
+
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: '🎉 Xác thực thành công!',
+    text: '{{ message }}',
+    confirmButtonText: 'Đăng nhập ngay',
+    confirmButtonColor: '#007bff'
+  });
+</script>
+{% endif %}
+
+  </div>
+
+  <!-- Modal popup điều khoản -->
+ <div id="termsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000088; z-index:9999;">
+  <div style="background:white; max-width:700px; margin:40px auto; padding:20px; border-radius:12px; max-height:85vh; overflow-y:auto;">
+    <h2> Điều khoản sử dụng – SolverViet</h2>
+    <p><strong>1. Mục đích:</strong>SolverViet là một nền tảng học tập ứng dụng trí tuệ nhân tạo nhằm hỗ trợ người dùng giải bài tập, luyện tập kiến thức và mở rộng tư duy trong nhiều lĩnh vực. Việc sử dụng hệ thống ngoài phạm vi học tập (ví dụ: spam, phá hoại, khai thác sai mục đích...) là hành vi bị cấm. Người dùng cần đảm bảo các hành vi sử dụng đều nằm trong giới hạn giáo dục, nghiên cứu cá nhân và có trách nhiệm.</p>
+    <p><strong>2. Bảo mật tài khoản:</strong> Khi đăng ký tài khoản, người dùng cần cung cấp thông tin chính xác. Việc sử dụng thông tin giả mạo hoặc dùng danh tính người khác để tạo tài khoản là vi phạm điều khoản. Người dùng phải bảo mật thông tin đăng nhập của mình. Mọi rủi ro phát sinh từ việc lộ mật khẩu hoặc dùng chung tài khoản đều do người dùng tự chịu trách nhiệm.
+
+Nếu bạn gặp vấn đề về bảo mật, bạn có thể liên hệ hệ thống hỗ trợ<a href="/feedback">[TẠI ĐÂY]</a></p>
+    <p><strong>3. Giới hạn sử dụng AI miễn phí:</strong>Mỗi người dùng được cung cấp số lượt sử dụng AI miễn phí nhất định. Khi hết lượt, bạn cần nâng cấp gói dịch vụ để tiếp tục sử dụng. Hệ thống sẽ hiển thị thông báo rõ ràng và không tự động trừ phí.
+
+Việc tạo tài khoản clone để tránh giới hạn hoặc tìm cách vượt qua hệ thống kiểm tra lượt dùng sẽ bị hệ thống ghi nhận và khóa tài khoản.</p>
+    <p><strong>4. Gói dịch vụ VIP và thanh toánn:</strong>Khi bạn nâng cấp gói VIP, hệ thống sẽ cấp quyền tương ứng với thời hạn ghi rõ. Thời hạn sẽ bắt đầu tính từ lúc thanh toán thành công. SolverViet không hoàn tiền đối với các gói đã sử dụng một phần hoặc đã kích hoạt. Trong trường hợp lỗi kỹ thuật, bạn có thể gửi yêu cầu hỗ trợ <a href="/feedback">[TẠI ĐÂY]</a></p> để được xem xét cá nhân.
+
+
+    <p><strong>5. Chống gian lận và tự động hoá:</strong> Việc sử dụng phần mềm, bot, tiện ích mở rộng hoặc bất kỳ công cụ tự động nào nhằm tương tác với hệ thống, spam AI hoặc vượt giới hạn tính năng đều bị nghiêm cấm. Hệ thống có thể tạm khóa hoặc vĩnh viễn vô hiệu hóa tài khoản mà không cần cảnh báo nếu phát hiện hành vi nghi ngờ.</p>
+    <p><strong>6. Quyền riêng tư:</strong>SolverViet cam kết bảo mật thông tin cá nhân và không chia sẻ với bên thứ ba. Tuy nhiên, hệ thống có thể ghi lại lịch sử sử dụng (số lượt AI, IP truy cập, hành vi đáng ngờ...) để phục vụ cho việc nâng cấp chất lượng và đảm bảo an toàn hệ thống.
+Người dùng có thể yêu cầu xoá dữ liệu cá nhân của mình bằng cách gửi yêu cầu<a href="/feedback">[TẠI ĐÂY]</a></p>
+    <p><strong>7.Chống khai thác, dò xét hệ thống trái phép</strong> SolverViet nghiêm cấm mọi hành vi tạo tài khoản để kiểm tra tính năng, sao chép ý tưởng, phân tích giao diện hoặc đánh giá nội bộ nhằm mục đích phát triển nền tảng đối thủ hoặc cạnh tranh không lành mạnh.
+Mọi hành vi như vậy sẽ bị hệ thống tự động ghi log, ngăn truy cập, và xử lý bằng các biện pháp phù hợp. Chúng tôi không khuyến khích việc sử dụng hệ thống với bất kỳ mục đích khai thác kỹ thuật nào.</p>
+    <p><strong>8.Trách nhiệm khi sử dụng nội dung từ AI:</strong>AI của SolverViet cung cấp các gợi ý mang tính tham khảo. Mọi quyết định sử dụng, sao chép, áp dụng hoặc nộp lại nội dung cho giáo viên hoặc nơi khác đều thuộc về người dùng. SolverViet không chịu trách nhiệm nếu nội dung được sử dụng sai mục đích, gây ảnh hưởng đến kết quả học tập hay cá nhân.</p>
+    <p><strong>9. Điều chỉnh nội dung và điều khoản:</strong> SolverViet có quyền thay đổi bất kỳ phần nào của giao diện, tính năng, chính sách hoạt động hoặc điều khoản sử dụng mà không cần báo trước. Việc bạn tiếp tục sử dụng hệ thống sau thay đổi đồng nghĩa với việc bạn đồng ý với các điều khoản mới.</p>
+    <p><strong>10. Vi phạm và xử lý:</strong> Mọi hành vi bị xác định là vi phạm điều khoản sử dụng sẽ bị hệ thống tự động xử lý: bao gồm giới hạn chức năng, thu hồi quyền truy cập, hoặc vô hiệu hoá tài khoản vĩnh viễn. Các quyết định xử lý sẽ dựa trên dữ liệu hệ thống và không cần báo trước.Nếu bạn cho rằng có sự hiểu lầm hoặc tài khoản bị xử lý sai, hãy gửi yêu cầu giải trình <a href="/feedback">[TẠI ĐÂY]</a></p>
+    <p><strong>11. Hỗ trợ khôi phục mật khẩu:</strong> Hệ thống SolverViet chỉ hỗ trợ tính năng "Quên mật khẩu" cho những tài khoản đã xác thực qua email. Các tài khoản chưa xác thực sẽ không được hỗ trợ trong trường hợp mất mật khẩu hoặc yêu cầu lấy lại tài khoản.</p>
+
+    <div style="text-align:right; margin-top: 20px;">
+      <button onclick="closeTermsModal()" style="padding: 8px 20px; background: #007acc; color: white; border: none; border-radius: 8px;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+  <script>
+    function togglePassword() {
+      const pw = document.getElementById("password");
+      const eye = document.getElementById("eyeIcon");
+      if (pw.type === "password") {
+        pw.type = "text";
+        eye.setAttribute("data-lucide", "eye-off");
+      } else {
+        pw.type = "password";
+        eye.setAttribute("data-lucide", "eye");
+      }
+      lucide.createIcons();
+    }
+
+    function openTermsModal() {
+      document.getElementById("termsModal").style.display = "block";
+    }
+    function closeTermsModal() {
+      document.getElementById("termsModal").style.display = "none";
+    }
+    lucide.createIcons();
+  </script>
+      <div class="text-center text-sm text-gray-400 mt-8">
+  Cần hỗ trợ? Liên hệ Zalo CSKH: <a href="tel:0865645752" class="text-blue-400 hover:underline">0865645752</a><br>
+  hoặc email: <a href="mailto:solverviet@gmail.com" class="text-blue-400 hover:underline">solverviet@gmail.com</a>
+</div>
+</body>
+</html>

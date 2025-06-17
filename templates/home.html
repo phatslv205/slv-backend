@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>SolverViet</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  #intro-block {
+    transition: opacity 0.5s ease, transform 0.5s ease, visibility 0.5s ease;
+  }
+
+  .fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+    visibility: hidden;
+  }
+
+  .fade-in {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+  }
+  
+</style>
+<style>
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.mic-active {
+  animation: pulse 1.2s infinite;
+  color: #00e676 !important;
+}
+</style>
+<style>
+@keyframes zoom-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+.animate-zoom-in {
+  animation: zoom-in 2.2s ease-in-out forwards;
+}
+@keyframes fade-delay {
+  0%   { opacity: 0; }
+  60%  { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-fade-delay {
+  animation: fade-delay 2.2s ease-in-out forwards;
+}
+</style>
+<style>
+body.dark-mode {
+  background: linear-gradient(to bottom right, #0d1117, #1a2a3d, #0f172a);
+  color: white;
+}
+
+/* Giao diện sáng – chỉnh lại dịu nhẹ */
+body:not(.dark-mode) {
+  background: #f1f3f5; /* xám nhạt, dịu hơn rất nhiều */
+  color: #222; /* không dùng đen tuyệt đối */
+}
+
+/* Cập nhật màu cho text và block tối */
+body:not(.dark-mode) .text-white {
+  color: #222 !important;
+}
+body:not(.dark-mode) .bg-[#2a2b32] {
+  background-color: #ffffff !important;
+}
+body:not(.dark-mode) .bg-[#0d1117] {
+  background-color: #ffffff !important;
+}
+
+/* Header viền dưới */
+body:not(.dark-mode) header {
+  border-bottom-color: #cccccc !important;
+}
+body:not(.dark-mode) #plus-menu {
+  background-color: #ffffff !important;
+  border: 1px solid #ddd;
+}
+
+body:not(.dark-mode) #plus-menu button {
+  color: #222 !important;
+}
+
+body:not(.dark-mode) #plus-menu button:hover {
+  color: #0ea5e9 !important; /* màu xanh cyan nhẹ */
+  background-color: #f3f4f6;
+}
+body:not(.dark-mode) .chat-bar {
+  background-color: #ffffff !important;
+  border: 1px solid #ddd;
+  color: #222;
+}
+
+body:not(.dark-mode) .chat-bar input::placeholder {
+  color: #888;
+}
+
+body:not(.dark-mode) .chat-bar input {
+  color: #222;
+}
+body:not(.dark-mode) .mic-btn {
+  background-color: #e5e7eb !important; /* xám nhạt */
+  color: #1f2937 !important; /* xám đậm gần đen */
+}
+body:not(.dark-mode) footer {
+  color: #444 !important;            /* Chữ đậm hơn */
+}
+
+body:not(.dark-mode) footer a {
+  color: #0ea5e9 !important;         /* Xanh dịu */
+  text-decoration: underline;
+}
+
+body:not(.dark-mode) footer i,
+body:not(.dark-mode) footer svg {
+  color: #555 !important;            /* Icon xám đậm */
+}
+
+body:not(.dark-mode) .footer-note {
+  color: #777 !important;            /* Dòng phụ mờ vừa đủ */
+  font-style: italic;
+}
+</style>
+<style>
+  #startup-screen {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+</style>
+
+<style>
+.countdown-fixed-width {
+  display: inline-block;
+  min-width: 240px; /* đủ cho "99 ngày 23 giờ 59 phút 59 giây" */
+  text-align: left;
+}
+</style>
+
+
+</head>
+  <div id="main-content" style="display: none;"></div>
+<body class="min-h-screen flex flex-col justify-between bg-gradient-to-br from-[#0d1117] via-[#1a2a3d] to-[#0f172a] text-white">
+<!-- 🔥 Splash Intro giống khởi động iPhone -->
+
+
+
+  <!-- Top header -->
+  <header class="bg-[#0d1117] text-white px-6 py-4 flex justify-between items-center border-b-2 border-[#00aaff]">
+    <div class="flex items-center gap-4">
+     
+      <div class="flex flex-col leading-tight">
+  <h1 class="text-3xl font-bold text-[#00aaff]">SolverViet</h1>
+  <span class="text-xs text-gray-400 mt-1">© 2025. All rights reserved.</span>
+</div>
+
+    </div>
+      <div class="flex items-center gap-4">
+        {% if avatar_url and 'logos/logo.png' not in avatar_url %}
+          <a href="/user-info" title="Thông tin tài khoản">
+            <img src="{{ avatar_url }}" alt="Avatar"
+                class="w-11 h-11 rounded-full object-cover border-2 border-cyan-400 hover:scale-105 transition duration-200">
+          </a>
+      </div>
+
+      {% endif %}
+    </div>
+  </header>
+    <!-- 🔹 Thanh menu ngang -->
+<nav class="bg-[#0d1117] border-b border-[#00aaff] px-4 py-3 grid grid-cols-6 text-white text-sm font-semibold text-center">
+  <a href="/" class="flex justify-center items-center gap-1 hover:text-cyan-400"><i data-lucide="home"></i>Home</a>
+  <a href="/shop" class="flex justify-center items-center gap-1 hover:text-cyan-400"><i data-lucide="shopping-cart"></i>Shop</a>
+  <a href="/chat_redirect" class="flex justify-center items-center gap-1 hover:text-cyan-400"><i data-lucide="bot"></i>AI</a>
+  <a href="/friends" class="flex justify-center items-center gap-1 hover:text-cyan-400"><i data-lucide="users"></i>Friend</a>
+  <a href="/biography" class="flex justify-center items-center gap-1 hover:text-cyan-400"><i data-lucide="video"></i>Biography</a>
+  <a href="/settings" class="flex justify-center items-center gap-1 hover:text-cyan-400"><i data-lucide="settings"></i>Setting</a>
+</nav>
+
+
+  <!-- Main content -->
+   <!-- Logo giữa trang -->
+  <div class="text-center mt-10">
+   
+
+  </div>
+
+  <div id="intro-block" class="transition-all duration-300 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] text-center px-4">
+  <main class="flex flex-col items-center justify-center gap-6">
+
+
+
+    </main>
+ </div>
+ {% if user_vip_status.vip_gpt and user_vip_status.vip_until_gpt %}
+ <!-- ✅ Thanh nhập chat luôn hiển thị và căn giữa -->
+<div class="fixed bottom-6 left-0 right-0 flex justify-center px-4">
+ 
+  <div class="w-full max-w-2xl">
+    <div class="chat-bar flex items-center bg-[#2a2b32] shadow-lg rounded-full px-6 py-3">
+
+      <!-- 👇 Nút + có menu chức năng -->
+    <div class="relative mr-3">
+      <button onclick="togglePlusMenu()" class="focus:outline-none transition duration-200 transform hover:scale-125 active:scale-90">
+
+        <div class="relative">
+      <i data-lucide="plus" class="w-5 h-5 text-gray-400"></i>
+      {% if user_messages and user_messages|length > 0 %}
+        <span class="absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full px-1.5">
+          {{ user_messages|length }}
+        </span>
+      {% endif %}
+    </div>
+ 
+</button>
+<div id="plus-menu" class="absolute bottom-12 left-0 bg-[#2e2e2e] rounded-xl shadow-lg p-3 hidden z-50 min-w-[260px]">
+  
+  <button onclick="goTo('/friends')" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+   Friend
+</button>
+  
+  <button onclick="goTo('/gop-y')" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+    Góp ý / Báo lỗi
+  </button>
+
+  <button onclick="togglePopupInbox()" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+    Hòm thư
+  </button>
+
+  <button onclick="goTo('/user-info')" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+    Thông tin tài khoản
+  </button>
+
+  <button onclick="openAlbum()" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+    Xem album ảnh
+  </button>
+  <button onclick="toggleDarkMode()" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+  Chế độ sáng / tối
+    </button>
+      </div>
+    </div>
+
+      <input
+        type="text"
+        placeholder="Bạn có câu hỏi gì hôm nay?"
+        class="flex-grow px-4 py-2 bg-transparent text-white placeholder-gray-400 outline-none text-base"
+        id="chatInput"
+      />
+       <!-- 🔊 Mic trạng thái -->
+  <div id="mic-status" class="text-center text-sm text-green-400 font-semibold mb-2 hidden">
+    🎙 Đang thu giọng...
+  </div>
+
+      <!-- 🔊 Mic đã sửa -->
+      <button id="micBtn" onclick="startVoiceRecognition()" class="mic-btn ml-3 bg-gray-700 hover:bg-gray-600 text-white rounded-full p-2">
+  <i data-lucide="mic" class="w-4 h-4"></i>
+</button>
+
+      
+     
+      <button id="sendBtn" class="ml-2 hidden bg-white text-black rounded-full p-2">
+        <i data-lucide="send" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+</div>
+ {% endif %}
+ {% if not (user_vip_status.vip_gpt and user_vip_status.vip_until_gpt) %}
+<!-- ✅ Chỉ hiện Plus Menu nếu KHÔNG có gói GPT -->
+<div class="fixed bottom-6 left-6 z-50">
+  <div class="relative">
+    <button onclick="togglePlusMenu()" class="bg-gray-800 text-white p-3 rounded-full shadow hover:bg-gray-700">
+      <i data-lucide="plus" class="w-6 h-6"></i>
+    </button>
+    <div id="plus-menu" class="absolute bottom-12 left-0 bg-[#2e2e2e] rounded-xl shadow-lg p-3 hidden min-w-[260px] z-50">
+     <button onclick="goTo('/friends')" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+  Friend
+</button>
+      <button onclick="goTo('/gop-y')" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+        Góp ý / Báo lỗi
+      </button>
+      <button onclick="togglePopupInbox()" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+        Hòm thư
+      </button>
+      <button onclick="goTo('/user-info')" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+        Thông tin tài khoản
+      </button>
+      <button onclick="openAlbum()" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+        Xem album ảnh
+      </button>
+      <button onclick="toggleDarkMode()" class="block w-full text-left text-white hover:text-cyan-400 py-2 px-5 text-base">
+   Chế độ sáng / tối
+    </button>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div id="inboxPopup" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-40 flex justify-center items-center z-50 {% if not user_messages %}hidden{% endif %}">
+  <div class="bg-[#1e293b] w-[90%] max-w-md rounded-xl shadow-xl p-5 text-white relative">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-lg font-semibold">📥 Hòm thư của bạn</h2>
+      <button onclick="closeInboxPopup()" class="text-gray-400 hover:text-white text-lg">✖</button>
+    </div>
+    {% if user_messages %}
+      {% set msg_count = user_messages|length %}
+      {% if msg_count > 100 %}
+        <p class="text-red-400 mb-3">⚠️ Hòm thư đã vượt quá 100 thư. Vui lòng xoá bớt!</p>
+      {% endif %}
+
+      <ul class="space-y-3 max-h-[350px] overflow-y-auto text-sm">
+       {% for msg in user_messages %}
+      {% set i = loop.index0 %}
+      <li class="bg-gray-800 rounded p-3 relative transition hover:bg-gray-700">
+        <div class="flex justify-between items-start cursor-pointer" onclick="toggleMessage({{ i }})">
+          <span id="title-{{ i }}" class="font-semibold hover:underline">{{ msg.split('\n')[0] }}</span>
+          <form method="POST" action="/xoa-thu" class="ml-2">
+            <input type="hidden" name="msg_index" value="{{ i }}">
+            <button class="text-red-400 hover:text-red-200 text-xs">🗑</button>
+          </form>
+        </div>
+        {% if '\n' in msg %}
+          <div id="msg-{{ i }}" class="mt-2 text-gray-300 text-sm hidden">{{ msg.split('\n', 1)[1] }}</div>
+        {% endif %}
+      </li>
+    {% endfor %}
+
+      </ul>
+
+      <div class="text-right mt-4">
+        <form method="POST" action="/xoa-het-thu">
+          <button class="text-sm text-red-300 hover:text-red-100 border border-red-400 px-3 py-1 rounded">🧹 Xoá tất cả</button>
+        </form>
+      </div>
+    {% endif %}
+  </div> <!-- ✅ Đóng div nội dung hòm thư -->
+</div>   
+
+
+<script>
+function toggleMessage(i) {
+  const el = document.getElementById("msg-" + i);
+  const title = document.getElementById("title-" + i);
+  if (el) {
+    el.classList.toggle("hidden");
+    title.classList.add("text-gray-400"); // hiệu ứng "đã xem"
+  }
+}
+</script>
+
+<script>
+  lucide.createIcons();
+
+  const chatInput = document.getElementById('chatInput');
+  const micBtn = document.getElementById('micBtn');
+  const sendBtn = document.getElementById('sendBtn');
+  const introBlock = document.getElementById('intro-block');
+
+  function updateIntroDisplay(content) {
+    if (content !== '') {
+      micBtn.classList.add('hidden');
+      sendBtn.classList.remove('hidden');
+
+      if (introBlock && !introBlock.classList.contains('fade-out')) {
+        introBlock.classList.remove('fade-in');
+        introBlock.classList.add('fade-out');
+      }
+    } else {
+      micBtn.classList.remove('hidden');
+      sendBtn.classList.add('hidden');
+
+      if (introBlock && introBlock.classList.contains('fade-out')) {
+        introBlock.classList.remove('fade-out');
+        introBlock.classList.add('fade-in');
+      }
+    }
+  }
+
+  // Khi người dùng nhập
+  chatInput.addEventListener('input', () => {
+    updateIntroDisplay(chatInput.value.trim());
+  });
+
+  // Khi người dùng rời khỏi input
+  chatInput.addEventListener('blur', () => {
+  // Khi người dùng bỏ focus => Luôn hiện lại intro, dù còn chữ
+    if (introBlock && introBlock.classList.contains('fade-out')) {
+      introBlock.classList.remove('fade-out');
+      introBlock.classList.add('fade-in');
+    }
+  });
+
+
+  sendBtn.addEventListener('click', () => {
+  const message = chatInput.value.trim();
+  if (message !== '') {
+    window.location.href = '/gpt_chat?message=' + encodeURIComponent(message);
+  }
+});
+
+chatInput.addEventListener('keydown', (e) => {
+  const message = chatInput.value.trim();
+  if (e.key === 'Enter' && message !== '') {
+    e.preventDefault();
+    window.location.href = '/gpt_chat?message=' + encodeURIComponent(message);
+  }
+});
+
+</script>
+<script>
+function togglePlusMenu() {
+  const menu = document.getElementById("plus-menu");
+  menu.classList.toggle("hidden");
+}
+
+function goTo(route) {
+  window.location.href = route;
+}
+
+// Auto tắt menu nếu click ra ngoài
+document.addEventListener("click", function (event) {
+  const menu = document.getElementById("plus-menu");
+  const plusBtn = event.target.closest(".relative");
+  if (!plusBtn || !plusBtn.contains(event.target)) {
+    menu?.classList.add("hidden");
+  }
+});
+</script>
+
+  <script>
+    function startSimpleCountdown(id, timeStr) {
+      const el = document.getElementById(id);
+      if (!el || !timeStr || timeStr === "None") return;
+
+      const deadline = new Date(timeStr.replace(" ", "T"));
+      function updateCountdown() {
+        const now = new Date();
+        const diff = deadline - now;
+        if (diff <= 0) {
+          el.textContent = "⛔ Gói đã hết hạn";
+          return;
+        }
+        const sec = Math.floor(diff / 1000);
+        const days = Math.floor(sec / (3600 * 24));
+        const hrs = Math.floor((sec % (3600 * 24)) / 3600);
+        const mins = Math.floor((sec % 3600) / 60);
+        const secs = sec % 60;
+        el.textContent = `${days} ngày ${hrs} giờ ${mins} phút ${secs} giây`;
+
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    {% if user_vip_status.vip_web and user_vip_status.vip_until_solver_edu %}
+  startSimpleCountdown("edu-vip-countdown", "{{ user_vip_status.vip_until_solver_edu | safe }}");
+{% endif %}
+
+    {% if user_vip_status.vip_gpt and user_vip_status.vip_until_gpt %}
+      startSimpleCountdown("gpt-vip-countdown", "{{ user_vip_status.vip_until_gpt | safe }}");
+    {% endif %}
+    {% if user_vip_status.vip_lite and user_vip_status.vip_until_lite %}
+      startSimpleCountdown("lite-vip-countdown", "{{ user_vip_status.vip_until_lite | safe }}");
+    {% endif %}
+
+  </script>
+  <script>
+function openAlbum() {
+  fetch("/get_user_album")
+    .then(res => res.json())
+    .then(data => {
+      const albumHTML = data.images.map(img => `
+        <div style="margin: 6px; display: inline-block;">
+          <img src="${img.path}" style="max-width: 120px; border-radius: 6px; cursor: pointer;" onclick="openImagePopup('${img.path}')" />
+        </div>
+      `).join("");
+
+      const overlay = document.createElement("div");
+      overlay.innerHTML = `
+        <div style="position:fixed; top:0; left:0; right:0; bottom:0; background:#000a; z-index:9999; display:flex; justify-content:center; align-items:center;">
+          <div style="background:#222; padding:20px; border-radius:10px; max-width:90%; max-height:90%; overflow:auto;">
+            <h3 style="color:#00bcd4">📸 Album ảnh đã gửi (lưu trong 7 ngày)</h3>
+            ${albumHTML || "<p style='color:white'>Chưa có ảnh nào.</p>"}
+            <div style="text-align:right; margin-top:12px;">
+              <button onclick="this.closest('div[style^=position]').remove()" style="padding: 6px 14px; border-radius:6px; background:#e53935; color:white; border:none;">Đóng</button>
+            </div>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    });
+}
+
+function openImagePopup(src) {
+  const viewer = document.getElementById("image-viewer");
+  const viewerImg = document.getElementById("image-viewer-img");
+  viewerImg.src = src;
+  viewer.style.display = "flex";
+}
+
+function closeImagePopup() {
+  document.getElementById("image-viewer").style.display = "none";
+}
+</script>
+<script>
+let recognition;
+let isListening = false;
+
+function startVoiceRecognition() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert("⚠️ Trình duyệt của bạn không hỗ trợ nhận diện giọng nói.");
+    return;
+  }
+
+  const input = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+
+  showVoiceTip();
+
+  recognition = new SpeechRecognition();
+  recognition.lang = 'vi-VN';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+  isListening = true;
+  micBtn.classList.add("mic-active");
+  document.getElementById("mic-status").classList.remove("hidden");
+};
+
+recognition.onend = () => {
+  isListening = false;
+  micBtn.classList.remove("mic-active");
+  document.getElementById("mic-status").classList.add("hidden");
+};
+
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    typeTextToInput(transcript, input);
+
+    const delayToSend = transcript.length * 40 + 500;
+    const lowered = transcript.toLowerCase();
+    const triggers = ["gửi", "xong", "ok", "nhé", "nha", "được không"];
+
+    const endsWithTrigger = triggers.some(word => lowered.endsWith(word));
+
+    setTimeout(() => {
+      if (input.value.trim() === transcript) {
+        if (endsWithTrigger) {
+          window.location.href = '/gpt_chat?message=' + encodeURIComponent(transcript);
+        } else {
+          // chỉ highlight nút gửi
+          sendBtn.classList.remove("hidden");
+          micBtn.classList.add("hidden");
+        }
+      }
+    }, delayToSend);
+  };
+
+  recognition.start();
+}
+
+function showVoiceTip() {
+  const tip = document.getElementById("voice-tip");
+  tip.style.display = "block";
+  setTimeout(() => { tip.style.display = "none"; }, 2000);
+}
+
+function typeTextToInput(text, inputElement, speed = 40) {
+  inputElement.value = "";
+  let index = 0;
+  function typeNextChar() {
+    if (index < text.length) {
+      inputElement.value += text.charAt(index);
+      index++;
+      setTimeout(typeNextChar, speed);
+    }
+  }
+  typeNextChar();
+}
+
+</script>
+<script>
+function closeInboxPopup() {
+  document.getElementById("inboxPopup").classList.add("hidden");
+}
+</script>
+<script>
+  function togglePopupInbox() {
+    const popup = document.getElementById("inboxPopup");
+    if (popup.classList.contains("hidden")) {
+      popup.classList.remove("hidden");
+    } else {
+      popup.classList.add("hidden");
+    }
+  }
+</script>
+<script>
+  function openTermsModal() {
+    const modal = document.getElementById("termsModal");
+    modal.style.display = "block";
+
+    // Gắn sự kiện chỉ khi mở popup
+    setTimeout(() => {
+      document.addEventListener("click", handleOutsideClick);
+    }, 10);
+  }
+
+  function closeTermsModal() {
+    document.getElementById("termsModal").style.display = "none";
+    document.removeEventListener("click", handleOutsideClick);
+  }
+
+  function handleOutsideClick(event) {
+    const modal = document.getElementById("termsModal");
+    const modalBox = modal.querySelector("div");
+
+    // Nếu click không nằm trong popup
+    if (!modalBox.contains(event.target)) {
+      closeTermsModal();
+    }
+  }
+</script>
+
+
+
+<!-- 🔍 Popup xem ảnh lớn -->
+<div id="image-viewer" class="image-viewer-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:99999; justify-content:center; align-items:center;">
+  <span onclick="closeImagePopup()" style="position:absolute; top:20px; right:30px; font-size:32px; color:white; cursor:pointer;">&times;</span>
+  <img id="image-viewer-img" src="" style="max-width:90%; max-height:90%; border-radius:12px;" />
+</div>
+<!-- 💬 Tooltip mic -->
+<div id="voice-tip" style="position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 8px 16px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); display: none; z-index: 9999;">
+  👉 Bạn có thể nói: <b>gửi</b>, <b>xong</b>, <b>ok</b>, <b>nhé</b>, <b>nha</b>, <b>được không</b>
+</div>
+
+
+{% if user_vip_status.vip_gpt and user_vip_status.vip_until_gpt %}
+<div id="startup-screen" class="fixed inset-0 bg-black flex flex-col items-center justify-center z-[9999]">
+  <div class="animate-zoom-in text-center">
+    <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 drop-shadow-lg">
+      SolverViet
+    </h1>
+    <p class="text-sm text-gray-500 mt-2">© 2025. All rights reserved.</p>
+  </div>
+</div>
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const splash = document.getElementById("startup-screen");
+  const main = document.getElementById("main-content");
+
+  const hasGpt = {{ 'true' if user.vip_gpt_ai else 'false' }};
+  const justLoggedIn = {{ 'true' if session.get('just_logged_in') else 'false' }};
+
+  const navigationType = performance.navigation?.type || 0;
+  const referrer = document.referrer;
+  const cameFromInternalPage = referrer.includes(location.origin);
+
+  console.log("hasGpt:", hasGpt);
+  console.log("justLoggedIn:", justLoggedIn);
+  console.log("referrer:", referrer);
+  console.log("navigationType:", navigationType);
+
+  if ((navigationType === 1 || justLoggedIn || (!cameFromInternalPage && navigationType === 0)) && hasGpt) {
+    splash.style.display = "flex";
+    main.style.display = "none";
+    setTimeout(() => {
+      splash.style.display = "none";
+      main.style.display = "block";
+    }, 2300);
+  } else {
+    splash.style.display = "none";
+    main.style.display = "block";
+  }
+});
+</script>
+
+
+
+{% else %}
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const main = document.getElementById("main-content");
+  if (main) main.style.display = "block";
+});
+</script>
+{% endif %}
+<script>
+function toggleDarkMode() {
+  const body = document.body;
+  const isDark = body.classList.toggle("dark-mode");
+
+  // Lưu chế độ
+  localStorage.setItem("solver_theme", isDark ? "dark" : "light");
+}
+
+// Tải lại trang giữ đúng giao diện
+window.addEventListener("DOMContentLoaded", () => {
+  const theme = localStorage.getItem("solver_theme");
+  if (theme === "light") {
+    document.body.classList.remove("dark-mode");
+  } else {
+    document.body.classList.add("dark-mode");
+  }
+});
+</script>
+
+{% if is_maintenance %}
+  <style>
+    .overlay-maintenance {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0, 0, 0, 0.92);
+      z-index: 999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      pointer-events: all;
+    }
+
+    .overlay-maintenance h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .overlay-maintenance p {
+      font-size: 1rem;
+      color: #ccc;
+    }
+  </style>
+
+  <div class="overlay-maintenance" id="maintenance-overlay">
+    <h2>🚧 Hệ thống đang bảo trì</h2>
+    <p>SolverViet hiện đang nâng cấp để phục vụ tốt hơn.<br>Vui lòng quay lại sau!</p>
+  </div>
+{% endif %}
+
+<script>
+  setInterval(() => {
+    fetch("/check_maintenance?feature=home")
+
+      .then(res => res.json())
+      .then(data => {
+        const existing = document.getElementById("maintenance-overlay");
+
+        if (data.maintenance) {
+          if (!existing) {
+            const overlay = document.createElement("div");
+            overlay.id = "maintenance-overlay";
+            overlay.style.position = "fixed";
+            overlay.style.inset = "0";
+            overlay.style.zIndex = "999999";
+            overlay.style.backgroundColor = "rgba(0,0,0,0.92)";
+            overlay.style.display = "flex";
+            overlay.style.flexDirection = "column";
+            overlay.style.alignItems = "center";
+            overlay.style.justifyContent = "center";
+            overlay.style.color = "white";
+            overlay.style.fontFamily = "sans-serif";
+            overlay.innerHTML = `
+              <div style="background:white; color:black; padding:24px; border-radius:12px; max-width:400px; text-align:center; box-shadow:0 0 20px rgba(0,0,0,0.4);">
+                <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">🚧 Hệ thống đang bảo trì</h2>
+                <p>SolverViet hiện đang nâng cấp hệ thống.<br>Vui lòng quay lại sau!</p>
+              </div>
+            `;
+            document.body.appendChild(overlay);
+          }
+        } else {
+          if (existing) {
+            existing.remove(); // ✅ Gỡ overlay khi admin đã tắt bảo trì
+          }
+        }
+      });
+  }, 5000); // Kiểm tra mỗi 5s
+</script>
+<script>
+  function setupCountdown(id) {
+    const el = document.getElementById(id);
+    if (!el || !el.dataset.until) return;
+
+    const untilTime = new Date(el.dataset.until);
+    if (isNaN(untilTime)) return;
+
+    let lastDisplay = "";
+
+    const interval = setInterval(() => {
+      const now = new Date();
+      const diff = untilTime - now;
+
+      if (diff <= 0) {
+        el.textContent = "⛔ Gói đã hết hạn";
+        clearInterval(interval);
+        return;
+      }
+
+      const sec = Math.floor(diff / 1000);
+      const days = Math.floor(sec / (3600 * 24));
+      const hrs = Math.floor((sec % (3600 * 24)) / 3600);
+      const mins = Math.floor((sec % 3600) / 60);
+      const secs = sec % 60;
+
+      const display = `${days} ngày ${hrs} giờ ${mins} phút ${secs} giây`;
+
+      if (display !== lastDisplay) {
+        el.textContent = display;
+        lastDisplay = display;
+      }
+    }, 100);  // vẫn cập nhật mỗi 100ms
+  }
+
+  setupCountdown("gpt-vip-countdown");
+  setupCountdown("lite-vip-countdown");
+  setupCountdown("edu-vip-countdown");
+</script>
+
+</body>
+</div>
+</html>

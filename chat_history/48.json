@@ -1,0 +1,38 @@
+[
+  {
+    "content": "alo alo",
+    "role": "user"
+  },
+  {
+    "content": "Chào bạn! Có điều gì mình có thể giúp đỡ bạn không? Hãy đặt câu hỏi hoặc chia sẻ vấn đề của bạn để mình hỗ trợ nhé!",
+    "role": "assistant"
+  },
+  {
+    "content": "aa",
+    "role": "user"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "content": "a",
+    "role": "user"
+  },
+  {
+    "role": "user",
+    "content": "a"
+  },
+  {
+    "role": "assistant",
+    "content": "Ủa alo alo, bạn đang thử mic hay đang cần gì nè? 😄 Có gì cứ nói mình nghe nhé!"
+  }
+]

@@ -1,0 +1,165 @@
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>SolverViet Admin - Điều Hướng</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 240px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #1e1e2f;
+      color: white;
+      padding-top: 20px;
+    }
+    .sidebar h2 {
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 30px;
+    }
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+      font-size: 16px;
+      transition: background 0.3s;
+    }
+    .sidebar a:hover {
+      background-color: #3c3c5c;
+    }
+    .main {
+      margin-left: 260px;
+      padding: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar">
+  <h2>🛠️ SolverViet Admin</h2>
+  <a href="/admin_users">👥 Người dùng</a>
+  <a href="/admin/review" class="btn btn-outline-warning mb-3">💎 Gói VIP chờ duyệt</a>
+
+<a href="/admin/gop-y">📩 Góp ý</a>
+
+<a href="/admin/gui-thong-bao">🔔 Gửi thông báo</a>
+
+  <a href="#" onclick="showStats()">📈 Thống kê</a>
+  <a href="/admin/bao-tri">🔧 Bảo trì hệ thống</a>
+
+
+
+</div>
+
+<div class="main" id="defaultBox">
+  <h2>📊 Trung tâm điều hành SolverViet</h2>
+  <p>Chọn chức năng quản lý từ thanh menu bên trái.</p>
+  <button onclick="restoreUsersJson()" style="
+  padding: 8px 16px;
+  background-color: #00aaff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+">
+  🛠️ Khôi phục users.json
+</button>
+
+<div id="restore-result" style="margin-top: 8px; color: #fff; font-size: 0.95rem;"></div>
+
+    <button onclick="cleanupChats()" style="margin-top: 20px; padding: 10px 20px; background-color: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;">
+    🧹 Dọn chat quá 30 ngày
+  </button>
+
+  <p id="cleanup-result" style="margin-top: 10px; font-style: italic; color: #333;"></p>
+
+     <hr style="margin: 16px 20px; border: 0.5px solid #444;">
+  <a href="/logout" style="color: #f87171;">🚪 Đăng xuất</a>
+</div>
+
+
+<div id="thongkeBox" class="main" style="display: none;">
+
+  <h2 class="text-xl font-bold mb-4">📈 Thống kê hệ thống</h2>
+
+<div class="mt-6">
+  <a href="#" onclick="hideStats()" class="text-blue-600 hover:underline text-sm">↩️ Quay về giao diện điều hành</a>
+</div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-800">
+    <div class="bg-gray-100 rounded p-4"><strong>👥 Tổng người dùng:</strong> {{ tong_nguoi_dung }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>🟢 Người đang VIP:</strong> {{ so_vip }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>🕓 Người hết VIP:</strong> {{ so_het_vip }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>📬 Góp ý đã nhận:</strong> {{ tong_gopy }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>📨 Thư đang lưu:</strong> {{ tong_thu }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>🧠 Lượt dùng AI:</strong> {{ tong_luot_ai }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>💰 Gói VIP đã duyệt:</strong> {{ so_goi_duyet }}</div>
+    <div class="bg-gray-100 rounded p-4"><strong>📅 Doanh thu (ước tính):</strong> {{ doanh_thu }} VNĐ</div>
+  </div>
+</div>
+<script>
+function showStats() {
+  document.getElementById("defaultBox").style.display = "none";
+  document.getElementById("thongkeBox").style.display = "block";
+}
+</script>
+<script>
+function showStats() {
+  document.getElementById("defaultBox").style.display = "none";
+  document.getElementById("thongkeBox").style.display = "block";
+}
+
+function hideStats() {
+  document.getElementById("thongkeBox").style.display = "none";
+  document.getElementById("defaultBox").style.display = "block";
+}
+</script>
+<script>
+function cleanupChats() {
+  if (!confirm("Bạn có chắc muốn dọn tất cả đoạn chat quá 30 ngày không?")) return;
+
+  fetch("/admin/cleanup_chats_30_days")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("cleanup-result").innerText = data;
+    })
+    .catch(error => {
+      document.getElementById("cleanup-result").innerText = "⚠️ Có lỗi xảy ra khi dọn dẹp.";
+      console.error(error);
+    });
+}
+</script>
+<script>
+function restoreUsersJson() {
+  fetch("/admin/restore_users_json", {
+    method: "POST"
+  })
+  .then(res => res.json())
+  .then(data => {
+    const resultDiv = document.getElementById("restore-result");
+    resultDiv.textContent = data.message;
+    resultDiv.style.color = data.success ? "#00cc88" : "#ff4444";
+  })
+  .catch(() => {
+    const resultDiv = document.getElementById("restore-result");
+    resultDiv.textContent = "❌ Không thể kết nối máy chủ!";
+    resultDiv.style.color = "#ff4444";
+  });
+}
+</script>
+
+
+</body>
+</html>

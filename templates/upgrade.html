@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Nâng cấp gói AI - 3 Bước</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom right, #0f2027, #203a43, #2c5364);
+      color: white;
+    }
+    .brand {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      padding: 20px 0;
+      background: #001f3f;
+      color: #4ea6ff;
+      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 32px;
+    }
+    .brand a {
+      color: #4ea6ff;
+      text-decoration: none;
+      font-size: 14px;
+      border: 1px solid #4ea6ff;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .step-container {
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px;
+      gap: 40px;
+    }
+    .step-box {
+      width: 320px;
+      background: #111;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      opacity: 0.4;
+      pointer-events: none;
+      position: relative;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .step-box.active {
+      opacity: 1;
+      pointer-events: auto;
+      border: 2px solid #4ea6ff;
+    }
+    .step-box.done::after {
+      content: "\2714";
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: #00e676;
+    }
+    .step-title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 16px;
+    }
+    .btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: #007bff;
+      color: white;
+    }
+    .btn-outline {
+      background: transparent;
+      color: #4ea6ff;
+      border: 1px solid #4ea6ff;
+      margin-right: 10px;
+    }
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      color: white;
+      font-size: 24px;
+    }
+    .package-option, .wallet-option {
+      display: block;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid #666;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #222;
+    }
+    .package-option.selected,
+    .wallet-option.selected {
+      background: #004080;
+      border-color: #4ea6ff;
+    }
+    input {
+      background: #333;
+      border: 1px solid #555;
+      color: white;
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 6px;
+    }
+    .note {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+    .payment-type-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        justify-items: center;
+        margin: 16px 0;
+      }
+
+      .square-btn {
+        width: 120px;
+        height: 100px;
+        font-size: 18px;
+        border: 1px solid #4ea6ff;
+        background: transparent;
+        color: #4ea6ff;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .square-btn:hover {
+        background: #004080;
+        color: white;
+      }
+      .wallet-icon {
+        width: 22px;
+        height: 22px;
+        object-fit: contain;
+      }
+      html, body {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      main {
+        flex: 1;
+      }
+      .btn-action {
+        background-color: #4ea6ff;
+        color: white;
+        padding: 10px 18px;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+      }
+
+      .btn-action:hover {
+        background-color: #007bff;
+      }
+
+      .btn-secondary {
+        background-color: #444;
+        color: #eee;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background 0.3s ease;
+      }
+
+      .btn-secondary:hover {
+        background-color: #666;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 20px;
+        transition: background 0.2s ease;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+
+
+  </style>
+<style>
+  @keyframes spin-ring {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes popup-slide {
+    0% { transform: translate(-50%, -60%) scale(0.9); opacity: 0; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+
+  .success-popup {
+    background: #101c2b;
+    color: #fff;
+    padding: 28px 30px 22px;
+    border-radius: 18px;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: popup-slide 0.4s ease-out;
+    z-index: 10000;
+    text-align: center;
+    max-width: 400px;
+    border: 2px solid #00e676;
+    box-shadow: 0 0 22px rgba(0, 230, 118, 0.4);
+    font-size: 15px;
+  }
+
+  .success-popup .circle {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .success-popup .svg-loader {
+    width: 64px;
+    height: 64px;
+    animation: spin-ring 1s linear forwards;
+    transform-origin: center;
+  }
+
+  .success-popup .icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 28px;
+    color: #00e676;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .success-popup p {
+    margin: 12px 0 0;
+    font-size: 15px;
+    color: #eee;
+  }
+
+  .success-popup button {
+    margin-top: 16px;
+    background: #333;
+    color: #eee;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+
+  .success-popup button:hover {
+    background: #555;
+  }
+  .error-popup {
+    background: #2d1a1a;
+    color: #fff;
+    padding: 24px 28px;
+    border-radius: 16px;
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: popup-slide 0.3s ease-out;
+    z-index: 10000;
+    text-align: center;
+    max-width: 380px;
+    border: 2px solid #ff4d4d;
+    box-shadow: 0 0 22px rgba(255, 77, 77, 0.4);
+    font-size: 15px;
+  }
+
+  .error-popup .icon {
+    font-size: 32px;
+    margin-bottom: 10px;
+    color: #ff4d4d;
+  }
+
+  .error-popup p {
+    margin: 0;
+    font-size: 15px;
+    color: #eee;
+  }
+
+</style>
+
+
+</head>
+<body>
+
+<div style="background-color: #0c0c0c; padding: 18px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #2196f3;">
+  <div>
+    <div style="font-size: 22px; font-weight: bold; color: #4ea6ff;">SolverViet</div>
+    <div style="font-size: 12px; color: #999;">© 2025. All rights reserved.</div>
+  </div>
+  <a href="/" style="color: #4ea6ff; text-decoration: none; font-size: 15px;">Về trang chủ</a>
+</div>
+
+
+   <main>
+  <div class="loading-overlay" id="loading">Đang kiểm tra thông tin...</div>
+
+  <div class="step-container">
+
+    <div class="step-box active" id="step1">
+      <div class="step-title">Bước 1: Thông tin tài khoản</div>
+      <div class="note">Vui lòng nhập đầy đủ họ tên và ID của bạn để bắt đầu quy trình nâng cấp.</div>
+      <input type="text" id="input-username" placeholder="Tên tài khoản" value="{{ fullname }}">
+      <input type="text" id="input-userid" placeholder="ID người dùng" value="{{ user_id }}">
+      <button class="btn btn-primary" onclick="submitStep1()">Tiếp tục</button>
+      <div id="step1-error" style="color: #ff6666; margin-top: 10px; display: none;"></div>
+    </div>
+
+    <div class="step-box" id="step2">
+      <input type="hidden" id="paypal-package" value="">
+      <input type="hidden" id="paypal-userid" value="{{ user_id }}">
+      <div class="step-title">Bước 2: Chọn gói</div>
+      <div onclick="selectPackage(this, 'vip_gpt_5d', 49000, 'SLV 5 ngày')" class="package-option">SLV5day - 49.000đ</div>
+    <div onclick="selectPackage(this, 'vip_gpt_15d', 109000, 'SLV 15 ngày')" class="package-option">SLV15day - 109.000đ</div>
+    <div onclick="selectPackage(this, 'vip_gpt_30d', 149000, 'SLV 30 ngày')" class="package-option">SLV30day - 149.000đ</div>
+    <div onclick="selectPackage(this, 'vip_ai_lite', 25000, 'Lite 7 ngày')" class="package-option">Lite7day - 25.000đ</div>
+
+
+      <div>
+        <button class="btn btn-outline" onclick="goBackToStep(1)">Quay lại</button>
+        <button class="btn btn-primary" onclick="submitStep2()">Tiếp tục</button>
+      </div>
+    </div>
+
+    <!-- Cập nhật phần Bước 3: Thay vì hiện trực tiếp các nền tảng thanh toán -->
+<!-- Cập nhật phần Bước 3: Thay vì hiện trực tiếp các nền tảng thanh toán -->
+    <div class="step-box" id="step3">
+      <div class="step-title">Bước 3: Thanh toán</div>
+      <div class="note">Chọn hình thức thanh toán bạn muốn sử dụng:</div>
+
+    <div id="main-methods" class="payment-type-grid">
+      <button class="square-btn" onclick="showPaymentOptions('qr')">QR</button>
+      <button class="square-btn" onclick="showPaymentOptions('stk')">STK</button>
+      <button class="square-btn" onclick="showPaymentOptions('atm')">ATM</button>
+      <button class="square-btn" onclick="showPaymentOptions('visa')">Visa</button>
+    </div>
+  <div id="visa-options" style="display: none; margin-top: 20px;">
+  <div class="wallet-option" onclick="redirectToPayPal()">
+    <img src="/static/logos/paypal_logo.png" class="wallet-icon">
+    <span>PayPal</span>
+  </div>
+  <div class="wallet-option" onclick="selectVisaMethod('visa')">
+    <img src="/static/logos/visa_logo.png" class="wallet-icon">
+    <span>Visa / MasterCard</span>
+  </div>
+</div>
+
+
+  <!-- Khối nền tảng cho QR -->
+ <div id="qr-options" style="display: none;">
+  <div class="wallet-option" onclick="selectWallet(this, 'MoMo')">
+    <img src="/static/logos/momo_logo.png" class="wallet-icon">
+    <span>MoMo</span>
+  </div>
+
+  <div class="wallet-option" onclick="selectWallet(this, 'ZaloPay')">
+    <img src="/static/logos/zalopay_logo.png" class="wallet-icon">
+    <span>ZaloPay</span>
+  </div>
+
+  <div class="wallet-option" onclick="selectWallet(this, 'BIDV')">
+    <img src="/static/logos/bidv_logo.png" class="wallet-icon">
+    <span>BIDV</span>
+  </div>
+
+  <div class="wallet-option" onclick="selectWallet(this, 'MB')">
+    <img src="/static/logos/mb_logo.png" class="wallet-icon">
+    <span>MB</span>
+  </div>
+
+  <div class="wallet-option" onclick="selectWallet(this, 'VCB')">
+    <img src="/static/logos/vcb_logo.jpg" class="wallet-icon">
+    <span>Vietcombank</span>
+  </div>
+
+  <div class="wallet-option" onclick="selectWallet(this, 'ARIBANK')">
+    <img src="/static/logos/ari_logo.png" class="wallet-icon">
+    <span>Agribank</span>
+  </div>
+
+  <div class="wallet-option" onclick="selectWallet(this, 'CAKE')">
+    <img src="/static/logos/cake_logo.png" class="wallet-icon">
+    <span>Cake Bank</span>
+  </div>
+</div>
+
+<div id="popup-step3-stk" class="popup" style="display: none;">
+  <div class="wallets">
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'MB')">
+      <img src="/static/logos/mb_logo.png" class="wallet-icon">
+      <span>MB</span>
+    </div>
+
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'VCB')">
+      <img src="/static/logos/vcb_logo.jpg" class="wallet-icon">
+      <span>Vietcombank</span>
+    </div>
+
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'BIDV')">
+      <img src="/static/logos/bidv_logo.png" class="wallet-icon">
+      <span>BIDV</span>
+    </div>
+
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'ARIBANK')">
+      <img src="/static/logos/ari_logo.png" class="wallet-icon">
+      <span>Agribank</span>
+    </div>
+
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'ZaloPay')">
+      <img src="/static/logos/zalopay_logo.png" class="wallet-icon">
+      <span>ZaloPay</span>
+    </div>
+
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'MoMo')">
+      <img src="/static/logos/momo_logo.png" class="wallet-icon">
+      <span>MoMo</span>
+    </div>
+
+    <div class="wallet-option" onclick="selectSTKPlatform(this, 'CAKE')">
+      <img src="/static/logos/cake_logo.png" class="wallet-icon">
+      <span>Cake Bank</span>
+    </div>
+  </div>
+</div>
+  <!-- Nút điều hướng -->
+  <div style="margin-top: 20px">
+    <button class="btn btn-outline" onclick="customBack()">Quay lại</button>
+
+    <button class="btn btn-primary" id="pay-now-btn" style="display: none" onclick="finalRedirect()">Thanh toán ngay</button>
+  </div>
+</div>
+
+<!-- Loading khi tạo mã QR -->
+<div class="loading-overlay" id="qr-loading" style="display: none;">
+  Đang tạo mã QR...
+</div>
+
+<!-- Popup QR hiện ra sau khi chọn nền tảng QR -->
+<div id="qr-popup" style="display: none; text-align: center; margin-top: 40px;">
+  <div style="background: #111; border-radius: 12px; padding: 20px; width: 340px; margin: auto; border: 2px solid #4ea6ff;">
+    <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Mã QR thanh toán</div>
+
+    <img id="qr-image" src="" width="260" height="260" style="margin-bottom: 10px;" />
+
+    <div id="qr-info" style="font-size: 14px; color: #aaa; margin-bottom: 10px;"></div>
+    <div id="qr-warning" style="font-size: 13px; color: #ffcc00;"></div>
+
+    <button id="copy-qr-txn-btn"
+          onclick="copyQRTransaction()"
+          class="btn-secondary"
+          style="display: none;">
+     Sao chép mã giao dịch
+  </button>
+
+
+    <!-- Nút hoàn tất -->
+<form id="upgrade-form">
+  <input id="input-package" name="package" type="hidden">
+  <input id="input-note" name="note" type="hidden">
+  <input id="input-method" name="method" type="hidden">
+  <button type="button" class="btn-action" onclick="finishTransaction()"> Hoàn tất</button>
+</form>
+   <p style="font-size: 13px; color: #888; margin-top: 10px; text-align: center;">
+⚠️ Nếu đã thanh toán mà bạn chưa có VIP, vui lòng 
+<a href="/feedback" style="color: #4ea6ff; text-decoration: underline;">liên hệ nhà phát triển</a> để được hỗ trợ nhanh chóng.<br>
+Nên <b>chụp lại hóa đơn thanh toán</b> để xác minh thuận tiện hơn nhé!
+</p>
+
+  </div>
+</div>
+
+
+<!-- Popup STK hiện ra sau khi chọn nền tảng STK -->
+<div id="stk-popup" style="display: none; text-align: center; margin-top: 40px;">
+  <div style="
+      background: #182b3a;
+      border-radius: 16px;
+      padding: 24px;
+      width: 360px;
+      margin: auto;
+      border: 2px solid #4ea6ff;
+      box-shadow: 0 0 20px rgba(78, 166, 255, 0.3);
+      font-size: 15px;
+      line-height: 1.6;
+    ">
+    <div style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #4ea6ff;">
+       Thông tin chuyển khoản
+    </div>
+
+    <div style="text-align: left;">
+      <p><strong>Số tài khoản:</strong> <span id="stk-account">...</span></p>
+      <button onclick="copyToClipboard('stk-account', 'số tài khoản')">📋 Sao chép số tài khoản</button>
+
+      <p><strong>Tên tài khoản:</strong> <span id="stk-name">TRAN HONG PHAT</span></p>
+      <p><strong>Tên người dùng:</strong> <span id="stk-username">...</span></p>
+      <p><strong>ID:</strong> <span id="stk-userid">...</span></p>
+      <p><strong>Gói:</strong> <span id="stk-package">...</span></p>
+      <p><strong>Mã giao dịch:</strong> <span id="stk-txn">...</span></p>
+      <p><strong>Hết hạn trong:</strong> <span id="stk-countdown">14:59</span></p>
+    </div>
+
+    <p style="font-size: 13px; color: #ffc107; background: #2d3f52; padding: 8px; border-radius: 8px; margin-top: 12px;">
+      ⚠️ Vui lòng sao chép mã giao dịch dán vào đúng nội dung chuyển khoản.
+    </p>
+
+    <button onclick="copyToClipboard('stk-txn', 'mã giao dịch')">📋 Sao chép mã</button>
+
+    <!-- ✅ Nút hoàn tất STK -->
+    <form id="upgrade-form-stk">
+      <input id="input-package-stk" name="package" type="hidden">
+      <input id="input-note-stk" name="note" type="hidden">
+      <input id="input-method-stk" name="method" type="hidden">
+      <button type="button" class="btn-action" onclick="finishTransactionSTK()"> Hoàn tất</button>
+    </form>
+    <p style="font-size: 13px; color: #888; margin-top: 10px; text-align: center;">
+      ⚠️ Nếu đã thanh toán mà bạn chưa có VIP, vui lòng 
+      <a href="/feedback" style="color: #4ea6ff; text-decoration: underline;">liên hệ nhà phát triển</a> để được hỗ trợ nhanh chóng.<br>
+      Nên <b>chụp lại hóa đơn thanh toán</b> để xác minh thuận tiện hơn nhé!
+      </p>
+
+  </div>
+</div>
+
+  </div>
+</div>
+<div id="atm-coming-popup" style="display: none; text-align: center; margin-top: 40px;">
+  <div style="
+      background: #332222;
+      border-radius: 16px;
+      padding: 24px;
+      width: 360px;
+      margin: auto;
+      border: 2px solid #ff9900;
+      box-shadow: 0 0 20px rgba(255, 166, 0, 0.3);
+      font-size: 15px;
+      line-height: 1.6;
+      color: #ffcc99;
+    ">
+    <div style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #ff9900;">
+       🚧 Tính năng đang phát triển
+    </div>
+    <div>
+      Hiện tại phương thức <b>Thanh toán bằng ATM</b> đang được phát triển.<br>
+      Rất mong bạn thông cảm. Chân thành xin lỗi bạn vì sự bất tiện này!. 
+    </div>
+  </div>
+</div>
+<!-- Popup Visa/MasterCard đang phát triển -->
+<div id="visa-coming-popup" style="display: none; text-align: center; margin-top: 40px;">
+  <div style="
+      background: #222233;
+      border-radius: 16px;
+      padding: 24px;
+      width: 360px;
+      margin: auto;
+      border: 2px solid #ff66cc;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+      font-size: 15px;
+      line-height: 1.6;
+      color: #ffcce0;
+    ">
+    <div style="font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #ff66cc;">
+        Tính năng đang phát triển
+    </div>
+    <div>
+      Phương thức <b>Visa / MasterCard</b> hiện chưa khả dụng.<br>
+      Vui lòng chọn <b>PayPal</b> hoặc phương thức khác để tiếp tục.
+    </div>
+  </div>
+</div>
+</main>
+
+  <script>
+    let paymentMode = null;
+    const loading = document.getElementById('loading');
+    let selectedPackage = null;
+    let selectedWallet = null;
+    let currentSTKPlatform = null;
+    let savedFullname = "";
+    let savedUserId = "";
+
+    function submitStep1() {
+      const name = document.getElementById('fullname').value.trim();
+      const id = document.getElementById('userId').value.trim();
+      if (!name || !id) return alert('Vui lòng nhập đủ họ tên và ID.');
+      savedFullname = name;
+      savedUserId = id;
+      loading.style.display = 'flex';
+
+      setTimeout(() => {
+        loading.style.display = 'none';
+        markStepDone(1);
+        enableStep(2);
+      }, 1500);
+    }
+
+    function submitStep2() {
+      if (!selectedPackage) {
+        showToast(" Bạn chưa chọn gói nâng cấp nào. Vui lòng chọn trước khi tiếp tục.");
+        return;
+      }
+      markStepDone(2);
+      enableStep(3);
+      document.getElementById("paypal-package").value = selectedPackage[0]; 
+    }
+
+ 
+
+    function markStepDone(step) {
+      document.getElementById('step' + step).classList.remove('active');
+      document.getElementById('step' + step).classList.add('done');
+    }
+
+    function enableStep(step) {
+      document.getElementById('step' + step).classList.add('active');
+    }
+
+    function goBackToStep(step) {
+      document.querySelectorAll('.step-box').forEach(b => b.classList.remove('active'));
+      document.getElementById('step' + step).classList.add('active');
+    }
+
+    function selectPackage(el, code, price, displayName) {
+      document.querySelectorAll('.package-option').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedPackage = [code, price, displayName];
+    }
+
+
+    function selectWallet(el, method) {
+      // 1. Hiện loading ngay lập tức
+      document.getElementById("qr-popup").style.display = "none";
+      document.getElementById("qr-loading").style.display = "flex";
+      document.getElementById("qr-warning").innerText = "";
+      document.getElementById("qr-info").innerText = "";
+
+      // 2. Giao diện chọn nền tảng
+      document.querySelectorAll('.wallet-option').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+      selectedWallet = method;
+
+      // 3. Tạo lại mã QR
+      if (paymentMode === 'qr') {
+        showQRPopup(method);
+      }
+    }
+
+
+    window.onload = () => {
+        const fullname = "{{ fullname|default('') }}";
+        const userId = "{{ user_id|default('') }}";
+
+        const fullnameInput = document.getElementById('fullname');
+        const userIdInput = document.getElementById('userId');
+
+        if (fullnameInput) fullnameInput.value = fullname;
+        if (userIdInput) userIdInput.value = userId;
+      };
+
+
+      function showPaymentOptions(method) {
+        const payNowBtn = document.getElementById("pay-now-btn");
+        const qrOptions = document.getElementById("qr-options");
+        const mainMethods = document.getElementById("main-methods");
+        const stkPopup = document.getElementById("popup-step3-stk");
+        const atmComingPopup = document.getElementById("atm-coming-popup");
+        const visaComingPopup = document.getElementById("visa-coming-popup");
+
+        // Ẩn tất cả popup/phụ
+        qrOptions.style.display = "none";
+        stkPopup.style.display = "none";
+        atmComingPopup.style.display = "none";
+        visaComingPopup.style.display = "none";
+
+        // Ẩn nút thanh toán ngay mặc định
+        payNowBtn.style.display = "none";
+
+        // Lưu trạng thái
+        paymentMode = method;
+
+        if (method === "qr") {
+          qrOptions.style.display = "block";
+          mainMethods.style.display = "none";
+        } else if (method === "stk") {
+          stkPopup.style.display = "block";
+          mainMethods.style.display = "none";
+        } else if (method === "atm") {
+          mainMethods.style.display = "none";
+          atmComingPopup.style.display = "block";
+        }else if (method === "visa") {
+          mainMethods.style.display = "none";
+          document.getElementById("visa-options").style.display = "block";
+        }else if (method === "paypal") {
+          redirectToPayPal(); // 👈 bạn phải có hàm này
+        } else {
+          goBackToStep(2);
+          if (savedFullname) document.getElementById('fullname').value = savedFullname;
+          if (savedUserId) document.getElementById('userId').value = savedUserId;
+        }
+      }
+
+
+function customBack() {
+  const mainMethods = document.getElementById("main-methods");
+  const qrOptions = document.getElementById("qr-options");
+  const qrPopup = document.getElementById("qr-popup");
+  const stkPopup = document.getElementById("stk-popup");
+  const popupSTK = document.getElementById("popup-step3-stk");
+  const atmComingPopup = document.getElementById("atm-coming-popup");
+  const visaOptions = document.getElementById("visa-options");
+  const visaComingPopup = document.getElementById("visa-coming-popup");
+
+  if (paymentMode === "qr") {
+    qrPopup.style.display = "none";
+    qrOptions.style.display = "none";
+    mainMethods.style.display = "grid";
+    paymentMode = null;
+    selectedWallet = null;
+  } else if (paymentMode === "stk") {
+    stkPopup.style.display = "none";
+    popupSTK.style.display = "none";
+    mainMethods.style.display = "grid";
+    paymentMode = null;
+    currentSTKPlatform = null;
+    clearInterval(stkCountdown);
+  } else if (paymentMode === "atm") {
+    atmComingPopup.style.display = "none";
+    mainMethods.style.display = "grid";
+    paymentMode = null;
+  } else if (paymentMode === "visa") {
+    visaOptions.style.display = "none";
+    visaComingPopup.style.display = "none";
+    mainMethods.style.display = "grid";
+    paymentMode = null;
+  } else {
+    goBackToStep(2);
+  }
+}
+
+
+
+function showQRPopup(method) {
+  if (!selectedPackage) {
+    alert("❌ Bạn chưa chọn gói nâng cấp.");
+    document.getElementById("qr-loading").style.display = "none";
+    return;
+  }
+
+  const [pkgCode, price, displayName] = selectedPackage;
+  const name = document.getElementById('input-username').value.trim();
+  const id = document.getElementById('input-userid').value.trim();
+  const txn = 'TXN_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+  const shortId = id.substring(0, 8);
+
+  let content = `${displayName}|tk:${name}|ID:${shortId}|mgd:${txn}`;
+  let displayContent = content;
+  let warningMsg = "";
+
+  if (["MoMo", "ZaloPay"].includes(method)) {
+    content = txn;
+    displayContent = `Mã giao dịch: ${txn}`;
+    warningMsg = "⚠️ Khi thanh toán bằng mã QR MoMo hoặc ZaloPay, vui lòng nhập chính xác mã giao dịch trong phần nội dung chuyển khoản.";
+  }
+
+  document.getElementById("qr-loading").style.display = "flex";
+
+  setTimeout(() => {
+    document.getElementById("qr-loading").style.display = "none";
+    document.getElementById("qr-popup").style.display = "block";
+
+    const finishBtn = document.getElementById("finish-btn");
+    if (finishBtn) finishBtn.style.display = "inline-block";
+
+    document.getElementById("qr-info").innerText = displayContent;
+    document.getElementById("qr-warning").innerText = warningMsg;
+    window.qrCopyContent = content;
+
+    const copyBtn = document.getElementById("copy-qr-txn-btn");
+    if (["MoMo", "ZaloPay"].includes(method)) {
+      if (copyBtn) copyBtn.style.display = "inline-block";
+    } else {
+      if (copyBtn) copyBtn.style.display = "none";
+    }
+
+    const accountMap = {
+      MB: ["970422", "0865645752"],
+      BIDV: ["970418", "7351445220"],
+      VCB: ["970436", "1057958336"],
+      ARIBANK: ["970405", "7406281009097"],
+      CAKE: ["CAKE", "0865645752"],
+    };
+
+    let qrURL = "";
+    if (["MoMo", "ZaloPay"].includes(method)) {
+      qrURL = `/static/qrcodes/${method.toLowerCase()}.png`;
+    } else {
+      const [bankCode, accountNumber] = accountMap[method];
+      qrURL = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-compact.png?amount=${price}&addInfo=${encodeURIComponent(content)}`;
+    }
+
+    document.getElementById("qr-image").src = qrURL;
+  }, 1500);
+}
+
+function selectSTKPlatform(el, platform) {
+  if (platform !== currentSTKPlatform) {
+    // ❗ Chỉ ẩn popup chuyển khoản STK, KHÔNG ẩn popup bước 3
+    document.getElementById("stk-popup").style.display = "none";
+
+    // ⏳ Hiện loading
+    showFullscreenLoading("Đang tạo mã giao dịch...");
+
+    setTimeout(() => {
+      currentSTKPlatform = platform;
+      document.querySelectorAll('#popup-step3-stk .wallet-option').forEach(p => p.classList.remove('selected'));
+      el.classList.add('selected');
+      hideFullscreenLoading();
+
+      const username = savedFullname;
+      const userId = savedUserId;
+
+      if (!username || !userId) {
+        alert("⚠️ Vui lòng nhập đầy đủ tên và ID ở Bước 1.");
+        return;
+      }
+
+      if (!selectedPackage) {
+        alert("⚠️ Vui lòng chọn gói ở Bước 2.");
+        return;
+      }
+
+      console.log("✅ Gọi showSTKPopup với:", platform, selectedPackage, userId, username);
+      showSTKPopup(platform, selectedPackage, userId, username);
+    }, 1200);
+  }
+}
+
+
+
+
+let stkCountdown;
+function showSTKPopup(platform, selectedPackage, userId, username) {
+  const popup = document.getElementById("stk-popup");
+  if (!popup) {
+    console.error("❌ Không tìm thấy phần tử stk-popup");
+    return;
+  }
+
+  popup.style.display = "block";  // ✅ Đảm bảo hiển thị popup
+
+  const txn = 'TXN_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  const accountMap = {
+    MB: "0865645752",
+    VCB: "1057958336",
+    BIDV: "7351445220",
+    ARIBANK: "7406281009097",
+    ZaloPay: "0865645752",
+    MoMo: "0865645752",
+    CAKE: "0865645752"
+  };
+
+  const account = accountMap[platform] || "0000000000";
+
+  document.getElementById("stk-account").innerText = account;
+  document.getElementById("stk-name").innerText = "TRAN HONG PHAT";
+  document.getElementById("stk-username").innerText = username || "(Không có)";
+  document.getElementById("stk-userid").innerText = userId || "(Không có)";
+  document.getElementById("stk-package").innerText = selectedPackage?.[2] || "(Không rõ)";
+  document.getElementById("stk-txn").innerText = txn;
+
+  window.stkTxn = txn;
+  startSTKCountdown(14 * 60 + 59);
+}
+
+
+
+function startSTKCountdown(seconds) {
+  clearInterval(stkCountdown);
+  stkCountdown = setInterval(() => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    document.getElementById("stk-countdown").innerText = `${m}:${s.toString().padStart(2, '0')}`;
+    if (--seconds < 0) {
+      clearInterval(stkCountdown);
+      document.getElementById("stk-countdown").innerText = "⛔ Đã hết hạn";
+    }
+  }, 1000);
+}
+
+function closeSTKPopup() {
+  document.getElementById("stk-popup").style.display = "none";
+  clearInterval(stkCountdown);
+}
+function copyToClipboard(elementId, label = "nội dung") {
+  const content = document.getElementById(elementId)?.innerText;
+  if (!content) {
+    showToast(`⚠️ Không tìm thấy ${label} để sao chép.`);
+    return;
+  }
+
+  navigator.clipboard.writeText(content).then(() => {
+    showToast(`📋 Đã sao chép ${label}!`);
+  }).catch(() => {
+    showToast(`❌ Không thể sao chép ${label}.`);
+  });
+}
+
+function copyContentSTK() {
+  const txn = document.getElementById("stk-txn").innerText;
+  navigator.clipboard.writeText(txn).then(() => {
+    showToast("📋 Đã sao chép mã giao dịch!");
+  }).catch(() => {
+    showToast("❌ Không thể sao chép mã giao dịch.");
+  });
+}
+
+function copySTKAccount() {
+  const stk = document.getElementById("stk-account").innerText;
+  navigator.clipboard.writeText(stk).then(() => {
+    alert("📋 Đã sao chép số tài khoản: " + stk);
+  }).catch(() => {
+    alert("❌ Không thể sao chép số tài khoản.");
+  });
+}
+
+function showFullscreenLoading() {
+  if (paymentMode === 'stk') {
+    document.getElementById("stk-loading").style.display = "flex";
+  } else {
+    document.getElementById("qr-loading").style.display = "flex";
+  }
+}
+
+function hideFullscreenLoading() {
+  document.getElementById("qr-loading").style.display = "none";
+  const stk = document.getElementById("stk-loading");
+  if (stk) stk.style.display = "none";
+}
+
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.style.display = "block";
+  toast.style.opacity = 1;
+
+  setTimeout(() => {
+    toast.style.opacity = 0;
+    setTimeout(() => {
+      toast.style.display = "none";
+    }, 400);
+  }, 3000);
+}
+function copyQRTransaction() {
+  if (!window.qrCopyContent) return showToast("❌ Không có nội dung để sao chép.");
+  navigator.clipboard.writeText(window.qrCopyContent).then(() => {
+    showToast("📋 Đã sao chép mã giao dịch!");
+  }).catch(() => {
+    showToast("❌ Không thể sao chép mã giao dịch.");
+  });
+}
+function selectVisaMethod(method) {
+  if (method === "paypal") {
+    redirectToPayPal();
+  } else if (method === "visa") {
+    document.getElementById("visa-options").style.display = "none";
+    document.getElementById("visa-coming-popup").style.display = "block";
+  }
+}
+
+</script>
+<div id="stk-loading" class="loading-overlay" style="display: none;">
+  Đang tạo mã giao dịch...
+</div>
+
+<div id="qr-loading" class="loading-overlay" style="display: none;">
+  <div class="loading-text">🔄 Đang tạo mã QR, vui lòng đợi trong giây lát...</div>
+</div>
+
+<div id="toast" style="
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #4ea6ff;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 14px;
+  z-index: 9999;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+"></div>
+
+
+<!-- ===== Footer Hỗ trợ SolverViet ===== -->
+<div style="margin-top: 80px; text-align: center; color: #ccc; font-size: 14px;">
+  <div style="margin-bottom: 8px;">
+    <span style="color: #ffcc00;">⚠️</span> Nếu bạn gặp sự cố hoặc cần trợ giúp, vui lòng liên hệ nhà phát triển SolverViet:
+  </div>
+  <div style="margin-bottom: 8px;">
+
+  </div>
+  <div style="margin-bottom: 6px;">
+    <span style="color: #ff6666;">📞 Zalo/Điện thoại:</span>
+    <a href="tel:0865645752" style="color: #4ea6ff;">0865645752</a>
+    &nbsp;&nbsp;
+    <span style="color: #66ccff;">📧 Email:</span>
+    <a href="mailto:solverviet@gmail.com" style="color: #4ea6ff;">solverviet@gmail.com</a>
+  </div>
+  <div style="font-style: italic; color: #aaa;">Chúng tôi luôn sẵn sàng hỗ trợ bạn!</div>
+</div>
+<script>
+function redirectToPayPal() {
+  const packageValue = document.getElementById("paypal-package")?.value;
+  const userId = document.getElementById("paypal-userid")?.value;
+
+  if (!packageValue || !userId) {
+    alert("⚠️ Bạn cần chọn gói và nhập thông tin.");
+    return;
+  }
+  console.log("📦 Gửi đến PayPal:", { package: packageValue, user_id: userId });
+
+  fetch("/paypal/start", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      package: packageValue,
+      user_id: userId
+    })
+  })
+  .then(async res => {
+    if (!res.ok) throw new Error("❌ Server trả về lỗi");
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("❌ Server không trả JSON");
+    }
+    return await res.json();
+  })
+
+  .then(data => {
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      alert("❌ Không thể khởi tạo thanh toán.");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert("❌ Lỗi kết nối đến PayPal: " + err);
+  });
+}
+
+</script>
+
+<script>
+function submitStep1() {
+  const name = document.getElementById('input-username').value.trim();
+  const id = document.getElementById('input-userid').value.trim();
+  const errorBox = document.getElementById("step1-error");
+
+  if (!name || !id) {
+    alert('⚠️ Vui lòng nhập đầy đủ tên tài khoản và ID.');
+    return;
+  }
+
+  savedFullname = name;
+  savedUserId = id;
+  loading.style.display = 'flex';
+  errorBox.style.display = "none"; // Ẩn lỗi cũ (nếu có)
+
+  fetch('/verify_user_info', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username: name, user_id: id })
+  })
+  .then(res => res.json())
+  .then(data => {
+    setTimeout(() => {
+      loading.style.display = 'none';
+
+      if (data.valid) {
+        markStepDone(1);
+        enableStep(2);
+      } else {
+        // Hiển thị lỗi ngay bên dưới
+        errorBox.innerText = "❌ Tài khoản hoặc ID không đúng. Vui lòng kiểm tra lại.";
+        errorBox.style.display = "block";
+      }
+    }, 1500); // delay 1.5s để UX mượt
+  })
+  .catch(err => {
+    setTimeout(() => {
+      loading.style.display = 'none';
+      alert("❌ Có lỗi xảy ra. Vui lòng thử lại sau.");
+      console.error(err);
+    }, 1500);
+  });
+}
+function finishTransactionSTK() {
+  const pkgCode = selectedPackage?.[0] || "";
+  const method = currentSTKPlatform || "";
+  const note = window.stkTxn || "";  // Mã giao dịch
+
+  if (!pkgCode || !method || !note) {
+    alert("⚠️ Thiếu thông tin xác thực.");
+    return;
+  }
+
+  document.getElementById("input-package-stk").value = pkgCode;
+  document.getElementById("input-method-stk").value = method;
+  document.getElementById("input-note-stk").value = note;
+
+  document.getElementById("fullscreen-loading").style.display = "flex";
+
+  const formData = new FormData(document.getElementById("upgrade-form-stk"));
+
+  fetch("/upgrade", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(html => {
+    pollTransactionStatus(); // Hàm này bạn đã có, dùng để check trạng thái giao dịch
+  })
+  .catch(err => {
+    document.getElementById("fullscreen-loading").style.display = "none";
+    alert("❌ Lỗi khi gửi giao dịch.");
+    console.error(err);
+  });
+}
+
+function finishTransaction() {
+  const pkgCode = selectedPackage?.[0] || "";
+  const method = selectedWallet || "";
+  const note = window.qrCopyContent || "";
+
+  if (!pkgCode || !method || !note) {
+    alert("⚠️ Thiếu thông tin xác thực.");
+    return;
+  }
+
+  document.getElementById("input-package").value = pkgCode;
+  document.getElementById("input-method").value = method;
+  document.getElementById("input-note").value = note;
+
+  document.getElementById("fullscreen-loading").style.display = "flex";
+
+  const formData = new FormData(document.getElementById("upgrade-form"));
+
+  fetch("/upgrade", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.text())
+  .then(html => {
+    pollTransactionStatus(); // Gọi check /check_status
+  })
+  .catch(err => {
+    document.getElementById("fullscreen-loading").style.display = "none";
+    alert("❌ Lỗi khi gửi giao dịch.");
+    console.error(err);
+  });
+}
+
+function pollTransactionStatus() {
+  let retries = 0;
+  const interval = setInterval(() => {
+    fetch("/check_status")
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.status) return;
+
+        if (data.status === "approved") {
+          clearInterval(interval);
+          document.getElementById("fullscreen-loading").style.display = "none";
+          showPopup("✅ Giao dịch thành công! Bạn sẽ được chuyển sang giao diện chính sau 5 giây.", true);
+          setTimeout(() => window.location.href = "/", 5000);
+        } else if (data.status === "rejected") {
+          clearInterval(interval);
+          document.getElementById("fullscreen-loading").style.display = "none";
+          showPopup(`❌ Giao dịch bị từ chối. <a href="/feedback" style="color:#4ea6ff;">Liên hệ nhà phát triển tại đây</a>.`);
+        }
+
+        retries++;
+        if (retries >= 15) {
+          clearInterval(interval);
+          document.getElementById("fullscreen-loading").style.display = "none";
+          showPopup("❌ Quá thời gian xác thực giao dịch. Vui lòng thử lại sau,hoặc ");
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi kiểm tra trạng thái:", err);
+      });
+  }, 3000);
+}
+
+function showPopup(msg, allowBack = false) {
+  const popup = document.createElement("div");
+  const isSuccess = msg.toLowerCase().includes("thành công");
+  const isError = msg.toLowerCase().includes("từ chối") || msg.toLowerCase().includes("lỗi");
+
+  // ✅ Popup thành công
+  if (isSuccess) {
+    popup.className = "success-popup";
+    popup.innerHTML = `
+      <div class="circle">
+        <svg class="svg-loader" viewBox="0 0 50 50">
+          <circle cx="25" cy="25" r="22" fill="none" stroke="#00e676" stroke-width="4" />
+        </svg>
+        <div class="icon">🎉</div>
+      </div>
+      <p>${msg}</p>
+      ${allowBack ? '<button onclick="window.location.href=\'/\'">Về trang chủ</button>' : ''}
+    `;
+    document.body.appendChild(popup);
+    setTimeout(() => popup.querySelector('.icon').style.opacity = 1, 1000);
+  }
+
+  // ❌ Popup lỗi
+  else if (isError) {
+    popup.className = "error-popup";
+    popup.innerHTML = `
+      <div class="icon">❌</div>
+      <p>${msg}</p>
+    `;
+    document.body.appendChild(popup);
+  }
+
+  // Ẩn sau 5s + reload nếu là popup lỗi
+  if (!allowBack) {
+    setTimeout(() => {
+      popup.style.opacity = 0;
+      setTimeout(() => {
+        popup.remove();
+        if (isError) location.reload();
+      }, 400);
+    }, 5000);
+  }
+}
+
+</script>
+<div id="fullscreen-loading" style="
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+  font-size: 18px;
+  color: white;">
+  Đang xác thực giao dịch ( điều này có thể mất vài phút)...
+</div>
+<script>
+  // 🟡 Truyền từ Flask
+  const hasGPT = {{ 'true' if vip_gpt_active else 'false' }};
+  const hasLite = {{ 'true' if vip_lite_active else 'false' }};
+
+  window.onload = () => {
+    const fullname = "{{ fullname|default('') }}";
+    const userId = "{{ user_id|default('') }}";
+    if (fullname && userId) {
+      document.getElementById('fullname').value = fullname;
+      document.getElementById('userId').value = userId;
+    }
+
+    // ✅ Chặn chọn gói nếu đang có gói khác
+    const packageOptions = document.querySelectorAll(".package-option");
+
+    packageOptions.forEach(option => {
+      const text = option.innerText.toLowerCase();
+
+      if (hasGPT && text.includes("lite")) {
+        option.style.opacity = 0.4;
+        option.style.pointerEvents = "none";
+      }
+
+      if (hasLite && text.includes("slv")) {
+        option.style.opacity = 0.4;
+        option.style.pointerEvents = "none";
+      }
+    });
+  };
+
+  // ✅ Cảnh báo khi cố chọn gói không hợp lệ
+   function selectPackage(el, code, price, displayName) {
+    // 🔒 Nếu đang có GPT → chặn chọn gói Lite
+    if (hasGPT && code === "vip_ai_lite") {
+      showToast("🚫 Hiện bạn đã sở hữu quyền lợi của SLV nên không thể mua gói Lite.");
+      return;
+    }
+
+    // 🔒 Nếu đang có Lite → chặn chọn gói GPT
+    if (hasLite && code.startsWith("vip_gpt")) {
+      showToast("🚫 Hiện bạn đã sở hữu quyền lợi của Lite nên không thể mua gói SLV.");
+      return;
+    }
+
+    // ⚠️ Nếu đã có gói GPT → cảnh báo ghi đè
+    if (hasGPT && code.startsWith("vip_gpt")) {
+      showToast("⚠️ Cân nhắc: Gói SLV của bạn chưa hết hạn. Nếu mua thêm sẽ bị ghi đè, không cộng dồn ngày.");
+    }
+
+    // ⚠️ Nếu đã có gói Lite và chọn lại Lite → cảnh báo mất hiệu lực cũ
+    if (hasLite && code === "vip_ai_lite") {
+      showToast("⚠️ Bạn hiện tại đang sở hữu gói Lite. Nếu bạn chọn gói Lite này, gói hiện tại sẽ bị mất hiệu lực.");
+    }
+
+    // ✅ Cho chọn gói
+    document.querySelectorAll('.package-option').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPackage = [code, price, displayName];
+  }
+
+
+</script>
+
+
+</body>
+</html>

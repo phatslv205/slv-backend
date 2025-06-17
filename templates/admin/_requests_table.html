@@ -1,0 +1,38 @@
+{% if txs %}
+<table>
+    <tr>
+        <th>Username</th>
+        <th>Gói</th>
+        <th>Phương thức</th>
+        <th>Ghi chú</th>
+        <th>Thời gian</th>
+        <th>Duyệt</th>
+        <th>Từ chối</th>
+    </tr>
+    {% for tx in txs %}
+        <tr>
+            <td>{{ tx.username }}</td>
+            <td>
+            {% if tx.package == "vip_gpt_5d" %}SLV 5 ngày – 49K
+            {% elif tx.package == "vip_gpt_15d" %}SLV 15 ngày – 109K
+            {% elif tx.package == "vip_gpt_30d" %}SLV 30 ngày – 149K
+            {% elif tx.package == "vip_ai_lite" %}AI Lite – 7 ngày – 25K
+            {% else %}{{ tx.amount }}
+            {% endif %}
+
+            </td>
+            <td>{{ tx.method }}</td>
+            <td>{{ tx.note }}</td>
+            <td>{{ tx.created_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+            <td>
+                <a class="btn-approve" href="{{ url_for('approve_transaction', txn_id=tx.txn_id) }}">✔ Duyệt</a>
+            </td>
+            <td>
+                <a class="btn-reject" href="{{ url_for('reject_transaction', txn_id=tx.txn_id) }}">✖ Từ chối</a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>Không có giao dịch nào.</p>
+{% endif %}
