@@ -1,0 +1,1 @@
+window.addEventListener('DOMContentLoaded', () => {lucide.createIcons(); });function handlePlus() {alert("📌 Chức năng bổ sung sẽ được cập nhật sau!");}

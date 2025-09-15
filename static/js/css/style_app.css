@@ -1,0 +1,35 @@
+@keyframes slideUp {
+  0% { transform: translateY(40px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes spinSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes pop {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-slide-up { animation: slideUp 1s ease-out forwards; }
+.animate-fade-in { animation: fadeIn 1.5s ease-out forwards; }
+.animate-spin-slow { animation: spinSlow 4s linear infinite; }
+.animate-pop { animation: pop 0.5s ease-out forwards; }
+html, body {overflow: hidden;height: 100%;}
+
+
+nav * {
+    cursor: pointer;
+}
+  .ripple { position: relative; overflow: hidden; }
+  .ripple::after{
+    content:""; position:absolute; border-radius:9999px; pointer-events:none;
+    width:8rem; height:8rem; background: radial-gradient(circle, rgba(34,211,238,.35), transparent 60%);
+    left:var(--rx,50%); top:var(--ry,50%); transform:translate(-50%,-50%) scale(0);
+    opacity:.8; transition: transform .45s ease, opacity .6s ease;
+  }
+  .ripple.play::after{ transform:translate(-50%,-50%) scale(3); opacity:0; }

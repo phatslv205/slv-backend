@@ -1,0 +1,1 @@
+window.addEventListener("load",function(){const e=document.getElementById("doc-loading-overlay");if(e){e.style.display="none"}});

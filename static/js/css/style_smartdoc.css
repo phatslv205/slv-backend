@@ -1,0 +1,22 @@
+#preview-content{background:#f4f4f4;padding:40px 60px;max-width:800px;margin:0 auto;box-shadow:0 0 10px rgba(0,0,0,0.2);font-family:"Times New Roman",serif;font-size:13.5pt;color:black;line-height:1.6;page-break-after:always}
+#preview-content p{text-align:justify;text-indent:28px;margin-bottom:10px;white-space:pre-line}
+#preview-content .center{text-align:center;font-weight:bold;text-transform:uppercase}
+#preview-content strong{font-weight:bold}
+#doc-loading-overlay{display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.6);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center}
+.loading-box-svg{text-align:center;color:white;font-family:'Segoe UI',sans-serif;animation:float 1.6s ease-in-out infinite}
+.loading-box-svg svg{margin-bottom:15px;stroke-dasharray:60;stroke-dashoffset:0;animation:draw 2s linear infinite}
+@keyframes float{0%{transform:translateY(0)}50%{transform:translateY(-4px)}100%{transform:translateY(0)}}
+@keyframes draw{0%{stroke-dashoffset:60}100%{stroke-dashoffset:0}}
+.loading-box-svg .text{font-size:20px}
+.loading-box-svg .dots span{opacity:0;animation:blink 1.4s infinite}
+.loading-box-svg .dots span:nth-child(2){animation-delay:0.2s}
+.loading-box-svg .dots span:nth-child(3){animation-delay:0.4s}
+@keyframes blink{0%,100%{opacity:0}50%{opacity:1}}
+body.loading-block{overflow:hidden;touch-action:none}
+.fade-in{animation:fadeIn 1s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+#doc-success-msg{display:none;font-size:18px;color:green;margin-bottom:10px;animation:popFade 1s ease forwards}
+@keyframes popFade{0%{opacity:0;transform:scale(0.9)}50%{opacity:1;transform:scale(1.05)}100%{transform:scale(1)}}
+@keyframes gradient{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.animate-gradient{background-size:400% 400%;animation:gradient 15s ease infinite}
+#toast{transition:opacity 0.3s ease}

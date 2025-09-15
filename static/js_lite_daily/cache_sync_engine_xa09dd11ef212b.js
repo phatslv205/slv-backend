@@ -1,0 +1,2 @@
+function showFeaturePopup() {const popup = document.getElementById("feature-popup");popup.style.display = "block";setTimeout(() => {popup.style.display = "none";}, 2000); }
+document.addEventListener("DOMContentLoaded", () => {const restrictedButtons = document.querySelectorAll(".only-gpt");restrictedButtons.forEach(btn => {btn.addEventListener("click", (e) => { e.preventDefault();showFeaturePopup();});});});

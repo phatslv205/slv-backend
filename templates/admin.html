@@ -1,135 +1,398 @@
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>SolverViet Admin - Điều Hướng</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f4f6f9;
-    }
-    .sidebar {
-      height: 100vh;
-      width: 240px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #1e1e2f;
-      color: white;
-      padding-top: 20px;
-    }
-    .sidebar h2 {
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 30px;
-    }
-    .sidebar a {
-      display: block;
-      color: white;
-      padding: 12px 20px;
-      text-decoration: none;
-      font-size: 16px;
-      transition: background 0.3s;
-    }
-    .sidebar a:hover {
-      background-color: #3c3c5c;
-    }
-    .main {
-      margin-left: 260px;
-      padding: 40px;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<style>body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: #1e1e2e; color: #f1f1f1; }
+.sidebar { height: 100vh; width: 240px; position: fixed; top: 0; left: 0; background-color: #111827; color: white; padding-top: 20px; border-right: 1px solid #2d3748; }
+.sidebar h2 { text-align: center; font-size: 18px; margin-bottom: 30px; color: #000000; }
+.sidebar a { display: block; color: #e5e7eb; padding: 12px 20px; text-decoration: none; font-size: 15px; transition: all 0.2s; }
+.sidebar a:hover { background-color: #374151; color: #ffffff; }
+.main { margin-left: 260px; padding: 40px; }
+.btn-custom { background-color: #3b82f6; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 15px; margin-bottom: 12px; }
+.btn-custom:hover { background-color: #2563eb; }
+hr { border-top: 1px solid #4b5563; }
+.card-box { background-color: #2d2d3a; padding: 16px; border-radius: 8px; color: #f1f5f9; }
+@keyframes fadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+body { animation: fadeIn 0.6s ease-in-out; }
+@keyframes slide-down { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+.animate-slide-down { animation: slide-down 0.3s ease-out; }</style>
+
 </head>
 <body>
+<div id="toast-container" style="
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+"></div>
 
 <div class="sidebar">
-  <h2>🛠️ SolverViet Admin</h2>
-  <a href="/admin_users">👥 Người dùng</a>
-  <a href="/admin/review" class="btn btn-outline-warning mb-3">💎 Gói VIP chờ duyệt</a>
-
-<a href="/admin/gop-y">📩 Góp ý</a>
-
-<a href="/admin/gui-thong-bao">🔔 Gửi thông báo</a>
-
-  <a href="#" onclick="showStats()">📈 Thống kê</a>
-  <a href="/admin/bao-tri">🔧 Bảo trì hệ thống</a>
-
-
-
+  <h2> SolverViet Admin</h2>
+  <a href="/admin_users"> Người dùng</a>
+  <a href="/admin/review"> Gói VIP chờ duyệt</a>
+  <a href="/admin/gop-y">Góp ý{% if feedback_count and feedback_count > 0 %} <span class="bg-red-600 text-white text-xs font-semibold px-2 py-0.5 rounded-full">{{ feedback_count }}</span>{% endif %}</a>
+  <a href="/admin/gui-thong-bao"> Gửi thông báo</a>
+  <a href="/admin/bao-tri"> Bảo trì hệ thống</a>
+  <a href="/admin/daily_stats"> Thống kê AI mỗi ngày</a>
+  <a href="/server_status">📡 Trạng thái Server</a>
 </div>
 
 <div class="main" id="defaultBox">
-  <h2>📊 Trung tâm điều hành SolverViet</h2>
+  <h2>Trung tâm điều hành SolverViet</h2>
   <p>Chọn chức năng quản lý từ thanh menu bên trái.</p>
-  <button onclick="restoreUsersJson()" style="
-  padding: 8px 16px;
-  background-color: #00aaff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  margin-top: 10px;
-  cursor: pointer;
-">
-  🛠️ Khôi phục users.json
-</button>
 
-<div id="restore-result" style="margin-top: 8px; color: #fff; font-size: 0.95rem;"></div>
 
-    <button onclick="cleanupChats()" style="margin-top: 20px; padding: 10px 20px; background-color: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;">
+<!-- Ghi chú hệ thống tổng hợp -->
+<div style="background-color: #000000; border: 1px solid #5a5a5a; padding: 20px; border-radius: 10px; margin-top: 24px; font-size: 15px;">
+
+  <strong>🧹 Dọn chat cũ mỗi đầu tháng:</strong><br>
+  Để tránh nặng hệ thống, admin nên xoá bớt chat cũ trong bảng <code>chat_history</code> bằng câu lệnh sau:
+  <div style="position: relative; margin-top: 12px; margin-bottom: 20px;">
+    <pre id="code1" style="background: #1e1e1e; color: #00c3ff; padding: 12px 16px; border-radius: 6px; font-family: monospace; font-size: 14px; overflow-x: auto;">
+DELETE FROM chat_history
+WHERE timestamp &lt; CURRENT_DATE;
+    </pre>
+    <button onclick="copyCode('code1')" title="Sao chép" style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+        <path d="M16 1H8C7.44772 1 7 1.44772 7 2V4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V6C20 4.89543 19.1046 4 18 4H17V2C17 1.44772 16.5523 1 16 1ZM9 3H15V4H9V3ZM18 6V20H6V6H18Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <strong>🖼️ Dọn ảnh AI cũ sau 15 ngày:</strong><br>
+  Dùng để xoá dữ liệu ảnh đã tạo lâu từ bảng <code>image_history</code>:
+  <div style="position: relative; margin-top: 12px; margin-bottom: 20px;">
+    <pre id="code2" style="background: #1e1e1e; color: #00d1ec; padding: 12px 16px; border-radius: 6px; font-family: monospace; font-size: 14px; overflow-x: auto;">
+DELETE FROM image_history
+WHERE created_at &lt; CURRENT_DATE - INTERVAL '15 days';
+    </pre>
+    <button onclick="copyCode('code2')" title="Sao chép" style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+        <path d="M16 1H8C7.44772 1 7 1.44772 7 2V4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V6C20 4.89543 19.1046 4 18 4H17V2C17 1.44772 16.5523 1 16 1ZM9 3H15V4H9V3ZM18 6V20H6V6H18Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <strong>🔁 Cập nhật service:</strong><br>
+  Mỗi khi chỉnh sửa mã nguồn hoặc giao diện, hãy chạy lệnh sau để áp dụng thay đổi:
+  <div style="position: relative; margin-top: 12px; margin-bottom: 20px;">
+    <pre id="code3" style="background: #1e1e1e; color: #00ffff; padding: 12px 16px; border-radius: 6px; font-family: monospace; font-size: 14px; overflow-x: auto;">
+sudo systemctl restart slv.service
+    </pre>
+    <button onclick="copyCode('code3')" title="Sao chép" style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+        <path d="M16 1H8C7.44772 1 7 1.44772 7 2V4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V6C20 4.89543 19.1046 4 18 4H17V2C17 1.44772 16.5523 1 16 1ZM9 3H15V4H9V3ZM18 6V20H6V6H18Z"/>
+      </svg>
+    </button>
+  </div>
+
+  <strong>🚀 Dọn RAM và log khi hệ thống quá tải:</strong><br>
+  Nếu thấy VPS bị nặng, bạn có thể thủ công chạy lệnh sau để dọn RAM, cache, log và ảnh AI cũ:
+  <div style="position: relative; margin-top: 12px;">
+    <pre id="code4" style="background: #1e1e1e; color: #f2b05e; padding: 12px 16px; border-radius: 6px; font-family: monospace; font-size: 14px; overflow-x: auto;">
+/root/clean_up_daily.sh
+    </pre>
+    <button onclick="copyCode('code4')" title="Sao chép" style="position: absolute; top: 8px; right: 8px; background: none; border: none; cursor: pointer;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+        <path d="M16 1H8C7.44772 1 7 1.44772 7 2V4H6C4.89543 4 4 4.89543 4 6V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V6C20 4.89543 19.1046 4 18 4H17V2C17 1.44772 16.5523 1 16 1ZM9 3H15V4H9V3ZM18 6V20H6V6H18Z"/>
+      </svg>
+    </button>
+  </div>
+  <hr style="border-color: #5a5a5a; margin: 32px 0;">
+
+  <strong>🔍 Kiểm tra từ trong từ điển:</strong><br>
+  Dùng để tra nhanh xem từ bạn định thêm đã có trong file `viet_dictionary.json` chưa.
+
+  <div style="margin-top: 12px; padding: 16px; background: #1e1e1e; border: 1px solid #5a5a5a; border-radius: 8px;">
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <input id="search_tu" placeholder="Nhập cụm từ cần kiểm tra..."
+        style="flex: 1; padding: 10px 14px; border-radius: 6px; border: 1px solid #5a5a5a; background: #2a2a2a; color: white; font-size: 14px;" />
+      <button onclick="checkTuTrongTuDien()" style="background: #2563eb; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">
+        Kiểm tra
+      </button>
+    </div>
+    <div id="result_check_tu" style="margin-top: 12px; color: #c0c0c0; font-size: 14px;"></div>
+    <p style="margin-top: 12px; font-size: 14px; color: #cccccc;">
+ <em>Nếu có người dùng góp ý cụm từ, sau khi tạo đoạn JSON, bạn nhớ thêm dòng:</em><br>
+<code style="color: #00e0ff;">"nguoi_cung_cap": "Tên người dùng"</code><br>
+<em>Ví dụ:</em> <code style="color: #7fffd4;">"nguoi_cung_cap": "Phát Nguyễn"</code>
+</p>
+
+  </div>
+
+</div>
+
+
+  <hr>
+<div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; justify-content: center;">
+
+  <a href="https://platform.openai.com/account/billing" target="_blank" style="
+    display: inline-block;
+    width: 240px;
+    text-align: center;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: 12px 18px;
+    font-size: 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(34, 197, 94, 0.3);
+    transition: all 0.25s ease;
+  "
+  onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 14px rgba(34, 197, 94, 0.45)';"
+  onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(34, 197, 94, 0.3)';"
+  >
+    ✅ Core
+  </a>
+
+  <!-- Dọn chat -->
+  <button onclick="cleanupChats()" style="
+    display: inline-block;
+    width: 240px;
+    text-align: center;
+    background: linear-gradient(135deg, #ef4444, #b91c1c);
+    color: white;
+    padding: 12px 18px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    transition: all 0.25s ease;
+    cursor: pointer;
+  "
+  onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 14px rgba(239, 68, 68, 0.5)';"
+  onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(239, 68, 68, 0.3)';"
+  >
     🧹 Dọn chat quá 30 ngày
   </button>
+<button onclick="cleanupOldAIImages()" style="
+  display: inline-block;
+  width: 240px;
+  text-align: center;
+  background: linear-gradient(135deg, #06b6d4, #0e7490);
+  color: white;
+  padding: 12px 18px;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+  transition: all 0.25s ease;
+  cursor: pointer;
+"
+onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 14px rgba(6, 182, 212, 0.45)';"
+onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(6, 182, 212, 0.3)';"
+>
+  🖼️ Dọn ảnh AI quá 30 ngày
+</button>
+  <!-- Logout -->
+  <a href="/logout" style="
+    display: inline-block;
+    width: 240px;
+    text-align: center;
+    background: linear-gradient(135deg, #f87171, #b91c1c);
+    color: white;
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(248, 113, 113, 0.3);
+    transition: all 0.25s ease;
+  "
+  onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 14px rgba(248, 113, 113, 0.5)';"
+  onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 10px rgba(248, 113, 113, 0.3)';"
+  >
+    🔐 Secure Logout
+  </a>
 
-  <p id="cleanup-result" style="margin-top: 10px; font-style: italic; color: #333;"></p>
-
-     <hr style="margin: 16px 20px; border: 0.5px solid #444;">
-  <a href="/logout" style="color: #f87171;">🚪 Đăng xuất</a>
 </div>
 
 
-<div id="thongkeBox" class="main" style="display: none;">
+<div class="mt-3 animate-slide-down" style="font-size: 15px;">
+<div style="background-color: #111827; color: #f3f4f6; padding: 25px; border-radius: 12px; line-height: 1.65; font-size: 15px;">
+  <strong class="text-cyan-400 text-lg">📘 Ghi chú đầy đủ các cột trong bảng <code>users</code>:</strong>
 
-  <h2 class="text-xl font-bold mb-4">📈 Thống kê hệ thống</h2>
+  <h5 class="mt-4 font-bold text-pink-400">🧑‍💼 Thông tin cá nhân</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>user_id</code>: ID duy nhất (UUID dạng chuỗi)</li>
+    <li><code>username</code>: Tên đăng nhập</li>
+    <li><code>password</code>: Mật khẩu (đã mã hóa)</li>
+    <li><code>email</code>: Email người dùng</li>
+    <li><code>fullname</code>: Họ tên đầy đủ</li>
+    <li><code>avatar_url</code>: URL avatar đại diện</li>
+    <li><code>bio</code>: Tiểu sử (giới thiệu bản thân)</li>
+    <li><code>bio_updated_at</code>: Thời gian cập nhật tiểu sử</li>
+    <li><code>privacy</code>: Cài đặt riêng tư (JSON)</li>
+  </ul>
+   <h5 class="mt-8 font-bold text-red-400">⚙️ Cách giảm lag cho server khi CPU NEWORD cao</h5>
+<ul class="ml-5 list-disc">
+  <li>Chạy <code>pkill -f vscode-server</code> để kết thúc toàn bộ tiến trình phụ từ VSCode Remote (không ảnh hưởng hệ thống).</li>
+  <li>Nếu cần thiết, dọn cache bằng <code>rm -rf ~/.vscode-server</code> để VSCode tự cài lại server.</li>
+  <li>Mở lại VSCode, nhấn <strong>Ctrl + Shift + P</strong> → chọn <code>Python: Select Interpreter</code> và chọn đúng môi trường như <code>~/slv_project/venv/bin/python</code>.</li>
+  <li>Cuối cùng, chọn lại <code>Python: Restart Language Server</code> để VSCode nhận lại thư viện.</li>
+  <li>Tránh mở quá nhiều tab VSCode hoặc để session treo, sẽ gây ngốn CPU.</li>
+</ul>
 
-<div class="mt-6">
-  <a href="#" onclick="hideStats()" class="text-blue-600 hover:underline text-sm">↩️ Quay về giao diện điều hành</a>
+  <h5 class="mt-4 font-bold text-yellow-400">🔐 Xác thực & trạng thái</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>is_blocked</code>: Tài khoản bị khóa hay không</li>
+    <li><code>otp_code</code>: Mã OTP gần nhất</li>
+    <li><code>wants_verification</code>: Đã yêu cầu xác thực chưa</li>
+    <li><code>is_verified</code>: Đã xác thực email hay chưa</li>
+    <li><code>email_temp</code>: Email tạm khi đổi email</li>
+  </ul>
+  <h5 class="mt-6 font-bold text-green-400">📦 Backup toàn bộ dự án Flask từ VPS về máy</h5>
+<ul class="ml-5 list-disc text-sm leading-relaxed">
+  <li><b>Bước 1</b>: Trên VS Code (đang kết nối SSH), chạy:
+    <br><code>cd ..</code>
+    <br><code>zip -r slv_project.zip slv_project</code>
+    <br><code>zip -r slv_project_full.zip .</code><a>sẽ là nén toàn bộ thành dự án bằng zip kể cả venv.</a>
+    <br><i>(Lệnh này sẽ nén toàn bộ thư mục <code>slv_project</code> thành file <code>slv_project.zip</code>)</i>
+  </li>
+  <li><b>Bước 2</b>: Kiểm tra xem file zip đã tạo xong chưa bằng:
+    <br><code>ls -lh</code>
+    <br><i>(Đảm bảo file <code>slv_project.zip</code> có dung lượng đúng)</i>
+  </li>
+  <li><b>Bước 3</b>: Trên máy cá nhân (Windows), mở PowerShell và chạy:
+    <br><code>scp root@45.252.248.215:/root/slv_project.zip C:\Users\Admin\Downloads\</code>
+    <br><i>(Thay IP nếu cần. Khi được yêu cầu, hãy nhập mật khẩu VPS)</i>
+  </li>
+  <li><b>Bước 4</b>: Sau khi tải xong, vào thư mục <code>Downloads</code> và giải nén file <code>slv_project.zip</code> để lấy lại toàn bộ mã nguồn</li>
+</ul>
+
+<h5 class="mt-4 font-bold text-blue-400">🗄️ Hướng dẫn sao lưu & khôi phục dữ liệu SQL (PostgreSQL)</h5>
+<ul class="ml-5 list-disc">
+  <li><code>1. Tạo thư mục backup (1 lần duy nhất):</code> <br> 
+      <code>mkdir -p /home/backup</code>
+  </li>
+
+  <li><code>2. Tạo file script sao lưu:</code> <br> 
+      <code>nano /home/backup/full_backup.sh</code>
+  </li>
+
+  <li><code>3. Nội dung file:</code> <br>
+    <code>
+    #!/bin/bash<br>
+    export PGPASSWORD="slv2025"<br>
+    DATE=$(date +%F)<br>
+    pg_dump -U postgres -h 127.0.0.1 -d slv_users > /home/backup/slv_db_$DATE.sql
+    </code>
+  </li>
+
+  <li><code>4. Cấp quyền chạy script:</code> <br> 
+      <code>chmod +x /home/backup/full_backup.sh</code>
+  </li>
+
+  <li><code>5. Chạy script để sao lưu ngay:</code> <br> 
+      <code>bash /home/backup/full_backup.sh</code>
+  </li>
+
+  <li><code>6. File .sql sau khi sao lưu sẽ nằm tại:</code> <br> 
+      <code>/home/backup/slv_db_YYYY-MM-DD.sql</code>
+  </li>
+
+  <li><code>7. Để tải về máy tính (từ bên ngoài VPS):</code> <br> 
+    <code>
+    scp root@45.252.248.215:/home/backup/slv_db_YYYY-MM-DD.sql ~/Desktop/
+    </code>
+  </li>
+
+  <li><code>8. Sau này nếu mất DB:</code><br>
+    - Nếu DB còn tồn tại nhưng mất dữ liệu, khôi phục bằng: <br>
+    <code>PGPASSWORD="slv2025" psql -U postgres -h 127.0.0.1 -d slv_users &lt; /home/backup/slv_db_YYYY-MM-DD.sql</code><br><br>
+    - Nếu DB đã bị xóa, tạo lại rồi khôi phục: <br>
+    <code>
+    PGPASSWORD="slv2025" createdb -U postgres -h 127.0.0.1 slv_users<br>
+    PGPASSWORD="slv2025" psql -U postgres -h 127.0.0.1 -d slv_users &lt; /home/backup/slv_db_YYYY-MM-DD.sql
+    </code>
+  </li>
+
+  <li><code>💡 Gợi ý:</code> Có thể thiết lập cronjob để tự động backup mỗi ngày hoặc mỗi tuần. <br>
+    Ví dụ: mở cron bằng <code>crontab -e</code> và thêm dòng: <br>
+    <code>0 2 * * * /home/backup/full_backup.sh</code>
+  </li>
+</ul>
+
+
+  <h5 class="mt-6 font-bold text-green-400">🛠 Quản trị hệ thống Flask & VPS</h5>
+<ul class="ml-5 list-disc text-sm leading-relaxed">
+  <li><code>sudo systemctl status slv.service</code>: Kiểm tra Flask server có đang chạy không</li>
+  <li><code>sudo lsof -i :5000</code>: Kiểm tra Flask đã chiếm cổng 5000 chưa (nếu dùng SocketIO)</li>
+  <li><code>journalctl -u slv.service -n 50</code>: Xem log mới nhất của Flask (giúp debug khi lỗi)</li>
+  <li><code>htop</code>: Kiểm tra CPU/RAM theo thời gian thực (dễ theo dõi hơn <code>top</code>)</li>
+  <li><code>df -h</code>: Kiểm tra dung lượng VPS (tránh bị đầy ổ gây lỗi)</li>
+  <li><code>sudo certbot certificates</code>: Xem chứng chỉ SSL và ngày hết hạn</li>
+</ul>
+
+  <h5 class="mt-4 font-bold text-blue-400">📶 Trạng thái hoạt động</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>created_at</code>: Ngày tạo tài khoản</li>
+    <li><code>last_seen</code>: Thời điểm hoạt động cuối</li>
+    <li><code>online</code>: Đang online hay không</li>
+  </ul>
+
+  <h5 class="mt-4 font-bold text-purple-400">💬 Cấu hình AI & cá nhân hóa</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>ai_personality</code>: Tính cách AI đã chọn</li>
+    <li><code>ai_system_prompt</code>: Prompt hệ thống cá nhân</li>
+    <li><code>ai_personality_rolls_left</code>: 5 lượt đầu chưa xác thực để thay đổi AI</li>
+    <li><code>ai_personality_rolls_reset</code>: Thời điểm reset lượt chọn tính cách</li>
+  </ul>
+
+  <h5 class="mt-4 font-bold text-red-400">⚡️ Quản lý lượt sử dụng AI</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>free_gpt_uses</code>: 15 lượt miễn phí sau khi xác thực</li>
+    <li><code>daily_fallback_uses</code>: 5 lượt mỗi ngày nếu không có gói Lite/SLV</li>
+    <li><code>daily_fallback_date</code>: Ngày sử dụng fallback gần nhất</li>
+    <li><code>daily_fallback_uses</code>: <b>5 lượt fallback mỗi ngày</b> nếu không có gói SLV hoặc AI Lite</li>
+    <li><code>gpt_usage_today</code>: Tổng lượt GPT dùng hôm nay</li>
+    <li><code>gpt_usage_date</code>: Ngày tương ứng của gpt_usage_today</li>
+  </ul>
+
+  <h5 class="mt-4 font-bold text-green-400">🎟️ Gói & quyền truy cập</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>vip_until_gpt</code>: Hạn gói SLV (GPT không giới hạn)</li>
+    <li><code>vip_until_lite</code>: Hạn gói AI Lite (50 lượt/ngày)</li>
+    <li><code>vip_gpt</code>: Tên gói SLV đang dùng</li>
+    <li><code>vip_gpt_ai</code>: Có gói SLV AI không</li>
+    <li><code>vip_ai_lite</code>: Có gói AI Lite không</li>
+  </ul>
+
+  <h5 class="mt-4 font-bold text-indigo-400">📊 Theo dõi gói AI Lite</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>lite_usage</code>: Lượt dùng AI Lite trong hôm nay (tối đa 50)</li>
+    <li><code>lite_date</code>: Ngày dùng gần nhất của AI Lite (dùng để reset lượt)</li>
+    <li><code>last_lite_free_date</code>: Ngày reset lượt fallback mỗi ngày (trường cũ)</li>
+  </ul>
+
+  <h5 class="mt-4 font-bold text-rose-400">⛔ Quản lý giới hạn & chặn</h5>
+  <ul class="ml-5 list-disc">
+    <li><code>over_quota_block</code>: Bị chặn vì dùng quá giới hạn</li>
+    <li><code>over_quota_block_at</code>: Thời điểm bị chặn do quá quota</li>
+    <li><code>gpt_unlimited</code>: Cờ nội bộ mở quyền GPT không giới hạn</li>
+  </ul>
 </div>
 
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-800">
-    <div class="bg-gray-100 rounded p-4"><strong>👥 Tổng người dùng:</strong> {{ tong_nguoi_dung }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>🟢 Người đang VIP:</strong> {{ so_vip }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>🕓 Người hết VIP:</strong> {{ so_het_vip }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>📬 Góp ý đã nhận:</strong> {{ tong_gopy }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>📨 Thư đang lưu:</strong> {{ tong_thu }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>🧠 Lượt dùng AI:</strong> {{ tong_luot_ai }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>💰 Gói VIP đã duyệt:</strong> {{ so_goi_duyet }}</div>
-    <div class="bg-gray-100 rounded p-4"><strong>📅 Doanh thu (ước tính):</strong> {{ doanh_thu }} VNĐ</div>
-  </div>
-</div>
 <script>
 function showStats() {
   document.getElementById("defaultBox").style.display = "none";
   document.getElementById("thongkeBox").style.display = "block";
 }
-</script>
-<script>
-function showStats() {
-  document.getElementById("defaultBox").style.display = "none";
-  document.getElementById("thongkeBox").style.display = "block";
-}
-
 function hideStats() {
-  document.getElementById("thongkeBox").style.display = "none";
   document.getElementById("defaultBox").style.display = "block";
+  document.getElementById("thongkeBox").style.display = "none";
 }
-</script>
-<script>
 function cleanupChats() {
   if (!confirm("Bạn có chắc muốn dọn tất cả đoạn chat quá 30 ngày không?")) return;
-
   fetch("/admin/cleanup_chats_30_days")
     .then(response => response.text())
     .then(data => {
@@ -137,29 +400,89 @@ function cleanupChats() {
     })
     .catch(error => {
       document.getElementById("cleanup-result").innerText = "⚠️ Có lỗi xảy ra khi dọn dẹp.";
-      console.error(error);
     });
 }
-</script>
-<script>
 function restoreUsersJson() {
-  fetch("/admin/restore_users_json", {
-    method: "POST"
-  })
-  .then(res => res.json())
-  .then(data => {
-    const resultDiv = document.getElementById("restore-result");
-    resultDiv.textContent = data.message;
-    resultDiv.style.color = data.success ? "#00cc88" : "#ff4444";
-  })
-  .catch(() => {
-    const resultDiv = document.getElementById("restore-result");
-    resultDiv.textContent = "❌ Không thể kết nối máy chủ!";
-    resultDiv.style.color = "#ff4444";
-  });
+  fetch("/admin/restore_users_json", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      const resultDiv = document.getElementById("restore-result");
+      resultDiv.textContent = data.message;
+      resultDiv.style.color = data.success ? "#22c55e" : "#ef4444";
+    })
+    .catch(() => {
+      const resultDiv = document.getElementById("restore-result");
+      resultDiv.textContent = "❌ Không thể kết nối máy chủ!";
+      resultDiv.style.color = "#ef4444";
+    });
 }
-</script>
 
+function showToast(message, color = 'bg-green-600') {
+  const container = document.getElementById("toast-container");
+
+  const toast = document.createElement("div");
+  toast.className = `${color} text-white text-sm px-4 py-2 rounded shadow-md animate-slide-in`;
+  toast.innerText = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("opacity-0", "transition-opacity", "duration-500");
+    setTimeout(() => toast.remove(), 500);
+  }, 2500);
+}
+
+function copyCode(id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text)
+    .then(() => showToast("✅ Đã sao chép!"))
+    .catch(() => showToast("❌ Lỗi sao chép", 'bg-red-600'));
+}
+function checkTuTrongTuDien() {
+  const tu = document.getElementById("search_tu").value.trim();
+  if (!tu) return showToast("Vui lòng nhập từ cần kiểm tra", "warning");
+
+  fetch("/admin/check_tu", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tu: tu })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.exists) {
+        document.getElementById("result_check_tu").innerHTML = `✅ <b>"${tu}"</b> đã có trong từ điển.<br><span class="italic">File: viet_dictionary.json</span>`;
+      } else {
+        document.getElementById("result_check_tu").innerHTML = `❌ <b>"${tu}"</b> chưa có trong từ điển. Bạn có thể thêm mới.`;
+      }
+    })
+    .catch(err => {
+      document.getElementById("result_check_tu").innerHTML = `⚠️ Lỗi: ${err}`;
+    });
+}
+document.getElementById("search_tu").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    checkTuTrongTuDien();
+  }
+});
+function cleanupOldAIImages() {
+  fetch("/cleanup_old_ai_images", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        showToast(data.message || "Đã dọn dẹp ảnh quá hạn!");
+        console.log("Đã xóa:", data.deleted);
+      } else {
+        showToast("❌ Lỗi khi dọn ảnh: " + data.error);
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      showToast("❌ Kết nối thất bại.");
+    });
+}
+
+</script>
 
 </body>
 </html>

@@ -1,0 +1,1 @@
+function openRulesPopup() { document.getElementById("rules-popup").style.display = "flex"; } function closeRulesPopup() { document.getElementById("rules-popup").style.display = "none"; }

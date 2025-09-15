@@ -1,0 +1,1 @@
+function showFeaturePopup(){const e=document.getElementById("feature-popup");e.style.display="block";setTimeout(()=>{e.style.display="none"},2000)}document.addEventListener("DOMContentLoaded",()=>{document.querySelectorAll(".only-gpt").forEach(e=>{e.addEventListener("click",t=>{t.preventDefault(),showFeaturePopup()})})});

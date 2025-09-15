@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ghi chú kiểm tra & xử lý sự cố server</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: dark; }
+    body { background: #0f1420; }
+    .card { background: #121a2a; border: 1px solid #1e2a44; border-radius: 14px; }
+    .kbd{background:#0b1220;border:1px solid #1f2a44;border-bottom-width:2px;border-radius:8px;padding:.15rem .35rem}
+    pre{white-space:pre-wrap}
+    code{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace}
+    a.anchor{color:#60a5fa;text-decoration:underline}
+    .toc a{color:#94a3b8}
+  </style>
+</head>
+<body class="text-slate-200">
+  <div class="max-w-6xl mx-auto p-6">
+    <header class="mb-6">
+      <h1 class="text-3xl font-bold">📓 Ghi chú kiểm tra & xử lý sự cố server</h1>
+      <p class="opacity-80">Dùng để tra cứu nhanh khi server lag / web chậm / down. Áp dụng cho VPS AZDIGI + kiểm tra qua SSH. (Web dùng Caddy – không nhắc Nginx)</p>
+    </header>
+<div class="mb-6">
+  <a href="/solverviet_control_x2025" 
+     class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 
+            hover:from-blue-600 hover:to-indigo-600 text-white font-medium shadow-lg transition-all duration-200">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+    </svg>
+    Quay về điều hướng
+  </a>
+</div>
+
+    <!-- TOC -->
+<nav class="card p-4 mb-6 toc">
+  <div class="font-semibold mb-2">Mục lục</div>
+  <ol class="list-decimal list-inside grid md:grid-cols-2 gap-y-1 text-sm">
+    <li><a class="anchor" href="#azdigi">Xem biểu đồ trên AZDIGI</a></li>
+    <li><a class="anchor" href="#quick-check">Checklist nhanh khi web chậm/đơ</a></li>
+    <li><a class="anchor" href="#cpu-high">CPU cao: nguyên nhân & khắc phục</a></li>
+    <li><a class="anchor" href="#ram-high">RAM cao & OOM-killer</a></li>
+    <li><a class="anchor" href="#disk-io">Disk full / I/O cao / inode full</a></li>
+    <li><a class="anchor" href="#network">Network bất thường / nghi DDoS</a></li>
+    <li><a class="anchor" href="#dns-namecheap">DNS & Domain (Namecheap): “Address/A record bị đổi”</a></li>
+    <li><a class="anchor" href="#caddy">Caddy & chứng chỉ TLS</a></li>
+    <li><a class="anchor" href="#db">Database (PostgreSQL) – check nhanh</a></li>
+    <li><a class="anchor" href="#hard-cases">Các tình huống xấu thường gặp</a></li>
+    <li><a class="anchor" href="#ssl-time">SSL/TLS & Đồng bộ thời gian</a></li>
+    <li><a class="anchor" href="#firewall-port">Firewall & Port</a></li>
+    <li><a class="anchor" href="#ulimit">Giới hạn tài nguyên (ulimit, file descriptor)</a></li>
+    <li><a class="anchor" href="#service-reboot">Service chết / reboot an toàn</a></li>
+    <li><a class="anchor" href="#postgres-advanced">PostgreSQL nâng cao</a></li>
+    <li><a class="anchor" href="#disk-health">Ổ đĩa & sức khoẻ phần cứng</a></li>
+    <li><a class="anchor" href="#security">Bảo mật & sự cố bị chiếm quyền</a></li>
+    <li><a class="anchor" href="#queue-cache">Hàng đợi & cache</a></li>
+    <li><a class="anchor" href="#web-errors">App/Web: CORS, Mixed Content, 429</a></li>
+    <li><a class="anchor" href="#email">Email deliverability</a></li>
+    <li><a class="anchor" href="#runbook">Runbook khẩn cấp</a></li>
+    <li><a class="anchor" href="#prevention">Phòng ngừa (Best practices)</a></li>
+    <li><a class="anchor" href="#check-ssl">Kiểm tra ngày hết hạn SSL (Caddy + OpenSSL 3.x)</a></li>
+  </ol>
+</nav>
+    <!-- 1. AZDIGI -->
+    <section id="azdigi" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">1) Xem biểu đồ trên AZDIGI</h2>
+      <ol class="list-decimal list-inside space-y-2">
+        <li>Vào <a class="anchor" target="_blank" href="https://my.azdigi.com">my.azdigi.com</a> → Đăng nhập.</li>
+        <li><b>Dịch vụ</b> → <b>Quản lý VPS</b> → Chọn đúng VPS.</li>
+        <li>Xem các chart:
+          <ul class="list-disc list-inside ml-5">
+            <li><b>CPU Usage</b>: % CPU đang sử dụng (spike cao liên tục &gt;80% là báo động).</li>
+            <li><b>RAM</b>: % RAM; nếu thường &gt; 90% + swap tăng → nguy cơ OOM.</li>
+            <li><b>Disk I/O</b>: đọc/ghi cao liên tục → app đọc/ghi nhiều hoặc swap.</li>
+            <li><b>Network</b>: băng thông gửi/nhận; đột biến → tải lớn hoặc DDoS.</li>
+          </ul>
+        </li>
+        <li><b>Console</b> (trong AZDIGI) nếu SSH không vào được.</li>
+      </ol>
+      <p class="text-sm text-amber-300 mt-2">Mẹo: Ghi lại thời điểm spike để so với log ứng dụng.</p>
+    </section>
+
+    <!-- 2. Checklist nhanh -->
+    <section id="quick-check" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">2) Checklist nhanh khi web chậm/đơ</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>Ping domain: <code>ping -c 3 yourdomain.com</code> (chỉ kiểm tra reachability, không đo web).</li>
+        <li>HTTP alive: <code>curl -I https://yourdomain.com</code> (200/301/302 ok; 502/504 lỗi upstream).</li>
+        <li>Server alive qua IP: <code>curl -I --resolve yourdomain.com:443:YOUR_SERVER_IP https://yourdomain.com</code> (bỏ qua DNS).</li>
+        <li>CPU/RAM/Disk nhanh:
+<pre><code>top -o %CPU
+free -h
+df -h    # dung lượng
+df -i    # inode</code></pre>
+        </li>
+        <li>Log Caddy & hệ thống:
+<pre><code>journalctl -u caddy --since "10 min ago"
+journalctl -p err -xn
+dmesg -T | tail -n 50   # tìm OOM/ lỗi kernel</code></pre>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 3. CPU cao -->
+    <section id="cpu-high" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">3) CPU cao: nguyên nhân & khắc phục</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <h3 class="font-medium mb-1">Nguyên nhân thường gặp</h3>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Traffic tăng đột biến / DDoS layer 7.</li>
+            <li>Vòng lặp vô hạn / task nặng (AI, nén ảnh, export, v.v.).</li>
+            <li>GC/Interpreter (Python) tốn CPU do nhiều request đồng thời.</li>
+            <li>CPU <span class="kbd">steal</span> cao (VPS host bận) – mất tài nguyên.</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-medium mb-1">Cách kiểm tra</h3>
+<pre><code>top -o %CPU
+htop              # cần: apt install htop
+ps -eo pid,ppid,cmd,%cpu,%mem --sort=-%cpu | head -n 15
+mpstat -P ALL 1 5 # sysstat
+vmstat 1 5</code></pre>
+        </div>
+      </div>
+      <h3 class="font-medium mt-3">Khắc phục nhanh</h3>
+      <ul class="list-disc list-inside space-y-1">
+        <li>Xác định PID ngốn CPU → tối ưu code / giới hạn concurrency.</li>
+        <li>Thêm cache (Redis), bật CDN, rate limit.</li>
+        <li>Nếu là VPS steal cao: mở ticket AZDIGI nhờ kiểm tra node.</li>
+      </ul>
+    </section>
+
+    <!-- 4. RAM cao & OOM -->
+    <section id="ram-high" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">4) RAM cao & OOM-killer</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <h3 class="font-medium mb-1">Dấu hiệu</h3>
+          <ul class="list-disc list-inside space-y-1">
+            <li>RAM gần 100% + swap tăng nhanh.</li>
+            <li>Ứng dụng bị kill ngẫu nhiên (OOM-killer).</li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-medium mb-1">Lệnh kiểm tra</h3>
+<pre><code>free -h
+dmesg -T | egrep -i "killed process|out of memory" | tail -n 20
+ps -eo pid,cmd,%mem --sort=-%mem | head -n 15</code></pre>
+        </div>
+      </div>
+      <h3 class="font-medium mt-3">Khắc phục nhanh</h3>
+      <ul class="list-disc list-inside space-y-1">
+        <li>Tạo swap (tạm thời, nếu chưa có):
+<pre><code>sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab</code></pre>
+        </li>
+        <li>Tối ưu app/DB, giới hạn worker/process, fix memory leak.</li>
+        <li>Nâng RAM nếu cần.</li>
+      </ul>
+    </section>
+
+    <!-- 5. Disk / I/O / inode -->
+    <section id="disk-io" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">5) Disk full / I/O cao / inode full</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <h3 class="font-medium mb-1">Kiểm tra</h3>
+<pre><code>df -h
+df -i                  # inode
+du -xh --max-depth=1 /var | sort -h
+iostat -xz 1 3         # sysstat</code></pre>
+        </div>
+        <div>
+          <h3 class="font-medium mb-1">Xử lý nhanh</h3>
+          <ul class="list-disc list-inside space-y-1">
+            <li>Dọn log: <code>journalctl --vacuum-size=200M</code></li>
+            <li>Dọn Docker: <code>docker system prune -af</code></li>
+            <li>Xóa file tạm / build cũ, xoá core dump.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Network / DDoS -->
+    <section id="network" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">6) Network bất thường / nghi DDoS</h2>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <h3 class="font-medium mb-1">Kiểm tra nhanh</h3>
+<pre><code>ss -s                          # tổng quan TCP
+iftop -i eth0                  # cần: apt install iftop
+nload                          # xem tổng in/out
+tcpdump -n dst port 443 -c 200 # mẫu lưu lượng đến 443</code></pre>
+        </div>
+        <div>
+          <h3 class="font-medium mb-1">Dấu hiệu & xử lý</h3>
+          <ul class="list-disc list-inside space-y-1">
+            <li>ESTABLISHED tăng nhanh bất thường → có thể DDoS L7 → bật CDN / WAF, rate limit.</li>
+            <li>In/Out băng thông đột biến → kiểm tra log truy cập app / Caddy.</li>
+            <li>Tạm thời chặn IP xấu (UFW/iptables) nếu rõ ràng.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. DNS / Namecheap -->
+    <section id="dns-namecheap" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">7) DNS & Domain (Namecheap): “Address/A record bị đổi”</h2>
+
+      <h3 class="font-medium mb-1">Triệu chứng</h3>
+      <ul class="list-disc list-inside">
+        <li>Domain trỏ sang IP lạ (không phải VPS của bạn).</li>
+        <li>Web hiển thị trang lạ / parking / 404 của bên thứ ba.</li>
+      </ul>
+
+      <h3 class="font-medium mt-3 mb-1">Nguyên nhân phổ biến</h3>
+      <ul class="list-disc list-inside space-y-1">
+        <li><b>Tài khoản Namecheap bị lộ / API Token bị lạm dụng</b> → A/AAAA record bị sửa.</li>
+        <li><b>Bật Dynamic DNS</b> trên Namecheap → một client trên PC/router đã cập nhật IP mới.</li>
+        <li><b>Đổi Nameserver</b> sang nhà khác (Cloudflare, v.v.) → đang sửa DNS ở nơi khác, không phải Namecheap.</li>
+        <li><b>TTL/Propagation</b> → máy bạn/ISP còn cache IP cũ.</li>
+        <li><b>Domain hết hạn / grace</b> → trỏ tạm về parking IP.</li>
+        <li><b>Nhầm bản ghi</b> (thay vì A lại sửa CNAME/URL Redirect), hoặc sửa bản ghi ở “Environment” sai (staging/prod).</li>
+        <li><b>DNSSEC/Glue</b> cấu hình sai → phân giải sai.</li>
+        <li><b>Hosts file local</b> (Windows/macOS) bị chỉnh → trỏ domain sang IP lạ.</li>
+      </ul>
+
+      <h3 class="font-medium mt-3 mb-1">Cách kiểm tra chính xác</h3>
+<pre><code># 1) So DNS qua nhiều resolver công cộng
+dig +short yourdomain.com A @8.8.8.8
+dig +short yourdomain.com A @1.1.1.1
+
+# 2) Hỏi thẳng authority của Namecheap (ví dụ ns1/2.registrar-servers.com)
+dig yourdomain.com A @ns1.registrar-servers.com +noall +answer
+
+# 3) Xem nameserver hiện tại
+whois yourdomain.com | egrep -i "Name Server|Name Server:"
+
+# 4) Bỏ qua DNS để test đúng server của bạn
+curl -I --resolve yourdomain.com:443:YOUR_SERVER_IP https://yourdomain.com
+
+# 5) So file hosts (nếu nghi ngờ)
+# Windows: C:\Windows\System32\drivers\etc\hosts
+# macOS/Linux: /etc/hosts</code></pre>
+
+      <h3 class="font-medium mt-3 mb-1">Cách khắc phục</h3>
+      <ol class="list-decimal list-inside space-y-1">
+        <li><b>Đổi mật khẩu Namecheap + bật 2FA.</b></li>
+        <li><b>Revoke API tokens</b> không dùng; tắt <b>Dynamic DNS</b> nếu không cần.</li>
+        <li>Kiểm tra & sửa lại bản ghi:  
+          - <b>A</b> cho <code>@</code> → IP VPS  
+          - <b>A</b> cho <code>www</code> (hoặc CNAME <code>www → @</code>)  
+          - Kiểm tra <b>AAAA</b> (IPv6) nếu có – sai là trỏ sai web.  
+          - TTL tạm để <b>5–10 phút</b> khi cần test nhanh.
+        </li>
+        <li>Nếu dùng Cloudflare: Sửa DNS ở Cloudflare (không phải Namecheap), bật “Proxy” nếu muốn ẩn IP.</li>
+        <li>Xóa chỉnh sửa hosts local nếu có.</li>
+        <li>Đợi propagation (~5–30 phút thường đủ). Xóa cache DNS local:
+<pre><code># Windows
+ipconfig /flushdns
+# macOS
+sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder
+# Linux (systemd-resolved)
+sudo resolvectl flush-caches</code></pre>
+        </li>
+      </ol>
+
+      <p class="text-sm text-amber-300 mt-2">Tip: Lưu lại “ảnh chụp” cấu hình DNS chuẩn (A, AAAA, CNAME) để đối chiếu nhanh khi sự cố.</p>
+    </section>
+
+    <!-- 8. Caddy -->
+    <section id="caddy" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">8) Caddy & TLS</h2>
+      <ul class="list-disc list-inside">
+        <li>Trạng thái dịch vụ:
+<pre><code>systemctl status caddy
+journalctl -u caddy --since "15 min ago"</code></pre>
+        </li>
+        <li>Test cấu hình:
+<pre><code>caddy validate --config /etc/caddy/Caddyfile</code></pre>
+        </li>
+        <li>Chứng chỉ/ACME fail thường do: DNS trỏ sai IP, port 80/443 bị chặn, hoặc app chiếm port.</li>
+        <li>Reload:
+<pre><code>sudo systemctl reload caddy</code></pre>
+        </li>
+      </ul>
+    </section>
+
+    <!-- 9. DB -->
+    <section id="db" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">9) PostgreSQL – kiểm tra nhanh</h2>
+      <ul class="list-disc list-inside">
+        <li>Trạng thái & log:
+<pre><code>systemctl status postgresql
+journalctl -u postgresql --since "15 min ago"</code></pre>
+        </li>
+        <li>Kết nối & truy vấn nặng:
+<pre><code>psql -U postgres -d slv_users -c "select pid,usename,query_start,wait_event_type,state,query from pg_stat_activity order by query_start asc limit 20;"</code></pre>
+        </li>
+        <li>Vacuum/Analyze định kỳ; thêm index cho truy vấn chậm.</li>
+      </ul>
+    </section>
+
+    <!-- 10. Hard cases -->
+    <section id="hard-cases" class="card p-5 mb-6">
+      <h2 class="text-xl font-semibold mb-2">10) Các tình huống xấu & cách xử lý</h2>
+      <div class="space-y-2">
+        <details class="bg-slate-800 rounded-md p-3">
+          <summary class="cursor-pointer font-medium">CPU/RAM > 90% liên tục</summary>
+          <ul class="list-disc list-inside mt-2">
+            <li>Xác định PID nặng (<code>top</code>, <code>ps … --sort=-%cpu</code> / <code>--sort=-%mem</code>).</li>
+            <li>Giảm concurrency, thêm queue/background job cho tác vụ nặng.</li>
+            <li>Thêm cache/Redis; CDN cho static.</li>
+            <li>Swap tạm thời (nếu thiếu RAM) + tối ưu app; cân nhắc nâng gói.</li>
+          </ul>
+        </details>
+
+        <details class="bg-slate-800 rounded-md p-3">
+          <summary class="cursor-pointer font-medium">Disk 100% / inode full</summary>
+          <ul class="list-disc list-inside mt-2">
+            <li>Dọn log, build cũ, cache; <code>journalctl --vacuum-size=200M</code>.</li>
+            <li>Kiểm tra thư mục phình to: <code>du -xh --max-depth=1 /var | sort -h</code>.</li>
+            <li>Nếu inode full: xóa nhiều file nhỏ thừa (cache/tmp).</li>
+          </ul>
+        </details>
+
+        <details class="bg-slate-800 rounded-md p-3">
+          <summary class="cursor-pointer font-medium">Network đột biến / nghi DDoS</summary>
+          <ul class="list-disc list-inside mt-2">
+            <li>Xem <code>ss -s</code>, <code>iftop</code>, <code>nload</code>.</li>
+            <li>Bật CDN/WAF, rate limit; chặn IP rõ ràng.</li>
+            <li>Log truy cập để truy vết nguồn.</li>
+          </ul>
+        </details>
+
+        <details class="bg-slate-800 rounded-md p-3">
+          <summary class="cursor-pointer font-medium">Tên miền về trang lạ (A record bị đổi)</summary>
+          <ul class="list-disc list-inside mt-2">
+            <li>Kiểm tra nameserver hiện tại và A/AAAA record trên Namecheap/Cloudflare.</li>
+            <li>Đổi pass, bật 2FA Namecheap; tắt Dynamic DNS; revoke API tokens.</li>
+            <li>Sửa lại bản ghi đúng IP; TTL 5–10 phút; flush DNS client.</li>
+          </ul>
+        </details>
+
+        <details class="bg-slate-800 rounded-md p-3">
+          <summary class="cursor-pointer font-medium">Caddy không lên HTTPS</summary>
+          <ul class="list-disc list-inside mt-2">
+            <li>Kiểm tra DNS đúng IP; mở port 80/443; <code>caddy validate</code>.</li>
+            <li>Xem log ACME trong <code>journalctl -u caddy</code>.</li>
+          </ul>
+        </details>
+      </div>
+    </section>
+    <!-- 11. SSL/TLS & Đồng bộ thời gian -->
+<section id="ssl-time" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">11) SSL/TLS & Đồng bộ thời gian (HTTPS lỗi bất chợt)</h2>
+  <ul class="list-disc list-inside space-y-1">
+    <li><b>Chứng chỉ hết hạn</b> hoặc ACME gia hạn lỗi do DNS sai / port 80,443 bị chặn.</li>
+    <li><b>Clock drift</b> (thời gian hệ thống lệch) → TLS handshake fail.</li>
+  </ul>
+  <h3 class="font-medium mt-2">Lệnh kiểm tra</h3>
+  <pre><code>date                                  # giờ hệ thống
+timedatectl status                    # NTP/sync?
+sudo timedatectl set-ntp true         # bật NTP
+journalctl -u caddy --since "30 min ago" | egrep -i "acme|cert|tls"</code></pre>
+  <p class="text-sm opacity-80 mt-2">Nếu hết hạn → kiểm DNS/port và <code>systemctl reload caddy</code> để re-issue.</p>
+</section>
+
+<!-- 12. Firewall & Port -->
+<section id="firewall-port" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">12) Firewall & Port (mở 80/443/DB)</h2>
+  <pre><code>sudo ufw status
+sudo ss -tulpn | egrep ":80|:443|:5432"
+curl -I https://yourdomain.com
+curl -I http://YOUR_SERVER_IP</code></pre>
+  <p class="text-sm opacity-80">Nếu dùng UFW: <code>sudo ufw allow 80,443/tcp</code>. Đảm bảo dịch vụ thật sự lắng nghe đúng port.</p>
+</section>
+
+<!-- 13. Giới hạn tài nguyên (ulimit, file descriptor, process) -->
+<section id="ulimit" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">13) Giới hạn tài nguyên: “Too many open files” / hết PID</h2>
+  <ul class="list-disc list-inside">
+    <li>Triệu chứng: lỗi <code>EMFILE</code>, không tạo thêm kết nối, service chết ngẫu nhiên.</li>
+  </ul>
+  <pre><code>ulimit -n                         # số file descriptor
+cat /proc/sys/fs/file-nr
+cat /etc/systemd/system/&lt;service&gt;.service | egrep -i "LimitNOFILE|TasksMax"</code></pre>
+  <p class="text-sm opacity-80">Tăng <code>LimitNOFILE</code> và khởi động lại service bằng systemd nếu cần.</p>
+</section>
+
+<!-- 14. Khởi động dịch vụ & reboot an toàn -->
+<section id="service-reboot" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">14) Service chết / pending reboot</h2>
+  <pre><code>systemctl list-units --type=service --state=failed
+needs-restarting -r   # (trên CentOS/Alma) có cần reboot?
+last -x | head        # lần reboot gần nhất
+systemctl restart caddy
+systemctl restart postgresql</code></pre>
+  <p class="text-sm opacity-80">Reboot an toàn: thông báo bảo trì, stop job nặng, <code>sync</code>, rồi <code>reboot</code>.</p>
+</section>
+
+<!-- 15. PostgreSQL nâng cao (khoá, bloat, connection pool) -->
+<section id="postgres-advanced" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">15) PostgreSQL nâng cao: lock, bloat, connection pool</h2>
+  <pre><code># Kết nối chậm / khoá:
+psql -U postgres -d slv_users -c "
+SELECT pid,wait_event_type,wait_event,state,query
+FROM pg_stat_activity
+WHERE state &lt;&gt; 'idle'
+ORDER BY query_start ASC LIMIT 20;"
+
+# Kết nối hiện tại & giới hạn:
+psql -U postgres -d slv_users -c "
+SELECT count(*), max_conn FROM
+ (SELECT 1 FROM pg_stat_activity WHERE datname=current_database()) t,
+ (SELECT setting::int AS max_conn FROM pg_settings WHERE name='max_connections') s;"
+
+# Bloat (cần extension pgstattuple hoặc dùng auto_explain/pg_stat_statements)</code></pre>
+  <p class="text-sm opacity-80">Nếu “quá nhiều kết nối”: giảm pool size app, tăng <code>max_connections</code> hợp lý, thêm PG bouncer.</p>
+</section>
+
+<!-- 16. Ổ đĩa & sức khoẻ phần cứng -->
+<section id="disk-health" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">16) Ổ đĩa & sức khoẻ (SMART, read-only bất chợt)</h2>
+  <ul class="list-disc list-inside">
+    <li>Triệu chứng: hệ thống chuyển read-only, I/O error.</li>
+  </ul>
+  <pre><code>sudo smartctl -a /dev/sda     # cần smartmontools
+dmesg -T | egrep -i "i/o error|read-only|ext4"
+mount | column -t</code></pre>
+  <p class="text-sm opacity-80">Nếu lỗi phần cứng → backup ngay, mở ticket nhà cung cấp.</p>
+</section>
+
+<!-- 17. Bảo mật & sự cố bị chiếm quyền -->
+<section id="security" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">17) Bảo mật: tài khoản/SSH/DNS bị can thiệp</h2>
+  <ul class="list-disc list-inside space-y-1">
+    <li>SSH: kiểm tra login lạ</li>
+  </ul>
+  <pre><code>last -a | head -n 20
+journalctl -u ssh --since "1 day ago" | egrep -i "Failed|Accepted"</code></pre>
+  <ul class="list-disc list-inside space-y-1 mt-2">
+    <li>Kiểm tra crontab lạ / script khởi động:</li>
+  </ul>
+  <pre><code>crontab -l
+ls -la /etc/cron.* /var/spool/cron
+systemctl list-unit-files | egrep -i "enabled"
+sudo find /etc/systemd -type f -maxdepth 3 | xargs grep -iE "curl|wget|bash -c" -n</code></pre>
+  <p class="text-sm opacity-80">Đổi mật khẩu, tắt root SSH, bật 2FA các tài khoản (Namecheap, VPS panel), rotate API tokens.</p>
+</section>
+
+<!-- 18. Hàng đợi & cache (Redis, Celery, RabbitMQ) -->
+<section id="queue-cache" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">18) Queue/Cache: backlog, OOM, key bloat</h2>
+  <pre><code>redis-cli info memory
+redis-cli info stats | egrep -i "keyspace|rejected|evicted"
+
+# Nếu dùng Celery:
+journalctl -u celery --since "30 min ago"
+# RabbitMQ:
+sudo rabbitmqctl list_queues name messages_ready messages_unacknowledged</code></pre>
+  <p class="text-sm opacity-80">Backlog tăng → scale worker, hẹn giờ job, đặt timeout và retry có backoff.</p>
+</section>
+
+<!-- 19. Ứng dụng & cấu hình Web (CORS, mixed content, 429) -->
+<section id="web-errors" class="card p-5 mb-6"> 
+  <h2 class="text-xl font-semibold mb-2">19) App/Web: CORS, Mixed Content, Rate limit</h2>
+  <ul class="list-disc list-inside">
+    <li>CORS sai → request bị block (kiểm tra header <code>Access-Control-Allow-*</code>).</li>
+    <li>Mixed content HTTPS/HTTP → trình duyệt chặn.</li>
+    <li>429/Rate limit → phía app/CDN chặn do quá nhiều request.</li>
+  </ul>
+  <pre><code>curl -I https://yourdomain.com/path
+# xem header trả về & mã lỗi (200/301/302 tốt, 4xx/5xx cần soi log)</code></pre>
+</section>
+
+<!-- 20. Email (nếu có) -->
+<section id="email" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">20) Email deliverability (nếu hệ thống gửi mail)</h2>
+  <ul class="list-disc list-inside">
+    <li>SPF/DKIM/DMARC chưa cấu hình → mail vào spam.</li>
+    <li>SMTP bị chặn bởi nhà mạng/VPS.</li>
+  </ul>
+  <pre><code>dig txt yourdomain.com
+dig txt default._domainkey.yourdomain.com
+dig txt _dmarc.yourdomain.com</code></pre>
+</section>
+
+<!-- 21. Quy trình khẩn cấp (Runbook ngắn) -->
+<section id="runbook" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">21) Runbook khẩn cấp</h2>
+  <ol class="list-decimal list-inside space-y-1">
+    <li>Gắn banner “Bảo trì” (HTTP 503) nếu cần giảm tải.</li>
+    <li>Kiểm tra nhanh: CPU/RAM/Disk/Network + log Caddy + log app.</li>
+    <li>Xác định service/PID gây tải → tạm giảm concurrency hoặc restart có kiểm soát.</li>
+    <li>Đảm bảo DB ổn: kết nối, lock, long query.</li>
+    <li>Nếu nghi phần cứng/VPS host: mở ticket AZDIGI (kèm thời điểm & log).</li>
+  </ol>
+</section>
+
+<!-- 22. Phòng ngừa -->
+<section id="prevention" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">22) Phòng ngừa (Best practices)</h2>
+  <ul class="list-disc list-inside space-y-1">
+    <li>Backup định kỳ + test khôi phục (DB & file).</li>
+    <li>Log rotate, dọn rác (journal, docker, build cũ).</li>
+    <li>Giới hạn tài nguyên mỗi service (systemd, ulimit), đặt healthcheck.</li>
+    <li>CDN + cache + rate limit; theo dõi alert CPU/RAM/HTTP 5xx.</li>
+    <li>Chụp ảnh cấu hình DNS chuẩn (Namecheap/Cloudflare) để đối chiếu nhanh.</li>
+  </ul>
+</section>
+<!-- 23. Kiểm tra ngày hết hạn SSL (Caddy + OpenSSL 3.x) -->
+<section id="check-ssl" class="card p-5 mb-6">
+  <h2 class="text-xl font-semibold mb-2">23) Kiểm tra ngày hết hạn SSL (Caddy + OpenSSL 3.x)</h2>
+  <p class="mb-2">Dùng lệnh này để kiểm tra chứng chỉ HTTPS của domain, áp dụng khi server dùng OpenSSL 3.x (mặc định trên Ubuntu 22.04+). Lệnh này lấy thông tin trực tiếp từ chứng chỉ đang hoạt động trên cổng 443.</p>
+  <pre><code>echo | openssl s_client -servername yourdomain.com -connect yourdomain.com:443 2>/dev/null \
+| sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' \
+| openssl x509 -noout -dates</code></pre>
+  <p class="mt-2 text-sm opacity-80">Thay <code>yourdomain.com</code> bằng domain thật. Kết quả hiển thị:</p>
+  <ul class="list-disc list-inside text-sm opacity-80 mb-2">
+    <li><b>notBefore</b> – ngày chứng chỉ bắt đầu có hiệu lực.</li>
+    <li><b>notAfter</b> – ngày chứng chỉ hết hạn.</li>
+  </ul>
+  <p class="text-sm opacity-80">Caddy sẽ tự động gia hạn khi còn &lt;30 ngày trước hạn. Nếu muốn gia hạn thủ công, dùng <code>sudo systemctl reload caddy</code> và kiểm tra lại log với <code>journalctl -u caddy | grep -i renew</code>.</p>
+</section>
+
+
+    <footer class="text-xs opacity-70 mt-6">
+      Tip: Lưu checklist này trong admin để ai trực cũng xử lý theo từng bước giống nhau.
+    </footer>
+  </div>
+</body>
+</html>

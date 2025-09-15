@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <title>SolverViet</title>
+
+  <link rel="icon" href="/static/logos/favicon.png">
+  <link rel="stylesheet" href="/static/js/css/style_lite.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],      
+    displayMath: [['\\[', '\\]'], ['$$', '$$']]      
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart@5.4.0/dist/style.css" />
+<script src="https://cdn.jsdelivr.net/npm/emoji-mart@5.4.0/dist/browser.js"></script>
+
+</head>
+
+<body class="dark">
+
+<header style="background-color:#111;color:white;padding:24px 37px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #00bcd4;">
+  <div style="display:flex;flex-direction:column;">
+    <a href="/" style="text-decoration:none; color:#00bcd4;">
+      <span style="font-size:27px;font-weight:bold;color:#00bcd4; cursor:pointer;">SolverViet</span>
+    </a>
+    <span style="font-size:16px;color:#aaa;margin-top:2px;">© 2025. All rights reserved.</span>
+  </div>
+  <div>
+    <a href="/" style="color:#00bcd4; text-decoration:none; display:flex; align-items:center; gap:10px;">
+      <i data-lucide="home" style="width: 24px; height: 24px;"></i>
+    </a>
+  </div>
+</header>
+
+  <div id="chat-container" data-chat-id="{{ chat_id }}"></div>
+<div id="preview-wrapper" style="max-width:700px; margin: 0 auto; padding: 8px 24px 0;">
+  <div id="image-preview" class="image-preview-container"></div>
+  <div id="reply-preview" style="display:none; margin-bottom:10px;"></div>
+
+</div>
+  <div id="input-area">
+    <div class="chat-bar">
+      <div class="plus-container">
+        <button onclick="togglePlusMenu(event)"><i data-lucide='plus'></i></button>
+        <div id="plus-menu" class="plus-menu">
+          <button onclick="reportIssue()"><i data-lucide="flag" style="width:18px;height:18px;margin-right:6px;"></i>Báo lỗi / Góp ý</button>
+          <button onclick="showStoragePopup()"><i data-lucide="database" style="width:18px;height:18px;margin-right:6px;"></i>Dung lượng và dữ liệu</button>
+          <button onclick="openUserInfoPopup()"><i data-lucide='user'></i><span>Thông tin cá nhân</span></button>
+         <button onclick="openMemoryPopup()"><i data-lucide="brain-cog" style="width:18px;height:18px;margin-right:6px;"></i><span>Ghi nhớ cho SLV</span></button>
+          <button onclick="toggleTheme()"><i data-lucide='sun' id="theme-icon"></i><span>Chế độ sáng/tối</span></button>
+          <button onclick="goToCodeMode()"><i data-lucide="code" style="width:18px;height:18px;margin-right:6px;"></i><span>DevCode</span></button>
+          <button onclick="saveCurrentChat()"><i data-lucide="save" style="width:18px;height:18px;margin-right:6px;"></i>Lưu đoạn chat</button>
+          <button onclick="showSavedChatPopup()"><i data-lucide="folder-open" style="width:18px;height:18px;margin-right:6px;"></i>Đoạn chat đã lưu</button>
+          <button onclick="openNewChatPopup()"><i data-lucide='plus-circle'></i><span>Đoạn chat mới</span></button>
+        </div>
+      </div>
+      <div id="file-preview"></div>
+     <div id="emoji-suggestions" style="display:none; max-width:700px; margin: 0 auto; padding: 8px 24px 0;">
+  <div style="background:#2a2a2b; border:1px solid #444; border-radius:12px; padding:8px 12px; display:flex; gap:10px; justify-content:flex-start; font-size:22px; flex-wrap:wrap;"></div>
+</div>
+
+
+<div id="emoji-picker" style="position: absolute; bottom: 60px; right: 20px; display: none; z-index: 9999;"></div>
+   <div id="chat-input"
+  contenteditable="true"
+  placeholder="Nhập tin nhắn..."
+  onkeydown="handleKey(event)"
+  style="
+    flex: 1;
+    min-height: 38px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #ffffff;
+    color: #000000;
+    font-size: 15px;
+    border: 1px solid #ffffff;
+    outline: none;
+  ">
+</div>
+
+
+      <button id="upload-btn" onclick="document.getElementById('upload-input').click()">
+        <i data-lucide="image"></i>
+      </button>
+
+      <input type="file" id="upload-input" accept="image/*" multiple style="display:none;" />
+
+      <div id="mic-wrapper" style="display:inline-block; border-radius:50%;">
+        <button id="micBtn" onclick="startVoiceRecognition()"><i data-lucide="mic"></i></button>
+      </div>
+<button id="send-btn" data-api="/core_inference"
+  class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 shadow-md transition-all">
+  <i data-lucide="send" class="w-4 h-4"></i>
+ 
+</button>
+
+
+    </div>
+  </div>
+
+
+<p class="notice-lite" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; text-align:center;">
+  <span class="product">SLV</span>
+  <span>– phiên bản đầy đủ với phản hồi chi tiết và khả năng xử lý ảnh. Kết quả tốt hơn Lite, nhưng vẫn nên kiểm tra kỹ để đảm bảo độ chính xác.</span>
+</p>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const chatInput = document.getElementById("chat-input");
+  const fileFallback = document.getElementById("file-fallback");
+  ["dragenter", "dragover", "dragleave", "drop"].forEach(evt => {
+    chatInput.addEventListener(evt, e => e.preventDefault());
+    document.body.addEventListener(evt, e => e.preventDefault());
+  });
+  chatInput.addEventListener("drop", e => {
+    e.preventDefault();
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const ext = files[0].name.split(".").pop().toLowerCase();
+      if (["py", "js", "html", "css", "json", "java", "cpp", "ts", "txt"].includes(ext)) {
+        showDevCodePopup();
+      } else {
+        fileFallback.files = files;
+        fileFallback.dispatchEvent(new Event("change"));
+      }
+    }
+  });
+
+  fileFallback.addEventListener("change", e => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const ext = files[0].name.split(".").pop().toLowerCase();
+      if (["py", "js", "html", "css", "json", "java", "cpp", "ts", "txt"].includes(ext)) {
+        showDevCodePopup();
+      }
+    }
+  });
+});
+
+function showDevCodePopup() {
+  if (document.querySelector(".devcode-popup")) return; 
+
+  const popup = document.createElement("div");
+  popup.className = "devcode-popup";
+  popup.innerHTML = `
+    <div class="text-center">
+      <h2 class="text-xl font-bold mb-2">File lập trình được phát hiện</h2>
+      <p class="mb-4">Bạn có muốn chuyển sang chế độ <b>DevCode</b> để dễ xử lý code không?</p>
+      <div class="flex justify-center gap-4">
+        <button onclick="goToDevCode()" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Chuyển ngay</button>
+        <button onclick="this.closest('.devcode-popup').remove()" class="bg-gray-300 dark:bg-gray-700 text-black dark:text-white px-4 py-2 rounded">Ở lại</button>
+      </div>
+    </div>
+  `;
+  Object.assign(popup.style, {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    background: "#fff",
+    color: "#000",
+    padding: "24px",
+    borderRadius: "16px",
+    boxShadow: "0 10px 40px rgba(0,0,0,0.3)",
+    zIndex: "9999",
+    maxWidth: "90%",
+    width: "420px",
+  });
+
+  document.body.appendChild(popup);
+}
+
+function goToDevCode() {
+  window.location.href = "/solvervietCode";
+}
+</script>
+
+  <script>
+    lucide.createIcons();
+  </script>
+  <script>function togglePlusMenu(event) {
+  event.stopPropagation();
+  const menu = document.getElementById("plus-menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+document.addEventListener("click", function (e) {
+  const container = document.querySelector(".plus-container");
+  const menu = document.getElementById("plus-menu");
+
+  if (!container.contains(e.target)) {
+    menu.style.display = "none";
+  }
+});
+function hidePlusMenu() {
+  document.getElementById("plus-menu").style.display = "none";
+}
+document.querySelectorAll('#plus-menu button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    hidePlusMenu();
+  });
+});
+function showVipWarning() {
+  const popup = document.createElement("div");
+  popup.style.position = "fixed";
+  popup.style.bottom = "30px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#e74c3c";
+  popup.style.color = "white";
+  popup.style.padding = "10px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  popup.style.zIndex = "9999";
+  popup.style.fontWeight = "bold";
+  popup.style.animation = "fadeInOut 2.4s ease";
+
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2400);
+}
+function confirmNewChat() {
+  const dontShowAgain = document.getElementById("dont-show-again")?.checked;
+  if (dontShowAgain) {
+    localStorage.setItem("skipNewChatPopup", "true");
+  }
+  hideNewChatPopup();
+  startNewChat();
+}
+
+function hideNewChatPopup() {
+  document.getElementById("chat-new-popup").style.display = "none";
+}
+function openNewChatPopup() {
+  const skipPopup = localStorage.getItem("skipNewChatPopup");
+  if (skipPopup === "true") {
+    startNewChat();
+  } else {
+    document.getElementById("chat-new-popup").style.display = "flex";
+  }
+}
+
+function hideNewChatPopup() {
+  document.getElementById("chat-new-popup").style.display = "none";
+}
+
+function startNewChat() {
+  fetch("/new_chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      const newUUID = self.crypto.randomUUID(); 
+      window.location.href = "/solvervietAIwatch/" + newUUID;
+    } else {
+      showToast("Lỗi khi tạo đoạn chat mới: " + data.error);
+    }
+  })
+  .catch(err => {
+    console.error("Lỗi khi gửi new_chat:", err);
+    showToast("Lỗi hệ thống, vui lòng thử lại.");
+  });
+}
+
+
+const toastFade = document.createElement("style");
+toastFade.innerHTML = `
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(10px); }
+}`;
+document.head.appendChild(toastFade);
+
+const MAX_IMAGES = 2;
+let selectedImages = [];
+
+document.getElementById("upload-input").addEventListener("change", handleImages);
+
+function handleImages(event) {
+  const files = Array.from(event.target.files);
+
+  if (selectedImages.length >= MAX_IMAGES) {
+    showToast("Tối đa 2 ảnh cho mỗi tin nhắn!");
+    return;
+  }
+
+  const availableSlots = MAX_IMAGES - selectedImages.length;
+  const newFiles = files.slice(0, availableSlots);
+
+  if (files.length > availableSlots) {
+    showToast("Bạn chỉ có thể chọn thêm " + availableSlots + " ảnh nữa!");
+  }
+
+  selectedImages = [...selectedImages, ...newFiles];
+  renderImagePreview();
+}
+
+function renderImagePreview() {
+  const container = document.getElementById("image-preview");
+  container.innerHTML = "";
+
+  selectedImages.forEach((file, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "img-wrapper";
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+    img.alt = "Ảnh được dán";
+
+    const removeBtn = document.createElement("span");
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "×";
+    removeBtn.title = "Xóa ảnh";
+    removeBtn.onclick = () => removeImage(index);
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(removeBtn);
+    container.appendChild(wrapper);
+  });
+}
+
+document.addEventListener("paste", function (event) {
+  const items = (event.clipboardData || window.clipboardData).items;
+
+  for (const item of items) {
+    if (item.type.indexOf("image") === 0) {
+      event.preventDefault(); 
+      const file = item.getAsFile();
+
+      if (selectedImages.length >= MAX_IMAGES) {
+        showToast(" Tối đa 2 ảnh cho mỗi tin nhắn!");
+        return;
+      }
+
+      selectedImages.push(file);
+      renderImagePreview();
+    }
+  }
+});
+
+function removeImage(index) {
+  selectedImages.splice(index, 1);
+  renderImagePreview();
+}
+
+function showToast(msg) {
+  const popup = document.createElement("div");
+  popup.textContent = msg;
+  popup.style.position = "fixed";
+  popup.style.bottom = "30px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#333";
+  popup.style.color = "white";
+  popup.style.padding = "10px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.fontWeight = "bold";
+  popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  popup.style.zIndex = "9999";
+  popup.style.animation = "fadeInOut 2.4s ease";
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2400);
+}
+let replyingTo = null;
+let recognition;
+let isListening = false;
+let isSending = false;
+let typingTimeout = null;
+function startVoiceRecognition() {
+  if (!('webkitSpeechRecognition' in window)) {
+    showToast("Trình duyệt không hỗ trợ giọng nói.");
+    return;
+  }
+
+  if (isListening) {
+    recognition.stop();
+    isListening = false;
+    return;
+  }
+
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'vi-VN'; 
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    showToast(" Đang lắng nghe...");
+    document.getElementById("mic-wrapper").classList.add("active");
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    document.getElementById("chat-input").innerText = transcript;
+
+    showToast(" Đã nhận diện xong. Bạn có thể gửi.");
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Lỗi mic:", event.error);
+    showToast(" Lỗi mic: " + event.error);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById("mic-wrapper").classList.remove("active");
+  };
+
+  recognition.start();
+}
+function toggleTheme() {
+  const current = document.body.classList.contains("dark") ? "dark" : "light";
+  const newMode = current === "dark" ? "light" : "dark";
+
+  document.body.classList.remove(current);
+  document.body.classList.add(newMode);
+  localStorage.setItem("theme_mode", newMode);
+
+  updateThemeIcon(newMode);
+}
+
+function updateThemeIcon(mode) {
+  const icon = document.getElementById("theme-icon");
+  if (mode === "dark") {
+    icon.setAttribute("data-lucide", "sun");
+  } else {
+    icon.setAttribute("data-lucide", "moon");
+  }
+  lucide.createIcons(); 
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  const savedMode = localStorage.getItem("theme_mode");
+  if (savedMode === "light") {
+    document.body.classList.remove("dark");
+    document.body.classList.add("light");
+    updateThemeIcon("light");
+  } else {
+    document.body.classList.add("dark");
+    updateThemeIcon("dark");
+  }
+
+  const chatContainer = document.getElementById("chat-container");
+  let sessionId = chatContainer?.dataset?.chatId;
+
+  if (sessionId) {
+    localStorage.setItem("chat_session_id", sessionId);
+  } else {
+    sessionId = localStorage.getItem("chat_session_id");
+  }
+
+  if (sessionId) {
+    fetch(`/get_chat_history?session_id=${sessionId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.history) {
+          renderMessages(data.history);
+        }
+      })
+      .catch(err => {
+        console.error("Lỗi tải lịch sử:", err);
+      });
+  }
+});
+function stripAllTagsAndMath(html) {
+  return html
+    .replace(/\\\((.*?)\\\)/g, "$1")
+    .replace(/\$\$(.*?)\$\$/gs, "$1")
+    .replace(/<[^>]*>/g, "");
+}
+async function sendMessage() {
+  if (isSending) return;
+  clearTimeout(typingTimeout);
+  isSending = true;
+  document.getElementById("send-btn").disabled = true;
+  document.querySelectorAll(".emoji-bar").forEach(bar => bar.remove());
+
+  const input = document.getElementById("chat-input");
+  const message = input.innerText.trim();
+
+  if (!message && selectedImages.length === 0) {
+    showToast("Vui lòng nhập nội dung hoặc chọn ảnh!");
+    isSending = false;
+    document.getElementById("send-btn").disabled = false;
+    return;
+  }
+
+  const imagesToSend = [...selectedImages];
+  const messageToSend = message;
+  const currentReplyTo = window.replyTo;
+
+  input.innerText = "";
+  selectedImages = [];
+  renderImagePreview();
+
+  const previewUrls = imagesToSend.map(file => URL.createObjectURL(file));
+  addUserMessage(messageToSend, previewUrls);
+  showLoadingBubble(messageToSend, previewUrls);
+
+let totalIncrease = 0;
+const messageLength = messageToSend.length;
+
+if (messageLength >= 20) totalIncrease += 0.7;
+else if (messageLength >= 10) totalIncrease += 0.5;
+else if (messageLength > 0) totalIncrease += 0.3;
+
+if (imagesToSend.length > 0) totalIncrease += imagesToSend.length * 0.4;
+
+simulateStorageIncrease(totalIncrease);
+  const formData = new FormData();
+  formData.append("message", messageToSend);
+  formData.append("history", JSON.stringify(serverRenderedMessages));
+  formData.append("reply_to", currentReplyTo?.content || "");
+
+  const sessionId = document.getElementById("chat-container")?.dataset?.chatId;
+  formData.append("session_id", sessionId);
+
+  imagesToSend.forEach((file, i) => {
+    formData.append(`file${i}`, file);
+  });
+  setTimeout(() => {
+    const replyBox = document.getElementById("reply-preview");
+    if (replyBox) replyBox.style.display = "none";
+    window.replyTo = null;
+  }, 300);
+  try {
+    const res = await fetch("/core_inference", {
+      method: "POST",
+      body: formData
+    });
+
+    let data = {};
+if (res.headers.get("content-type")?.includes("application/json")) {
+  data = await res.json();
+} else {
+  throw new Error("Phản hồi không hợp lệ");
+}
+
+    removeLoadingBubble();
+
+    if (data.reply) {
+      addBotMessage(data.reply);
+    } else {
+      addBotMessage("Không nhận được phản hồi từ AI.");
+    }
+    serverRenderedMessages.push({
+      role: "user",
+      content: messageToSend,
+      reply_to: currentReplyTo?.content || null
+    });
+
+    serverRenderedMessages.push({
+      role: "assistant",
+      content: data.reply
+    });
+    const totalMessages = serverRenderedMessages.length;
+if (totalMessages >= 130) {
+  showToast(`Đoạn chat hiện tại đã có hơn ${totalMessages} câu. Bạn nên tạo đoạn mới để tránh lag 💡`);
+}
+    checkShowRatingPopup();
+
+  } catch (err) {
+    removeLoadingBubble();
+    addBotMessage("Lỗi hệ thống khi gửi. Vui lòng thử lại sau.");
+    console.error("Lỗi gửi:", err);
+  }
+}
+
+
+
+function addBotMessage(text, images = []) {
+  const chatContainer = document.getElementById("chat-container");
+  const wrapper = document.createElement("div");
+  wrapper.className = "message bot";
+
+  // Tạo phần text trước
+  const content = document.createElement("div");
+  content.className = "message-content";
+  content.innerHTML = text;
+
+  wrapper.appendChild(content);
+
+  // Nếu có ảnh → thêm từng ảnh sau khi load
+  if (images.length > 0) {
+    images.forEach(url => {
+      const img = new Image();
+      img.className = "chat-image";
+      img.alt = "Ảnh AI";
+      img.loading = "lazy";
+      img.style.display = "none";
+      img.onload = () => {
+        img.style.display = "block";
+      };
+      img.src = url;
+      wrapper.appendChild(img);
+    });
+  }
+
+  chatContainer.appendChild(wrapper);
+}
+
+function addBotMessage(htmlText) {
+  let codeTagEscaped = false;
+  document.querySelectorAll(".emoji-bar").forEach(bar => bar.remove());
+
+  const container = document.getElementById("chat-container");
+
+  // 🚨 Check nếu là ảnh tạo bằng AI (svg palette)
+  const isAIImageSVG = htmlText.includes("lucide-palette") && htmlText.includes("AI vừa tạo ảnh");
+  if (isAIImageSVG) {
+    const div = document.createElement("div");
+    div.className = "message bot";
+    div.innerHTML = htmlText;
+    container.appendChild(div);
+    scrollToBottom();
+
+    const meta = document.createElement("div");
+    meta.className = "message-meta";
+    const now = new Date();
+    const timeStr = now.toTimeString().slice(0, 5);
+    const speed = (Math.random() * 0.4 + 0.4).toFixed(1);
+    meta.innerHTML = `<span>${timeStr}</span><span>${speed} giây</span>`;
+    div.appendChild(meta);
+
+    appendCopyButton(div);
+    addEmojiBar(div, htmlText);
+    document.getElementById("send-btn").disabled = false;
+    isSending = false;
+    return; // ⛔️ Quan trọng: dừng tại đây
+  }
+
+  // ⬇️ Nếu không phải ảnh AI → xử lý như bình thường
+  const div = document.createElement("div");
+  div.className = "message bot";
+  container.appendChild(div);
+  scrollToBottom();
+
+  const errorKeywords = ["overloaded", "connection", "please try again", "timeout", "error", "failed"];
+  const isError = errorKeywords.some(k => htmlText.toLowerCase().includes(k));
+  const isFullHTML = htmlText.includes("<html") || htmlText.includes("<body");
+  const isFormLikeHTML = /<form|<input|<button|<label|<select/i.test(htmlText);
+  const isLikelyUI = /<(form|input|button|textarea|select|label|div|section|submit|main|header|article)/i.test(htmlText);
+  const isPreCodeBlock = /<pre><code.*?>[\s\S]*?<\/code><\/pre>/i.test(htmlText);
+  const isSVG = /<svg[\s\S]*?>[\s\S]*?<\/svg>/i.test(htmlText);
+  const isCodeTagWithUI = /<code[^>]*>[\s\S]*?(<form|<input|<button|<svg|<label|<select)[\s\S]*?<\/code>/i.test(htmlText);
+
+if (!isPreCodeBlock && isCodeTagWithUI) {
+  htmlText = htmlText.replace(
+    /<code[^>]*>([\s\S]*?)<\/code>/gi,
+    (_, raw) => {
+      const safe = raw
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+          const encoded = encodeURIComponent(safe.trim());
+      return `<div class="__CODE_BLOCK__" data-code="${encoded}"></div>`; 
+    }
+  );
+  codeTagEscaped = true; 
+}
+const shouldRenderAsCodeBlock =
+  (isFullHTML || isFormLikeHTML || isLikelyUI || isPreCodeBlock || isSVG) &&
+  !htmlText.includes("<script") &&
+  !htmlText.includes('class="message');
+
+if (shouldRenderAsCodeBlock) {
+  if (!isPreCodeBlock && (isFormLikeHTML || isLikelyUI || isSVG)) {
+    const escaped = htmlText
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+    htmlText = `<pre><code class='text'>${escaped}</code></pre>`;
+  }
+
+  const parts = htmlText.split(/(<pre><code[\s\S]*?<\/code><\/pre>)/gi);
+  htmlText = parts.map(part => {
+    if (/<pre><code[^>]*>/.test(part)) {
+      const match = part.match(/<pre><code[^>]*>([\s\S]*?)<\/code><\/pre>/i);
+      if (match) {
+        const code = match[1];
+        const encoded = encodeURIComponent(
+          code.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").trim()
+        );
+        return `<div class="__CODE_BLOCK__" data-code="${encoded}"></div>`;
+      }
+    }
+    return part;
+  }).join("");
+}
+if (!isPreCodeBlock && htmlText.includes("<code") && !codeTagEscaped) {
+  htmlText = htmlText.replace(
+    /<code[^>]*>([\s\S]*?)<\/code>/gi,
+    (_, raw) => {
+      const safe = raw
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .trim();
+
+      const uiTags = ["button", "form", "input", "select", "textarea", "svg", "label"];
+      const uiRegex = new RegExp(uiTags.join("|"), "i");
+      if (!raw.includes("\n") && uiRegex.test(raw)) {
+        return `<span class="inline-code">${safe}</span>`;
+      }
+      if (!safe.includes("\n") && safe.length < 80) {
+        return `<span class="inline-code">${safe}</span>`;
+      }
+      const encoded = encodeURIComponent(
+        raw.replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&").trim()
+      );
+      return `<div class="__CODE_BLOCK__" data-code="${encoded}"></div>`;
+    }
+  );
+}
+
+
+const tempDiv = document.createElement("div");
+const dangerousTags = ["button", "form", "input", "select", "textarea", "svg", "label"];
+const uiRegex = new RegExp(`<(${dangerousTags.join("|")})([\\s\\S]*?)>`, "i");
+
+if (uiRegex.test(htmlText) && !isPreCodeBlock) {
+  const escaped = htmlText
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  htmlText = `<pre><code class='text'>${escaped}</code></pre>`;
+}
+
+tempDiv.innerHTML = htmlText;
+
+
+  const nodes = Array.from(tempDiv.childNodes);
+  let index = 0;
+
+  function typeNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      let text = node.nodeValue || node.textContent || "";
+      if (text.includes("<table") && text.includes("</table>")) {
+        const before = text.split("<table")[0];
+        const tableHTML = "<table" + text.split("<table")[1].split("</table>")[0] + "</table>";
+        const after = text.split("</table>")[1];
+
+        if (before.trim()) {
+          for (let ch of before) div.innerHTML += ch === "\n" ? "<br>" : ch;
+        }
+
+        const tableDiv = document.createElement("div");
+        tableDiv.innerHTML = tableHTML;
+        div.appendChild(tableDiv);
+
+        if (after.trim()) {
+          for (let ch of after) div.innerHTML += ch === "\n" ? "<br>" : ch;
+        }
+
+        scrollToBottom();
+        processNextNode();
+        return;
+      }
+
+      let i = 0;
+      const typingSpeed = 15;
+      function typeChar() {
+        if (i < text.length) {
+          div.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+          i++;
+          scrollToBottom();
+          if (document.hidden) {
+            while (i < text.length) {
+              div.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+              i++;
+            }
+            scrollToBottom();
+            processNextNode();
+          } else {
+            setTimeout(typeChar, typingSpeed);
+          }
+        } else {
+          processNextNode();
+        }
+      }
+      typeChar();
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+
+if (node.classList && node.classList.contains("__CODE_BLOCK__")) {
+  const rawCode = decodeURIComponent(node.getAttribute("data-code") || "");
+  const codeBlockWrapper = document.createElement("div");
+  codeBlockWrapper.style = "position: relative;";
+
+  const codeBlock = document.createElement("pre");
+  codeBlock.className = "code-with-copy";
+  codeBlock.style = `
+    background: #0b0c10;
+    color: #3399ff;
+    padding: 12px;
+    border: 1px solid #1f4f99;
+    border-radius: 12px;
+    font-size: 14px;
+    font-family: 'Fira Code', monospace;
+    text-shadow: 0 0 3px #1e90ff88;
+    overflow-x: auto;
+    white-space: pre-wrap;
+  `;
+  codeBlock.innerText = rawCode;
+  const verifiedWrap = document.createElement("div");
+  verifiedWrap.innerHTML = `
+    <div class="verified-wrapper" style="display: flex; align-items: center; gap: 6px; transform: rotate(0deg); transition: transform 1s ease;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+        viewBox="0 0 24 24" stroke="#4caf50" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+      </svg>
+      <span style="font-size: 12px; color: #4caf50; font-weight: bold;">Verified</span>
+    </div>
+  `;
+  Object.assign(verifiedWrap.style, {
+    position: "absolute",
+    top: "8px",
+    right: "8px",
+    background: "#222",
+    padding: "4px 8px",
+    borderRadius: "8px",
+    zIndex: "1",
+    cursor: "default"
+  });
+  verifiedWrap.title = "Nội dung đã được xác minh và an toàn.";
+  setTimeout(() => {
+    const wrapper = verifiedWrap.querySelector(".verified-wrapper");
+    wrapper.style.transform = "rotate(360deg)";
+  }, 100);
+
+  codeBlockWrapper.appendChild(verifiedWrap);
+  codeBlockWrapper.appendChild(codeBlock);
+  div.appendChild(codeBlockWrapper);
+
+  scrollToBottom();
+  processNextNode();
+  return;
+}
+
+      const latexTag = node.tagName === "SPAN" && node.innerText?.match(/^\s*\\\(|\\\[|\$\$|\\begin/);
+      if (latexTag) {
+        const mathDiv = document.createElement("span");
+        mathDiv.innerHTML = node.outerHTML;
+        mathDiv.classList.add("math-latex");
+        div.appendChild(mathDiv);
+        if (window.MathJax) MathJax.typesetPromise([mathDiv]);
+        scrollToBottom();
+        processNextNode();
+      } else {
+        const clone = node.cloneNode(true);
+        div.appendChild(clone);
+        scrollToBottom();
+        processNextNode();
+      }
+    } else {
+      processNextNode();
+    }
+  }
+  
+function appendCopyButton(botDiv) {
+  const actionWrap = document.createElement("div");
+  actionWrap.className = "ai-action-wrap";
+  actionWrap.style = "display: flex; gap: 10px; justify-content: flex-end; margin-top: 6px;";
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "copy-btn-ai";
+  copyBtn.title = "Sao chép nội dung AI";
+  copyBtn.style = `
+    background: #1f1f1f;
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 32px;
+    height: 32px;
+  `;
+  copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  copyBtn.onmouseenter = () => copyBtn.style.background = "#333";
+  copyBtn.onmouseleave = () => copyBtn.style.background = "#1f1f1f";
+  copyBtn.onclick = () => {
+    const temp = document.createElement("div");
+    temp.innerHTML = botDiv.innerHTML;
+    navigator.clipboard.writeText(temp.innerText)
+      .then(() => showToast("Đã sao chép nội dung!"))
+      .catch(() => showToast("Sao chép thất bại."));
+  };
+
+  const replyBtn = document.createElement("button");
+  replyBtn.className = "reply-btn-ai";
+  replyBtn.title = "Trả lời AI";
+  replyBtn.style = copyBtn.style; 
+  replyBtn.innerHTML = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-corner-up-left">
+    <polyline points="9 14 4 9 9 4"></polyline>
+    <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+  </svg>`;
+  replyBtn.onmouseenter = () => replyBtn.style.background = "#333";
+  replyBtn.onmouseleave = () => replyBtn.style.background = "#1f1f1f";
+  replyBtn.onclick = () => {
+    let raw = botDiv.innerText || "";
+    raw = raw.replace(/([\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}])/gu, "");
+    raw = raw.replace(/\d{1,2}:\d{2}\s*\d+(\.\d+)?\s*giây/, "");
+    raw = raw.replace(/\s+/g, " ").trim();
+    let previewText = raw.slice(0, Math.min(Math.floor(raw.length / 2), 100));
+    if (raw.length > previewText.length) previewText += "…";
+    window.replyTo = {
+      id: crypto.randomUUID(),
+      content: previewText,
+      role: "bot"
+    };
+    showReplyPreview(window.replyTo);
+  };
+
+  actionWrap.appendChild(copyBtn);
+  actionWrap.appendChild(replyBtn);
+  botDiv.appendChild(actionWrap);
+}
+
+  function processNextNode() {
+    if (index < nodes.length) {
+      const node = nodes[index];
+      index++;
+      typeNode(node);
+    } else {
+      if (window.MathJax) MathJax.typesetPromise([div]);
+      const meta = document.createElement("div");
+      meta.className = "message-meta";
+      const now = new Date();
+      const timeStr = now.toTimeString().slice(0, 5);
+      const speed = (Math.random() * 0.4 + 0.4).toFixed(1);
+      meta.innerHTML = `<span>${timeStr}</span><span>${speed} giây</span>`;
+      div.appendChild(meta);
+      appendCopyButton(div);
+      addEmojiBar(div, htmlText);
+      scrollToBottom();
+      document.getElementById("send-btn").disabled = false;
+      isSending = false;
+    }
+  }
+  processNextNode();
+}
+
+function showReplyPreview(replyTo) {
+  const preview = document.getElementById("reply-preview");
+  if (!preview) return;
+
+  preview.innerHTML = `
+    <div class="reply-box">
+      <b>${replyTo.role === "user" ? "Bạn trả lời chính bạn:" : "Bạn trả lời AI:"}</b><br>
+      <i>${replyTo.content}</i>
+      <button onclick="cancelReply()">✖</button>
+    </div>
+  `;
+  preview.style.display = "block";
+}
+function cancelReply() {
+  window.replyTo = null;
+  const preview = document.getElementById("reply-preview");
+  if (preview) preview.style.display = "none";
+}
+
+function normalizeGPTTable(table) {
+  table.querySelectorAll("td[rowspan], th[rowspan], td[colspan], th[colspan]").forEach(cell => {
+    cell.removeAttribute("rowspan");
+    cell.removeAttribute("colspan");
+  });
+  table.querySelectorAll("tr").forEach(tr => {
+    const cells = tr.querySelectorAll("td, th");
+    const missing = 3 - cells.length;
+    for (let i = 0; i < missing; i++) {
+      const td = document.createElement("td");
+      td.innerHTML = "&nbsp;";
+      tr.appendChild(td);
+    }
+  });
+  table.querySelectorAll("td, th").forEach(cell => {
+    cell.innerHTML = cell.innerHTML
+      .replace(/\s*\n\s*/g, " ") 
+      .replace(/,\s*/g, ", ")         
+      .trim();
+  });
+
+  return table;
+}
+
+function addEmojiBar(botDiv, lastReply) {
+  const emojis = ["❤️", "😂", "😢", "🤔", "😡"];
+  const bar = document.createElement("div");
+  bar.className = "emoji-bar";
+  bar.style = "margin-top: 6px; display: flex; gap: 8px; font-size: 20px; animation: fadeIn 0.5s ease-in-out;";
+
+  emojis.forEach(emoji => {
+    const btn = document.createElement("button");
+    btn.textContent = emoji;
+    btn.style = "background: none; border: none; cursor: pointer; transition: transform 0.2s;";
+    btn.onclick = () => {
+      bar.remove();
+      handleEmojiClick(emoji, lastReply);
+    };
+    btn.onmouseover = () => btn.style.transform = "scale(1.2)";
+    btn.onmouseleave = () => btn.style.transform = "scale(1)";
+    bar.appendChild(btn);
+  });
+
+  botDiv.appendChild(bar);
+}
+function handleEmojiClick(emoji, lastReply) {
+  const typingDiv = document.createElement("div");
+  typingDiv.className = "message bot typing";
+    typingDiv.innerHTML = `
+    <div style="background:#000;border:1px solid #222;border-radius:10px;padding:6px 10px;display:inline-block;">
+      <svg width="32" height="10" xmlns="http://www.w3.org/2000/svg" fill="#fff">
+        <circle cx="5" cy="5" r="3">
+          <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin="0s"/>
+        </circle>
+        <circle cx="16" cy="5" r="2">
+          <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin="0.2s"/>
+        </circle>
+        <circle cx="27" cy="5" r="3">
+          <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin="0.4s"/>
+        </circle>
+      </svg>
+    </div>`;
+
+  document.getElementById("chat-container").appendChild(typingDiv);
+  scrollToBottom();
+
+  fetch("/send-emoji", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ emoji, last_reply: lastReply })
+  })
+    .then(res => res.json())
+    .then(data => {
+      typingDiv.remove();
+
+      if (data.ai_reply) {
+        const message = data.ai_reply;
+        const color = getColorByEmoji(emoji);
+        const wrapper = document.createElement("div");
+        wrapper.className = "message bot";
+        wrapper.style.animation = "fadeIn 0.6s ease";
+
+        wrapper.innerHTML = `
+          <div class="message-content" style="background:${color};color:white;border-radius:14px;padding:10px 14px;animation:bounceIn 0.3s ease;">
+            ${message}
+          </div>
+        `;
+        document.getElementById("chat-container").appendChild(wrapper);
+        scrollToBottom();
+      } else {
+        showToast("AI không phản hồi gì thêm.");
+      }
+    })
+    .catch(err => {
+      typingDiv.remove(); 
+      console.error(" Lỗi gửi emoji:", err);
+      showToast("Lỗi gửi cảm xúc.");
+    });
+}
+
+function getColorByEmoji(emoji) {
+  switch (emoji) {
+    case "❤️": return "#e74c3c";
+    case "😂": return "#f39c12";
+    case "😢": return "#3498db";
+    case "🤔": return "#9b59b6"; 
+    case "😡": return "#c0392b";
+    default: return "#34495e";
+  }
+}
+
+
+function openPreviewModal(htmlCode) {
+  let modal = document.getElementById("preview-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "preview-modal";
+    modal.innerHTML = `
+      <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;">
+        <div style="width:90vw;height:90vh;background:white;border-radius:12px;overflow:hidden;position:relative;">
+          <button id="close-preview" style="position:absolute;top:10px;right:10px;padding:6px 10px;background:#e74c3c;color:white;border:none;border-radius:6px;cursor:pointer;z-index:1;">Đóng</button>
+          <iframe sandbox="allow-scripts allow-forms" style="width:100%;height:100%;border:none;" id="preview-frame"></iframe>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    document.getElementById("close-preview").onclick = () => modal.remove();
+  }
+
+  const frame = modal.querySelector("#preview-frame");
+  frame.srcdoc = htmlCode;
+}
+
+function showLoadingBubble(messageText, imagesArray) {
+  const container = document.getElementById("chat-container");
+  const div = document.createElement("div");
+  div.className = "message bot";
+  div.id = "loading-bubble";
+
+  const text = (messageText || "").toLowerCase();
+  const mathKeywords = [
+  "giải", "tính", "phân tích", "phương trình", "bài toán", "đáp án", "chứng minh", "rút gọn", "tích phân", "đạo hàm",
+  "math", "solve", "calculate", "equation", "problem", "answer", "simplify", "integral", "derivative", "explain", "analysis"
+];
+const imageKeywords = [
+  "tạo ảnh", "tạo hình", "vẽ giúp", "minh họa", "vẽ lại", "tạo cho tôi", "vẽ cái", "dựng hình", "thiết kế ảnh", "tranh", "hình ảnh",
+  "generate image", "draw", "illustrate", "create image", "sketch", "render", "visualize", "picture of", "image of", "design an image"
+];
+
+
+  const isMath = mathKeywords.some(k => text.includes(k));
+  const isImagePrompt = imageKeywords.some(k => text.includes(k));
+  const hasImages = imagesArray && imagesArray.length > 0;
+
+  if (isMath || hasImages) {
+    div.innerHTML = "<i>Đang phân tích</i> <span class='dot'>.</span><span class='dot'>.</span><span class='dot'>.</span>";
+  } else if (isImagePrompt) {
+    div.innerHTML = `
+    <div style="background:#111;border:1px solid #333;border-radius:10px;padding:6px 10px;display:inline-block;">
+      <div style="color:#eee;margin-bottom:4px;font-style:italic;font-size:12px;">Wait for me a moment.</div>
+      <svg width="70" height="12" xmlns="http://www.w3.org/2000/svg" fill="#0ea5e9">
+        <circle cx="8" cy="6" r="3">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0s"/>
+        </circle>
+        <circle cx="24" cy="6" r="3">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0.2s"/>
+        </circle>
+        <circle cx="40" cy="6" r="3">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0.4s"/>
+        </circle>
+        <circle cx="56" cy="6" r="3">
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.2s" repeatCount="indefinite" begin="0.6s"/>
+        </circle>
+      </svg>
+    </div>
+    `;
+  } else {
+    div.innerHTML = `
+    <div style="background:#000;border:1px solid #222;border-radius:10px;padding:6px 10px;display:inline-block;">
+      <svg width="32" height="10" xmlns="http://www.w3.org/2000/svg" fill="#fff">
+        <circle cx="5" cy="5" r="3">
+          <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin="0s"/>
+        </circle>
+        <circle cx="16" cy="5" r="2">
+          <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin="0.2s"/>
+        </circle>
+        <circle cx="27" cy="5" r="3">
+          <animate attributeName="opacity" values="0.2;1;0.2" dur="1.2s" repeatCount="indefinite" begin="0.4s"/>
+        </circle>
+      </svg>
+    </div>`;
+  }
+
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+
+function removeLoadingBubble() {
+  const loading = document.getElementById("loading-bubble");
+  if (loading) loading.remove();
+}
+function handleKey(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+}
+function scrollToBottom() {
+  const container = document.getElementById("chat-container");
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
+  }, 100);
+}
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("send-btn").addEventListener("click", sendMessage);
+  });
+
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("inline-img")) {
+    const src = e.target.getAttribute("src");
+    const popup = document.getElementById("image-popup");
+    const popupImg = document.getElementById("popup-img");
+
+    popupImg.src = src;
+    popup.style.display = "flex";
+  }
+
+  if (e.target.id === "image-popup") {
+    document.getElementById("image-popup").style.display = "none";
+    document.getElementById("popup-img").src = "";
+  }
+});
+
+function addImageMessage(imageUrl) {
+  const container = document.getElementById("chat-container");
+  const div = document.createElement("div");
+  div.className = "message user";
+
+  const img = document.createElement("img");
+  img.src = imageUrl;
+  img.className = "sent-image image-sent-effect";
+
+  div.appendChild(img);
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+
+function sendLocationToAI(message) {
+  const formData = new FormData();
+  formData.append("message", message);
+  formData.append("history", JSON.stringify(serverRenderedMessages));
+
+  fetch("/chat_ai_lite", {
+    method: "POST",
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    removeLoadingBubble();
+    addBotMessage(data.reply || "Không nhận được phản hồi từ AI.");
+  })
+  .catch(err => {
+    removeLoadingBubble();
+    addBotMessage("Lỗi hệ thống khi gửi vị trí.");
+    console.error(err);
+  });
+}
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+function openUserInfoPopup() {
+  fetch("/user-info-popup")
+    .then(res => res.text())
+    .then(html => {
+      const wrapper = document.getElementById("user-info-popup-wrapper");
+      wrapper.innerHTML = html;
+      
+      wrapper.style.display = "flex";
+    })
+    .catch(err => {
+      showToast("Không thể mở thông tin người dùng.");
+      console.error(err);
+    });
+}
+
+function closeUserInfoPopup() {
+  const wrapper = document.getElementById("user-info-popup-wrapper");
+  if (wrapper) wrapper.style.display = "none";
+}
+function saveUserInfo(e) {
+  e.preventDefault();
+
+  const fullname = document.getElementById("popup_fullname")?.value;
+  const email = document.getElementById("popup_email")?.value;
+  const password = document.getElementById("popup_password")?.value;
+  const ai_personality = document.getElementById("popup_ai")?.value;
+
+  fetch("/update_user_info", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      fullname,
+      email,
+      password,
+      ai_personality
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      showToast("Đã lưu thông tin!");
+      closeUserInfoPopup();
+    } else {
+      showToast("Lưu thất bại: " + (data.error || ""));
+    }
+  })
+  .catch(err => {
+    showToast(" Lỗi kết nối.");
+    console.error(err);
+  });
+
+  return false;
+}
+
+function submitUserInfo(e) {
+  e.preventDefault();
+  return false;
+}
+
+let serverRenderedMessages = [];
+
+window.addEventListener("DOMContentLoaded", () => {
+  const chatId = document.getElementById("chat-container")?.dataset?.chatId;
+  if (chatId) {
+    fetch(`/get_chat_history?session_id=${chatId}`, {
+      method: "GET",
+      credentials: "include"
+    })
+      .then(res => {
+        if (!res.ok) throw new Error(`Lỗi HTTP ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        serverRenderedMessages = data.history || [];
+        renderMessages(serverRenderedMessages);
+      })
+      .catch(err => {
+        console.error("Lỗi khi lấy lịch sử:", err);
+      });
+  }
+});
+function getColorByEmoji(emoji) {
+ switch (emoji) {
+    case "❤️": return "#e74c3c";
+    case "😂": return "#f39c12"; 
+    case "😢": return "#3498db";
+    case "🤔": return "#9b59b6"; 
+    case "😡": return "#c0392b";
+    default: return "#34495e"; 
+  }
+}
+function renderMessages(history) {
+  const container = document.getElementById("chat-container");
+  container.innerHTML = "";
+  const messagesToRender = [];
+  let lastRealAiContent = null;
+
+  for (let i = history.length - 1; i >= 0; i--) {
+    const msg = history[i];
+    if (
+      (msg.role === "assistant" && msg.source === "emoji" && lastRealAiContent && msg.content.trim() === lastRealAiContent.trim()) ||
+      (msg.role === "user" && lastRealAiContent && msg.content.trim() === lastRealAiContent.trim()) ||
+        (msg.role === "user" && msg.content.trim().startsWith("[Thả cảm xúc "))
+    ) {
+      continue; 
+    }
+    if (msg.role === "assistant" && msg.source !== "emoji") {
+      lastRealAiContent = msg.content;
+    }
+    messagesToRender.push(msg);
+  }
+
+  messagesToRender.reverse().forEach(msg => {
+    const div = document.createElement("div");
+    div.className = msg.role === "user" ? "message user" : "message bot";
+
+if (msg.image_url) {
+  let imageArray = [];
+  try {
+    imageArray = typeof msg.image_url === "string"
+      ? JSON.parse(msg.image_url)
+      : msg.image_url;
+    if (!Array.isArray(imageArray)) imageArray = [imageArray];
+  } catch (e) {
+    imageArray = msg.image_url
+      ? msg.image_url.toString().split(",").map(s => s.trim()).filter(Boolean)
+      : [];
+  }
+  if (!imageArray || imageArray.length === 0) {
+    imageArray = []; 
+  } else {
+    const imgMsg = document.createElement("div");
+    imgMsg.className = msg.role === "user" ? "message user no-bubble" : "message bot no-bubble";
+
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "msg-imgs";
+
+    imageArray.forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "Ảnh AI đã tạo";
+      img.className = "chat-img full-img";
+      imgContainer.appendChild(img);
+    });
+
+    imgMsg.appendChild(imgContainer);
+    container.appendChild(imgMsg);
+  }
+}
+
+if (msg.role === "user") {
+    const isEmpty = !msg.content || msg.content.trim() === "";
+  if (isEmpty && !msg.image_url) return;
+
+  div.className = "message user";
+
+  if (msg.reply_to) {
+    const replyWrapper = document.createElement("div");
+    replyWrapper.style.cssText = `
+      background: #111;
+      padding: 6px 10px;
+      border-left: 3px solid #00bcd4;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      font-size: 13px;
+      color: #ccc;
+    `;
+    replyWrapper.innerHTML = `<b>Bạn đang trả lời AI:</b><br><i>${msg.reply_to}</i>`;
+    div.appendChild(replyWrapper);
+  }
+
+
+      div.style.position = "relative";
+
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "text-content";
+      contentDiv.style.paddingRight = "40px";
+      contentDiv.textContent = msg.content;
+
+
+      const copyBtn = document.createElement("button");
+      copyBtn.className = "copy-btn";
+      copyBtn.title = "Sao chép";
+      copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+
+      Object.assign(copyBtn.style, {
+        position: "absolute",
+        bottom: "4px",
+        right: "4px",
+        width: "22px",
+        height: "22px",
+        background: "transparent",
+        color: "#00eaff",
+        padding: "2px",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+        opacity: "1",
+        zIndex: "2"
+      });
+
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(contentDiv.innerText || "").then(() => {
+          showToast("Đã sao chép");
+          copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check">
+            <path d="M20 6L9 17l-5-5"/></svg>`;
+          setTimeout(() => {
+            copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+          }, 1200);
+        });
+      };
+
+      div.appendChild(contentDiv);
+      div.appendChild(copyBtn);
+        
+const statusDiv = document.createElement("div");
+statusDiv.textContent = "done";
+statusDiv.title = "Đã gửi";
+Object.assign(statusDiv.style, {
+  position: "absolute",
+  bottom: "6px",
+  right: "32px",  
+  fontSize: "10px",
+  color: "#888",
+  opacity: "0.8",
+  pointerEvents: "none",
+});
+
+     
+     div.appendChild(statusDiv);
+      container.appendChild(div);
+  
+      return; 
+    }
+if (msg.role === "assistant" && typeof msg.content === "string") {    
+  const isFullHTML = /<html[\s\S]*?>[\s\S]*?<\/html>/i.test(msg.content);
+  const isFormLikeHTML = /<form[\s\S]*?>[\s\S]*?<\/form>/i.test(msg.content);
+  const isSVG = /<svg[\s\S]*?>[\s\S]*?<\/svg>/i.test(msg.content);
+  const isDangerousHTML = /<(script|style|iframe|button|input|form|select|textarea|label)[\s>]/i.test(msg.content);
+  const isSuspiciousStructure = msg.content.trim().startsWith("<") && msg.content.trim().endsWith(">");
+  const isCodeBlockPre = /<pre><code.*?>[\s\S]*?<\/code><\/pre>/i.test(msg.content);
+  const isSafeMiniTags = /^<(b|i|u|br|span|small)[\s>]/i.test(msg.content) && !msg.content.includes("<script");
+
+  const shouldRenderAsCodeBlock = (
+    (isFullHTML || isFormLikeHTML || isSVG || isDangerousHTML || isSuspiciousStructure || isCodeBlockPre) &&
+    !isSafeMiniTags &&
+    !msg.content.includes("__CODE_BLOCK__") &&
+    !msg.content.includes("uploads/")
+  );
+
+if (!msg.image_url && /<pre><code.*?>[\s\S]*?<\/code><\/pre>/i.test(msg.content) && !msg.content.includes("__CODE_BLOCK__")) {
+  const parts = msg.content.split(/(<pre><code.*?>[\s\S]*?<\/code><\/pre>)/gi);
+
+  parts.forEach(part => {
+    if (/<pre><code.*?>[\s\S]*?<\/code><\/pre>/i.test(part)) {
+      const match = part.match(/<pre><code.*?>([\s\S]*?)<\/code><\/pre>/i);
+      const codeText = match ? match[1] : "";
+
+      const codeBlockWrapper = document.createElement("div");
+      codeBlockWrapper.style = "position: relative; margin-top: 8px;";
+
+      const codeBlock = document.createElement("pre");
+      codeBlock.className = "__split_code__";
+codeBlock.style = `
+  background: #0b0c10; /* đen đậm, không thuần đen */
+  color: #3399ff;      /* xanh nước biển mát mắt */
+  padding: 12px;
+  border: 1px solid #1f4f99; /* xanh đậm làm viền */
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: 'Fira Code', monospace;
+  text-shadow: 0 0 3px #1e90ff88; /* ánh nhẹ xanh biển */
+`;
+
+
+      codeBlock.textContent = codeText;
+      codeBlock.addEventListener("click", () => {
+  const range = document.createRange();
+  range.selectNodeContents(codeBlock);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+});
+
+      const verifiedWrap = document.createElement("div");
+verifiedWrap.innerHTML = `
+  <div class="verified-wrapper" style="
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transform: scale(0.8);
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  ">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+      viewBox="0 0 24 24" stroke="#4caf50" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+    <span style="font-size: 12px; color: #4caf50; font-weight: bold;">Verified</span>
+  </div>
+`;
+Object.assign(verifiedWrap.style, {
+  position: "absolute",
+  top: "8px",
+  right: "8px",
+  background: "#222",
+  padding: "4px 8px",
+  borderRadius: "8px",
+  zIndex: "1",
+  cursor: "default"
+});
+verifiedWrap.title = "Nội dung đã được xác minh và an toàn.";
+
+setTimeout(() => {
+  const wrapper = verifiedWrap.querySelector(".verified-wrapper");
+  wrapper.style.opacity = "1";
+  wrapper.style.transform = "scale(1)";
+}, 100);
+
+
+      codeBlockWrapper.appendChild(verifiedWrap);
+      codeBlockWrapper.appendChild(codeBlock);
+      div.appendChild(codeBlockWrapper);
+    } else {
+      const clean = part.trim();
+      if (clean) {
+        const textDiv = document.createElement("div");
+        textDiv.className = "text-content";
+        textDiv.innerHTML = clean.replace(/\n/g, "<br>");
+        div.appendChild(textDiv);
+      }
+    }
+  });
+
+  container.appendChild(div);
+  return;
+}
+  const firstLine = msg.content.trim().split("\n")[0];
+  const match = firstLine.match(/Cảm ơn bạn đã thả\s*([^\s<]+)/);
+  if (match && match[1]) {
+    const emoji = match[1];
+    const color = getColorByEmoji(emoji);
+    if (color) {
+      Object.assign(div.style, {
+        backgroundColor: color,
+        borderRadius: "12px",
+        padding: "10px",
+        marginBottom: "6px",
+        color: ((c) => {
+          const r = parseInt(c.substr(1, 2), 16);
+          const g = parseInt(c.substr(3, 2), 16);
+          const b = parseInt(c.substr(5, 2), 16);
+          return ((r * 299 + g * 587 + b * 114) / 1000) > 180 ? "#000" : "#fff";
+        })(color)
+      });
+    }
+  }
+}
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = msg.content;
+    
+    if (msg.content.includes('__CODE_BLOCK__')) {
+  const match = msg.content.match(/data-code="([^"]+)"/);
+  if (match && match[1]) {
+    const decoded = decodeURIComponent(match[1]);
+    const codeDiv = document.createElement("pre");
+    codeDiv.style = "background:#1e1e1e;color:#fff;padding:12px;border-radius:8px;overflow:auto;font-size:13px;";
+    codeDiv.textContent = decoded;
+    div.appendChild(codeDiv);
+    container.appendChild(div);
+    return; 
+  }
+}
+
+if (!msg.image_url) {
+  if (!msg.content.includes("__CODE_BLOCK__") && /<table[\s\S]*?>[\s\S]*?<\/table>/i.test(msg.content)) {
+    const tableWrapper = document.createElement("div");
+    tableWrapper.className = "ai-table-wrapper";
+    tableWrapper.setAttribute("data-code", encodeURIComponent(msg.content));
+
+    const match = msg.content.match(/([\s\S]*?)(<table[\s\S]*?>[\s\S]*?<\/table>)([\s\S]*)/i);
+
+    if (match) {
+      const beforeText = match[1].trim();
+      const tableHTML = match[2];
+      const afterText = match[3].trim();
+
+      if (beforeText) {
+        const beforeDiv = document.createElement("div");
+        beforeDiv.className = "text-content";
+        beforeDiv.style.marginBottom = "8px";   
+        beforeDiv.innerHTML = beforeText.replace(/\n/g, "<br>");
+        tableWrapper.appendChild(beforeDiv);
+      }
+
+      const tableDiv = document.createElement("div");
+      tableDiv.className = "table-content";
+      tableDiv.style.margin = "12px 0"; 
+      tableDiv.innerHTML = tableHTML;
+      tableWrapper.appendChild(tableDiv);
+
+      if (afterText) {
+        const afterDiv = document.createElement("div");
+        afterDiv.className = "text-content";
+        afterDiv.style.marginTop = "8px";   
+        afterDiv.innerHTML = afterText.replace(/\n/g, "<br>");
+        tableWrapper.appendChild(afterDiv);
+      }
+    }
+
+    div.appendChild(tableWrapper);
+    container.appendChild(div);
+    return;
+  }
+  let cleanedContent = msg.content.trim();
+  if (cleanedContent.includes("<img") && cleanedContent.includes("uploads/")) {
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "text-content";
+    contentDiv.innerHTML = cleanedContent;
+    div.appendChild(contentDiv);
+    container.appendChild(div);  
+    return; 
+  }
+      if (cleanedContent.includes("<html") || cleanedContent.includes("<body")) {
+          const previewBtn = document.createElement("button");
+  const codeBlock = document.createElement("pre");
+        Object.assign(previewBtn.style, {
+          marginBottom: "10px",
+          padding: "6px 12px",
+          borderRadius: "8px",
+          background: "#00bcd4",
+          color: "white",
+          border: "none",
+          cursor: "pointer"
+        });
+        codeBlock.innerText = cleanedContent;
+        div.appendChild(previewBtn);
+        div.appendChild(codeBlock);
+      } else {
+        const contentWrapper = document.createElement("div");
+        contentWrapper.className = "text-wrapper";
+        contentWrapper.style.position = "relative";
+        contentWrapper.style.paddingRight = "32px";
+
+        const contentDiv = document.createElement("div");
+        contentDiv.className = "text-content";
+        contentDiv.textContent = msg.content;
+
+
+        if (cleanedContent.includes("<table")) {
+  contentDiv.innerHTML = `<br>${cleanedContent}<br>`;
+} else {
+  contentDiv.innerHTML = cleanedContent.replace(/\n/g, "<br>");
+}
+
+        const copyBtn = document.createElement("button");
+        copyBtn.className = "copy-btn";
+        copyBtn.title = "Sao chép";
+        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+        Object.assign(copyBtn.style, {
+          position: "absolute",
+          top: "1px",
+          right: "1px",
+          width: "28px",
+          height: "28px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "#fff",
+          color: "#000",
+          borderRadius: "999px",
+          padding: "0",
+          border: "none",
+          cursor: "pointer",
+          opacity: "0",
+          transition: "all 0.2s ease",
+          zIndex: "2"
+        });
+
+        contentWrapper.onmouseenter = () => (copyBtn.style.opacity = "1");
+        contentWrapper.onmouseleave = () => (copyBtn.style.opacity = "0");
+
+        copyBtn.onclick = () => {
+  navigator.clipboard.writeText(contentDiv.innerText || "").then(() => {
+    showToast("Đã sao chép");
+    copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check">
+      <path d="M20 6L9 17l-5-5"/></svg>`;
+    setTimeout(() => {
+      copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    }, 1200);
+  });
+};
+        contentWrapper.appendChild(contentDiv);
+        contentWrapper.appendChild(copyBtn);
+        
+        div.appendChild(contentWrapper);
+      }
+    }
+   if (!div.hasChildNodes()) return; 
+    container.appendChild(div);
+  });
+
+  if (window.MathJax && typeof MathJax.typesetPromise === "function") {
+    MathJax.typesetPromise([container]).catch(err => {
+      console.error("MathJax lỗi:", err);
+    });
+  }
+
+  const totalMessages = history.length;
+  if (totalMessages >= 130) {
+    showToast(`Đoạn chat hiện tại đã có hơn ${totalMessages} câu. Bạn nên tạo đoạn mới để tránh lag 💡`);
+  }
+
+  scrollToBottom();
+}
+function addUserMessage(messageText, images = []) {
+  const container = document.getElementById("chat-container");
+  if (images && images.length > 0) {
+    const imgMsg = document.createElement("div");
+    imgMsg.className = "message user no-bubble";
+
+    const imgContainer = document.createElement("div");
+    imgContainer.className = "msg-imgs";
+
+    images.forEach((url) => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "Ảnh";
+      img.className = "chat-img full-img";
+      imgContainer.appendChild(img);
+    });
+
+    imgMsg.appendChild(imgContainer);
+    container.appendChild(imgMsg);
+  }
+  if (messageText?.trim()) {
+    const textMsg = document.createElement("div");
+    textMsg.className = "message user";
+    textMsg.style.position = "relative";
+    if (window.replyTo?.content) {
+      const replyPreview = document.createElement("div");
+      replyPreview.className = "reply-preview";
+      replyPreview.style = `
+        background: #202020;
+        padding: 6px 10px;
+        border-left: 3px solid #00bcd4;
+        border-radius: 8px;
+        margin-bottom: 5px;
+        font-size: 13px;
+        color: #ccc;
+      `;
+      replyPreview.innerHTML = `<b>${window.replyTo.role === "bot" ? "Bạn đang trả lời AI:" : "Bạn đang trả lời:"}</b><br><i>${window.replyTo.content}</i>`;
+      textMsg.appendChild(replyPreview);
+    }
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "text-content";
+    contentDiv.style.paddingRight = "40px";
+    contentDiv.innerText = messageText;
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "copy-btn";
+    copyBtn.title = "Sao chép";
+    copyBtn.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+      </svg>`;
+    Object.assign(copyBtn.style, {
+      position: "absolute",
+      bottom: "4px",
+      right: "4px",
+      width: "22px",
+      height: "22px",
+      background: "transparent",
+      color: "#00eaff",
+      padding: "2px",
+      border: "none",
+      borderRadius: "4px",
+      cursor: "pointer",
+      opacity: "1",
+      zIndex: "2"
+    });
+
+    copyBtn.onclick = () => {
+      navigator.clipboard.writeText(contentDiv.innerText || "").then(() => {
+        showToast("Đã sao chép");
+        copyBtn.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>`;
+        setTimeout(() => {
+          copyBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+            </svg>`;
+        }, 1200);
+      });
+    };
+
+    textMsg.appendChild(contentDiv);
+    textMsg.appendChild(copyBtn);
+    const timeDiv = document.createElement("div");
+    const now = new Date();
+    const timeString = now.getHours().toString().padStart(2, "0") + ":" +
+                       now.getMinutes().toString().padStart(2, "0");
+    timeDiv.textContent = timeString;
+    timeDiv.style.fontSize = "11px";
+    timeDiv.style.opacity = "0.5";
+    timeDiv.style.marginTop = "4px";
+    textMsg.appendChild(timeDiv);
+
+    container.appendChild(textMsg);
+    
+  }
+  scrollToBottom();
+}
+
+</script>
+<script>function copyUserId() {
+  const input = document.getElementById("popup_user_id");
+  navigator.clipboard.writeText(input.value)
+    .then(() => showToast(" Đã sao chép ID!"))
+    .catch(() => showToast(" Sao chép thất bại"));
+}
+
+function copyReferralCode() {
+  const input = document.getElementById("popup_referral");
+  navigator.clipboard.writeText(input.value)
+    .then(() => showToast("Đã sao chép mã giới thiệu!"))
+    .catch(() => showToast(" Sao chép thất bại"));
+}
+
+</script>
+<div id="user-info-popup-wrapper" style="display: none;">
+
+</div>
+<div id="image-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999;">
+  <img id="popup-img" src="" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 0 12px rgba(0,0,0,0.6);" />
+</div>
+<script>
+function openAvatarPopup() {
+  const src = document.querySelector('img[alt="Avatar người dùng"]').src;
+  document.getElementById('popup-avatar-img').src = src;
+  document.getElementById('avatar-popup').style.display = 'block';
+}
+
+function closeAvatarPopup() {
+  document.getElementById('avatar-popup').style.display = 'none';
+}
+</script>
+<div id="chat-new-popup" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+  <div style="background:#fff;color:#000;padding:24px;border-radius:12px;max-width:90%;width:400px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+    <h3 style="font-size:18px;font-weight:bold;color:#e74c3c;margin-bottom:12px;"> Lưu ý trước khi tạo đoạn chat mới</h3>
+    <p style="font-size:14px;line-height:1.5;margin-bottom:20px;">
+      Khi tạo đoạn chat mới, <strong>mọi dữ liệu trong đoạn hiện tại sẽ bị xóa sạch khỏi hệ thống.</strong><br>
+      Bạn nên kiểm tra lại các thông tin hoặc kết quả cần thiết trước khi tiếp tục.
+    </p>
+    <label style="display:flex;align-items:center;justify-content:center;font-size:13px;margin-bottom:16px;cursor:pointer;">
+      <input type="checkbox" id="dont-show-again" style="margin-right:6px;">
+      Không nhắc lại lần sau
+    </label>
+
+    <div style="display:flex;justify-content:center;gap:12px;">
+      <button onclick="hideNewChatPopup()" style="padding:8px 16px;border-radius:6px;background:#777;color:#fff;border:none;">Huỷ</button>
+      <button onclick="confirmNewChat()" style="padding:8px 16px;border-radius:6px;background:#e74c3c;color:#fff;font-weight:bold;border:none;">Tạo đoạn mới</button>
+    </div>
+  </div>
+</div>
+
+  <script>
+  function saveCurrentChat() {
+    document.getElementById("chat-title-input").value = "";
+    document.getElementById("save-chat-name-popup").style.display = "flex";
+  }
+
+function confirmSaveChat() {
+  const title = document.getElementById("chat-title-input").value.trim();
+  if (!title) return showToast(" Vui lòng nhập tên đoạn chat!");
+  fetch("/save_chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success) {
+      showToast("Không thể lưu: " + (data.error || "Lỗi không xác định"));
+      return;
+    }
+
+  
+    hideSaveChatNamePopup();
+    showToast(" Đã lưu đoạn chat! Đang tạo đoạn mới...");
+
+   
+    return fetch("/new_chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });
+  })
+  .then(res => res?.json?.())
+  .then(result => {
+    if (result?.success) {
+      location.reload(); 
+    } else {
+      showToast(" Không thể tạo đoạn chat mới.");
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    showToast("Lỗi hệ thống khi lưu hoặc tạo đoạn mới.");
+  });
+}
+
+
+
+  function hideSaveChatNamePopup() {
+    document.getElementById("save-chat-name-popup").style.display = "none";
+  }
+
+let savedChatsData = []; 
+function showSavedChatPopup() {
+  const popup = document.getElementById("saved-chat-popup");
+  const list = document.getElementById("saved-chat-list");
+  const searchInput = document.getElementById("search-chat-input");
+
+  popup.style.display = "flex";
+  list.innerHTML = "<p>Đang tải...</p>";
+  if (searchInput) searchInput.value = ""; 
+
+  fetch("/saved_chats")
+    .then(res => res.json())
+    .then(result => {
+     if (!result.success || result.data.length === 0) {
+  list.innerHTML = "<p>Chưa có đoạn chat nào được lưu.</p>";
+  const countEl = document.getElementById("chat-count-number");
+  if (countEl) {
+    countEl.innerText = "0";
+    countEl.style.color = "#4caf50";
+  }
+  return;
+}
+      savedChatsData = result.data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      const countNumber = savedChatsData.length;
+const countNumberEl = document.getElementById("chat-count-number");
+countNumberEl.innerText = countNumber;
+if (countNumber >= 70) {
+  countNumberEl.style.color = "#e74c3c"; 
+} else if (countNumber >= 50) {
+  countNumberEl.style.color = "#f39c12";
+} else {
+  countNumberEl.style.color = "#4caf50"; 
+}
+
+      list.innerHTML = "";
+savedChatsData.forEach(chat => {
+  const item = document.createElement("div");
+  item.style.display = "flex";
+  item.style.justifyContent = "space-between";
+  item.style.alignItems = "center";
+  item.style.padding = "6px 0";
+
+  item.innerHTML = `
+    <a href="javascript:void(0)" onclick="loadSavedChat('${chat.id}')" style="color:#00aced;text-decoration:none;flex:1;">
+      🔹 <strong>${chat.title}</strong> <span style="color:#aaa;font-size:12px;">(${chat.created_at.split(' ')[0]})</span>
+    </a>
+    <div style="display:flex;gap:6px;">
+      <button onclick="showShareLink('${chat.id}')" style="background:#2980b9;color:white;border:none;padding:4px 8px;border-radius:4px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24">
+          <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.02-4.11A2.99 2.99 0 1 0 14 4a2.99 2.99 0 0 0 .09.7L7.06 8.81a3.004 3.004 0 1 0 0 6.38l7.03 4.11c-.05.23-.09.46-.09.7a3 3 0 1 0 3-3z"/>
+        </svg>
+      </button>
+      <button onclick="deleteSavedChat('${chat.id}')" style="background:#c0392b;color:white;border:none;padding:4px 8px;border-radius:4px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24">
+          <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z"/>
+        </svg>
+      </button>
+    </div>
+  `;
+  list.appendChild(item);
+});
+
+    })
+    .catch(err => {
+      list.innerHTML = "<p>Không thể tải danh sách. Thử lại sau.</p>";
+      console.error(err);
+    });
+}
+function filterSavedChatsInPopup() {
+  const keyword = document.getElementById("search-chat-input").value.toLowerCase().trim();
+  const list = document.getElementById("saved-chat-list");
+
+  const filtered = savedChatsData.filter(chat =>
+    chat.title.toLowerCase().includes(keyword)
+  );
+
+  if (filtered.length === 0) {
+    list.innerHTML = "<p> Không tìm thấy đoạn chat!</p>";
+    return;
+  }
+
+  list.innerHTML = "";
+  filtered.forEach(chat => {
+    const item = document.createElement("div");
+    item.style.display = "flex";
+    item.style.justifyContent = "space-between";
+    item.style.alignItems = "center";
+    item.style.padding = "6px 0";
+
+    item.innerHTML = `
+  <a href="javascript:void(0)" onclick="loadSavedChat('${chat.id}')" style="color:#00aced;text-decoration:none;flex:1;">
+    🔹 <strong>${chat.title}</strong> <span style="color:#aaa;font-size:12px;">(${chat.created_at.split(' ')[0]})</span>
+  </a>
+  <div style="display:flex;gap:6px;">
+
+<button onclick="showShareLink('${chat.id}')" 
+  style="background:#2980b9;color:white;border:none;padding:4px 8px;border-radius:4px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24">
+    <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.02-4.11A2.99 2.99 0 1 0 14 4a2.99 2.99 0 0 0 .09.7L7.06 8.81a3.004 3.004 0 1 0 0 6.38l7.03 4.11c-.05.23-.09.46-.09.7a3 3 0 1 0 3-3z"/>
+  </svg>
+  Chia sẻ
+</button>
+
+<button onclick="deleteSavedChat('${chat.id}')" 
+  style="background:#c0392b;color:white;border:none;padding:4px 8px;border-radius:4px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="white" viewBox="0 0 24 24">
+    <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z"/>
+  </svg>
+  Xoá
+</button>
+
+  </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
+  function hideSavedChatPopup() {
+    document.getElementById("saved-chat-popup").style.display = "none";
+  }
+  function deleteSavedChat(chatId) {
+    if (!confirm("Bạn có chắc muốn xóa đoạn chat này?")) return;
+
+    fetch(`/delete_saved_chat/${chatId}`, { method: "DELETE" })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          showSavedChatPopup(); 
+        } else {
+          showToast("Không thể xóa: " + data.error);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        showToast("Lỗi khi xóa đoạn chat.");
+      });
+  }
+function isDangerousHTML(content) {
+  return /<(button|input|svg|select|form|script|iframe|style|object|embed|link)[\s>]/i.test(content);
+}
+
+function loadSavedChat(chatId) {
+  fetch(`/saved_chat/${chatId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) throw new Error("Không tìm thấy đoạn chat.");
+
+      const popup = document.getElementById("chat-preview-popup");
+      const title = document.getElementById("preview-title");
+      const box = document.getElementById("preview-messages");
+
+      title.innerText = `${data.title} (${data.created_at})`;
+      box.innerHTML = "";
+
+      data.messages.forEach(msg => {
+        if (msg.content && msg.content.startsWith("[Thả cảm xúc")) return;
+
+        const div = document.createElement("div");
+        div.style.display = "flex";
+        div.style.margin = "10px 0";
+        div.style.justifyContent = msg.role === "user" ? "flex-end" : "flex-start";
+
+        const bubble = document.createElement("div");
+        bubble.style.display = "block";
+        bubble.style.width = "fit-content";
+        bubble.style.background = msg.role === "user" ? "#2c3e50" : "#34495e";
+        bubble.style.color = "white";
+        bubble.style.padding = "10px 14px";
+        bubble.style.borderRadius = "18px";
+        bubble.style[`borderBottom${msg.role === "user" ? "Right" : "Left"}Radius`] = "4px";
+        bubble.style.maxWidth = "80%";
+        bubble.style.wordWrap = "break-word";
+        bubble.style.fontSize = "14px";
+        bubble.style.lineHeight = "1.5";
+        bubble.style.textAlign = "left";
+        bubble.style.position = "relative";
+
+  
+        if (msg.image_url && !(msg.content && msg.content.includes("AI vừa tạo ảnh này"))) {
+          let urls = [];
+          try {
+            urls = JSON.parse(msg.image_url);
+            if (!Array.isArray(urls)) urls = [urls];
+          } catch {
+            urls = [msg.image_url];
+          }
+          urls = [...new Set(urls.map(u => String(u).trim().replace(/^["'\[]+|["'\]]+$/g, "")))];
+          urls.forEach(url => {
+            if (!url) return;
+            const finalUrl = url.startsWith("/static") ? url : "/static/" + url;
+            const img = document.createElement("img");
+img.src = finalUrl;
+img.style.maxWidth = "100%";
+img.style.borderRadius = "8px";
+img.style.marginBottom = "6px";
+img.style.cursor = "pointer"; 
+
+img.onclick = () => {
+  const viewer = document.getElementById("popup-image-viewer");
+  const viewerImg = document.getElementById("popup-image-viewer-img");
+  viewerImg.src = finalUrl;
+  viewer.style.display = "flex";
+};
+
+bubble.appendChild(img);
+          });
+        }
+
+        const raw = (msg.content || "").trim();
+        const isAIImageHTML = raw.includes("<img") && raw.includes("AI vừa tạo ảnh này");
+
+        if (!raw || raw === "__image_only__") {
+          div.appendChild(bubble);
+          box.appendChild(div);
+          return;
+        }
+
+        if (isAIImageHTML) {
+          const aiDiv = document.createElement("div");
+          aiDiv.innerHTML = raw;
+          bubble.appendChild(aiDiv);
+          div.appendChild(bubble);
+          box.appendChild(div);
+          return;
+        }
+
+        const isOnlyText = !raw.includes("<pre><code") && !raw.includes("<img");
+
+        if (isOnlyText) {
+          const danger = isDangerousHTML(raw);
+          let safeHTML = danger
+            ? raw.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")
+            : raw.replace(/\n/g, "<br>");
+
+if (!danger && safeHTML.includes("<table")) {
+  const parts = safeHTML.split(/(<table[\s\S]*?<\/table>)/i);
+  const before = parts[0]?.trim() || "";
+  const table = parts[1] || "";
+  const after = parts[2]?.trim() || "";
+
+  if (before) {
+    const textDiv = document.createElement("div");
+    textDiv.innerHTML = before;
+    bubble.appendChild(textDiv);
+  }
+
+  if (table) {
+const btn = document.createElement("button");
+btn.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+       viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:6px;">
+    <circle cx="11" cy="11" r="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Xem chi tiết</span>
+`;
+Object.assign(btn.style, {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "6px",
+  background: "#444",
+  color: "white",
+  border: "none",
+  padding: "6px 12px",
+  borderRadius: "6px",
+  marginTop: "8px",
+  cursor: "pointer",
+  fontSize: "14px"
+});
+
+    btn.dataset.tableHTML = table;
+btn.onclick = () => {
+  const popup = document.getElementById("table-popup");
+  const container = document.getElementById("table-popup-content");
+
+  let rawHTML = btn.dataset.tableHTML || "";
+    rawHTML = rawHTML
+    .replace(/^(<br\s*\/?>|\s)+/gi, "")                         
+    .replace(/(<br\s*\/?>|\s)+$/gi, "")                       
+    .replace(/(<td[^>]*>)(\s*<br\s*\/?>\s*)+/gi, "$1")          
+    .replace(/(\s*<br\s*\/?>\s*)+(<\/td>)/gi, "$2")             
+    .replace(/(<tr[^>]*>)(\s*<br\s*\/?>\s*)+/gi, "$1")    
+    .replace(/(\s*<br\s*\/?>\s*)+(<\/tr>)/gi, "$2")
+    .replace(/<div[^>]*>\s*(<table[\s\S]*?<\/table>)\s*<\/div>/i, "$1") 
+    .replace(/style\s*=\s*["'][^"']*(margin|padding)[^"']*["']/gi, "");  
+
+  container.innerHTML = rawHTML;
+  container.style.border = "2px dashed red";
+
+  popup.style.display = "flex";
+};
+
+    bubble.appendChild(btn);
+  }
+
+  if (after) {
+    const afterDiv = document.createElement("div");
+    afterDiv.innerHTML = after;
+    bubble.appendChild(afterDiv);
+  }
+
+  div.appendChild(bubble);
+  box.appendChild(div);
+  return;
+}
+
+
+          const textDiv = document.createElement("div");
+          textDiv.innerHTML = safeHTML;
+          bubble.appendChild(textDiv);
+          div.appendChild(bubble);
+          box.appendChild(div);
+          return;
+        }
+
+        const parts = raw.split(/(<pre><code.*?>[\s\S]*?<\/code><\/pre>)/gi);
+        parts.forEach(part => {
+          const isCode = /<pre><code.*?>[\s\S]*?<\/code><\/pre>/i.test(part);
+          if (isCode) {
+            const match = part.match(/<pre><code.*?>([\s\S]*?)<\/code><\/pre>/i);
+            const codeText = match ? match[1] : "";
+
+            const verifiedWrap = document.createElement("div");
+            verifiedWrap.innerHTML = `
+              <div class="verified-wrapper" style="display: flex; align-items: center; gap: 6px; opacity: 0; transition: opacity 0.8s ease;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+                  viewBox="0 0 24 24" stroke="#4caf50" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                </svg>
+                <span style="font-size: 12px; color: #4caf50; font-weight: bold;">Verified</span>
+              </div>
+            `;
+            Object.assign(verifiedWrap.style, {
+              position: "absolute",
+              top: "8px",
+              right: "8px",
+              background: "#222",
+              padding: "4px 8px",
+              borderRadius: "8px",
+              zIndex: "1",
+              cursor: "default"
+            });
+            setTimeout(() => {
+              const badge = verifiedWrap.querySelector(".verified-wrapper");
+              if (badge) badge.style.opacity = "1";
+            }, 200);
+
+            const codeBlock = document.createElement("pre");
+            codeBlock.style = "white-space: pre-wrap; background: #000; color: #fff; padding: 12px 16px; border-radius: 10px; overflow-x: auto; font-size: 13px; margin-top: 8px;";
+            codeBlock.textContent = codeText;
+            
+
+            const wrapper = document.createElement("div");
+            wrapper.style.position = "relative";
+            wrapper.appendChild(verifiedWrap);
+            wrapper.appendChild(codeBlock);
+            bubble.appendChild(wrapper);
+          } else {
+            const clean = part.trim();
+            if (clean) {
+              const danger = isDangerousHTML(clean);
+              let html = danger
+                ? clean.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")
+                : clean.replace(/\n/g, "<br>").trim();
+
+              if (!danger && html.includes("<table")) {
+                html = html.replace(/(<br>\s*)+(?=<table)/gi, "");
+                html = html.replace(/(<\/table>)(\s*<br>)*/gi, "$1");
+
+                const match = html.match(/([\s\S]*?)(<table[\s\S]*<\/table>)/i);
+                if (match) {
+                  const textPart = match[1].trim().replace(/(<br>\s*)+$/gi, "");
+                  const tablePart = match[2];
+
+                  if (textPart) {
+                    const textDiv = document.createElement("div");
+                    textDiv.innerHTML = textPart;
+                    bubble.appendChild(textDiv);
+                  }
+
+                  const btn = document.createElement("button");
+btn.innerHTML = `
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none"
+       viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="margin-right:6px;">
+    <circle cx="11" cy="11" r="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <span>Xem chi tiết</span>
+`;
+Object.assign(btn.style, {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "6px",
+  background: "#444",
+  color: "white",
+  border: "none",
+  padding: "6px 12px",
+  borderRadius: "6px",
+  marginTop: "8px",
+  cursor: "pointer",
+  fontSize: "14px"
+});
+
+                  btn.dataset.tableHTML = tablePart;
+                  btn.onclick = () => {
+                    const popup = document.getElementById("table-popup");
+                    const container = document.getElementById("table-popup-content");
+                    container.innerHTML = btn.dataset.tableHTML;
+                    popup.style.display = "flex";
+                  };
+                  bubble.appendChild(btn);
+                  return; 
+                }
+              }
+
+              const divNormal = document.createElement("div");
+              divNormal.innerHTML = html;
+              bubble.appendChild(divNormal);
+            }
+          }
+        });
+
+        div.appendChild(bubble);
+        box.appendChild(div);
+      });
+
+      popup.style.display = "flex";
+      if (window.MathJax) MathJax.typesetPromise();
+    })
+    .catch(err => {
+      showToast("Không thể tải đoạn chat.");
+      console.error(err);
+    });
+}
+
+  function hidePreviewPopup() {
+    document.getElementById("chat-preview-popup").style.display = "none";
+  }
+ function isDangerousHTML(content) {
+  return /<(button|input|svg|select|form|script|iframe|style|object|embed|link)[\s>]/i.test(content);
+}
+
+function viewSavedChat(chatId) {
+  fetch(`/saved_chat/${chatId}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) {
+        showToast("Không tìm thấy nội dung đoạn chat.");
+        return;
+      }
+
+      const content = document.getElementById("saved-chat-detail-content");
+      const title = document.getElementById("saved-chat-detail-title");
+      title.innerText = data.title;
+      content.innerHTML = "";
+
+      data.messages.forEach(msg => {
+        if (!msg.content || msg.content.trim() === "__image_only__") return;
+
+        const raw = msg.content.trim();
+        const isAIImageHTML = raw.includes("<img") && raw.includes("AI vừa tạo ảnh này");
+        const isOnlyText = !raw.includes("<pre><code") && !raw.includes("<img");
+
+        const div = document.createElement("div");
+        div.style.marginBottom = "12px";
+
+        let bodyHTML = "";
+
+        if (isAIImageHTML) {
+          bodyHTML = raw;
+        } else if (isOnlyText) {
+          const danger = isDangerousHTML(raw);
+          const safeHTML = danger
+            ? raw.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")
+            : raw.replace(/\n/g, "<br>");
+          bodyHTML = safeHTML;
+        } else {
+          const parts = raw.split(/(<pre><code.*?>[\s\S]*?<\/code><\/pre>)/gi);
+          parts.forEach(part => {
+            const isCode = /<pre><code.*?>[\s\S]*?<\/code><\/pre>/i.test(part);
+            if (isCode) {
+              const match = part.match(/<pre><code.*?>([\s\S]*?)<\/code><\/pre>/i);
+              const codeText = match ? match[1] : "";
+
+              const codeHTML = `
+                <div style="position: relative; margin-top: 10px;">
+                  <div class="verified-wrapper" style="display: flex; align-items: center; gap: 6px; position: absolute; top: 8px; right: 8px; background: #222; padding: 4px 8px; border-radius: 8px; z-index: 1; cursor: default; opacity: 0; transition: opacity 0.8s ease;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#4caf50" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                    <span style="font-size: 12px; color: #4caf50; font-weight: bold;">Verified</span>
+                  </div>
+                  <pre style="white-space: pre-wrap; background: #000; color: #fff; padding: 12px 16px; border-radius: 10px; overflow-x: auto; font-size: 13px; margin-top: 8px;">${codeText}</pre>
+                </div>
+              `;
+              bodyHTML += codeHTML;
+            } else {
+              const clean = part.trim();
+              if (!clean) return;
+              const danger = isDangerousHTML(clean);
+              const safe = danger
+                ? clean.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>")
+                : clean.replace(/\n/g, "<br>");
+              bodyHTML += `<div>${safe}</div>`;
+            }
+          });
+        }
+        const hasImgInContent = raw.includes("<img");
+        const imageHTML = (!hasImgInContent && msg.image_url)
+          ? (() => {
+              try {
+                let urls = JSON.parse(msg.image_url);
+                if (!Array.isArray(urls)) urls = [urls];
+                urls = [...new Set(urls.map(u => String(u).trim().replace(/^["'\[]+|["'\]]+$/g, "")))];
+                return urls
+                  .filter(url => !!url)
+                  .map(url => {
+                    const finalUrl = url.startsWith("/static") ? url : "/static/" + url;
+                    return `<img src="${finalUrl}" style="max-width:100%;margin-top:8px;border-radius:8px;">`;
+                  })
+                  .join("");
+              } catch {
+                return `<img src="${msg.image_url}" style="max-width:100%;margin-top:8px;border-radius:8px;">`;
+              }
+            })()
+          : "";
+
+        div.innerHTML = `
+          <div style="font-weight:bold;color:${msg.role === 'user' ? '#00aced' : '#f39c12'}">
+            ${msg.role === 'user' ? ' Bạn' : ' AI'}
+          </div>
+          <div>${bodyHTML}</div>
+          ${imageHTML}
+        `;
+
+        content.appendChild(div);
+      });
+
+      document.getElementById("saved-chat-detail-popup").style.display = "flex";
+    })
+    .catch(err => {
+      console.error(err);
+      showToast("Lỗi khi tải nội dung đoạn chat.");
+    });
+}
+function showShareLink(chatId) {
+  const fullLink = `${window.location.origin}/shared_chat/${chatId}`;
+  document.getElementById("share-link-input").value = fullLink;
+  document.getElementById("share-link-popup").style.display = "flex";
+}
+
+function hideSharePopup() {
+  document.getElementById("share-link-popup").style.display = "none";
+}
+
+function copyShareLink() {
+  const input = document.getElementById("share-link-input");
+  input.select();
+  input.setSelectionRange(0, 99999);
+  document.execCommand("copy");
+  showToast("Đã sao chép liên kết!");
+}
+
+
+  </script>
+<div id="share-link-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+  <div style="
+    background:#1e1e1e;
+    color:white;
+    padding:24px;
+    border-radius:16px;
+    width:100%;
+    max-width:460px;
+    box-sizing:border-box;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    margin: 12px;
+  ">
+    <h3 style="font-size:12px;margin-bottom:14px;display:flex;align-items:center;gap:6px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="19" viewBox="0 0 24 24">
+  <circle cx="12" cy="12" r="10" stroke="black" stroke-width="2" fill="lightblue"/>
+  <line x1="12" y1="6" x2="12" y2="18" stroke="black" stroke-width="2"/>
+  <line x1="6" y1="12" x2="18" y2="12" stroke="black" stroke-width="2"/>
+</svg>
+      Link chia sẻ đoạn chat
+    </h3>
+
+    <input id="share-link-input" type="text" readonly 
+      style="width:100%;padding:10px 14px;border-radius:8px;border:none;background:#2c2c2c;color:white;font-size:15px;box-sizing:border-box;">
+
+    <div style="text-align:right;margin-top:18px;display:flex;justify-content:flex-end;gap:10px;">
+      <button onclick="copyShareLink()" 
+        style="display:flex;align-items:center;gap:6px;padding:6px 14px;background:#27ae60;border:none;border-radius:8px;color:white;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        </svg>
+        Sao chép
+      </button>
+
+      <button onclick="hideSharePopup()" 
+        style="padding:6px 14px;background:#444;border:none;border-radius:8px;color:white;">Đóng</button>
+    </div>
+  </div>
+</div>
+<div id="saved-chat-popup" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;">
+  <div style="background:#1e1e1e;color:#fff;padding:24px;border-radius:12px;max-width:90%;width:480px;max-height:80vh;overflow:visible;display:flex;flex-direction:column;">
+
+    <h3 style="font-size:18px;font-weight:bold;margin-bottom:12px;">Danh sách đoạn chat đã lưu</h3>
+   <div id="chat-count" style="font-size:14px;font-weight:500;margin-bottom:8px;text-align:right;">
+  Bạn đã lưu<span id="chat-count-number" style="color:#4caf50;">0</span><span style="color:#aaa;">/70 đoạn chat</span>
+</div>
+    <input id="search-chat-input" type="text" placeholder="Tìm theo tên đoạn chat..." 
+      style="padding:6px 10px;margin-bottom:12px;border-radius:6px;border:none;outline:none;font-size:14px;" 
+      oninput="filterSavedChatsInPopup()">
+   <div id="saved-chat-list" style="overflow-y:auto;flex:1;max-height:300px;">
+
+      <p>Đang tải...</p>
+    </div>
+
+    <div style="text-align:right;margin-top:16px;">
+      <button onclick="hideSavedChatPopup()" style="padding:6px 14px;border-radius:6px;background:#444;color:white;border:none;">Đóng</button>
+    </div>
+  </div>
+</div>
+<div id="save-chat-name-popup" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;">
+  <div style="background:linear-gradient(135deg, #1e1e1e, #2c3e50);color:#fff;padding:28px 24px;border-radius:16px;width:90%;max-width:480px;box-shadow:0 10px 40px rgba(0,0,0,0.5);position:relative;">
+   <h3 style="margin-bottom:18px;font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#f1c40f" viewBox="0 0 24 24"><path d="M10.586 2a2 2 0 0 0-1.414.586l-6.586 6.586a2 2 0 0 0-.586 1.414v9.414a2 2 0 0 0 2 2h16.001a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-8.586l-2-2H10.586zM20 20.001H4v-9.414l6.586-6.586 2 2H20v14z"/></svg>
+      Đặt tên cho đoạn chat
+    </h3>
+
+<div style="display:flex;gap:12px;background:#2f2f2f;border-left:4px solid #f1c40f;padding:14px 16px;border-radius:12px;font-size:13.5px;margin-bottom:18px;line-height:1.65;">
+  <div style="flex-shrink:0;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#f1c40f" viewBox="0 0 24 24">
+      <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+    </svg>
+  </div>
+<div>
+  <strong style="color:#f1c40f;">Lưu ý trước khi lưu đoạn chat:</strong><br>
+  • Hãy lưu trên <u>tài khoản cá nhân</u> để tránh rò rỉ nội dung nhạy cảm.<br>
+  • Mọi đoạn chat đã lưu đều <b>chỉ hiển thị riêng cho bạn</b> — người khác không thể xem được.<br>
+  • <b>Không nên lưu các thông tin quan trọng</b> như: mật khẩu, số tài khoản ngân hàng, mã OTP,...<br>
+  • SolverViet<u>không kiểm duyệt nội dung lưu</u>, bạn chịu trách nhiệm với những gì lưu lại.<br>
+  • <b>Các ảnh được AI tạo</b> sẽ tự động bị hệ thống dọn dẹp sau <u>30 ngày</u> nếu bạn lưu kèm chúng.
+  • <i>Nếu bạn dùng máy tính công cộng, hãy đảm bảo đã đăng xuất sau khi sử dụng.</i><br>
+  
+<div style="margin-top:8px; font-size:13px; color:#aaa;">
+    Bằng việc bấm <b>Lưu</b>, bạn đã đồng ý các lưu ý trên và
+    <a href="#" onclick="event.preventDefault(); document.getElementById('terms-popup').style.display='flex';" style="color:#00aced; text-decoration:none;">
+     Điều khoản lưu trữ
+    </a>  
+  </div>
+</div>
+
+
+</div>
+    <input id="chat-title-input" type="text" placeholder="Nhập tên đoạn chat..." autocomplete="off"
+      style="width:100%;padding:12px 14px;border-radius:8px;border:none;margin-bottom:18px;font-size:15px;background:#2c3e50;color:white;box-sizing:border-box;">
+<div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
+
+  <button onclick="confirmSaveChat()" style="
+    display:flex;align-items:center;gap:8px;
+    padding:10px 18px;
+    border-radius:8px;
+    background:#00aced;
+    color:white;
+    border:none;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    transition:background 0.3s;">
+    Lưu
+  </button>
+  <button onclick="hideSaveChatNamePopup()" style="
+    display:flex;align-items:center;gap:8px;
+    padding:10px 18px;
+    border-radius:8px;
+    background:#555;
+    color:white;
+    border:none;
+    font-weight:500;
+    font-size:14px;
+    cursor:pointer;
+    transition:background 0.3s;">
+
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+      <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.41L10.59 12l-4.89 4.89a1 1 0 0 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z"/>
+    </svg>
+    Hủy
+  </button>
+
+</div>
+  </div>
+</div>
+<div id="popup-image-viewer" style="display:none;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,0.8);align-items:center;justify-content:center;">
+  <img id="popup-image-viewer-img" src="" style="max-width:90vw;max-height:90vh;border-radius:12px;">
+  <button onclick="document.getElementById('popup-image-viewer').style.display='none'" 
+    style="position:absolute;top:20px;right:30px;font-size:24px;color:white;background:none;border:none;cursor:pointer;">✖</button>
+</div>
+
+<div id="table-popup"
+     style="display: none; position: fixed; inset: 0; z-index: 100000; background: rgba(0,0,0,0.7); overflow: auto; padding: 60px 20px;">
+  <div style="background: #1e1e1e; color: white; padding: 24px; border-radius: 12px; max-width: 90vw; display: block; margin: 0 auto; box-shadow: 0 0 30px rgba(0,0,0,0.6); position: relative; width: fit-content;">
+
+    <button onclick="document.getElementById('table-popup').style.display='none'"
+            style="position: absolute; top: 8px; right: 12px; font-size: 20px; background: none; border: none; color: white; cursor: pointer;">
+      ✖
+    </button>
+    <div id="table-popup-content" style="display: block;"></div>
+  </div>
+</div>
+<div id="chat-preview-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;">
+  <div style="background:#1e1e1e;color:#fff;padding:24px;border-radius:12px;width:90vw;max-width:900px;height:90vh;overflow:auto;display:flex;flex-direction:column;">
+    <h3 id="preview-title" style="font-size:18px;font-weight:bold;margin-bottom:16px;">Xem đoạn chat</h3>
+    <div id="preview-messages" style="flex:1;overflow:auto;"></div>
+    <div style="text-align:right;margin-top:16px;">
+      <button onclick="hidePreviewPopup()" style="padding:6px 14px;border-radius:6px;background:#444;color:white;border:none;">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<div id="storage-popup" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(3px);">
+
+  <div style="background:#1e1e1e;color:#fff;padding:24px 20px;border-radius:16px;width:92%;max-width:500px;box-shadow:0 12px 30px rgba(0,0,0,0.5);animation:popupShow 0.25s ease;">
+    <h3 style="font-size:18px;font-weight:600;margin-bottom:18px;text-align:center;">Phân tích dung lượng</h3>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div>
+        <div style="font-size:14px;margin-bottom:6px;">
+          Bạn đã sử dụng: <span id="storage-percent">0%</span> (<span id="storage-size">0.0 MB</span>)
+        </div>
+        <div style="background:#2c2c2c;border-radius:12px;overflow:hidden;height:18px;">
+          <div id="storage-bar" style="width:0%;height:100%;background:linear-gradient(to right, #00c4ff, #007fff);box-shadow:0 0 10px #00c4ff;transition:width 0.6s ease;"></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;margin-bottom:6px;">Dữ liệu hệ thống: 26%</div>
+        <div style="background:#2c2c2c;border-radius:12px;overflow:hidden;height:18px;">
+          <div style="width:26%;height:100%;background:linear-gradient(to right, #9b59b6, #8e44ad);box-shadow:0 0 10px #9b59b6;"></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;margin-bottom:6px;">Dung lượng dữ liệu nền: 17%</div>
+        <div style="background:#2c2c2c;border-radius:12px;overflow:hidden;height:18px;">
+          <div style="width:17%;height:100%;background:linear-gradient(to right, #e67e22, #d35400);box-shadow:0 0 10px #e67e22;"></div>
+        </div>
+      </div>
+
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:24px;">
+      <button onclick="hideStoragePopup()" style="flex:1;margin-right:10px;padding:10px;border:none;border-radius:8px;background:#444;color:#fff;font-weight:500;transition:0.3s;">Đóng</button>
+      <button onclick="showConfirmResetPopup()" style="flex:1;padding:10px;border:none;border-radius:8px;background:#e74c3c;color:#fff;font-weight:500;box-shadow:0 0 12px #e74c3c88;transition:0.3s;">Dọn sạch</button>
+    </div>
+  </div>
+</div>
+<div id="confirm-reset-popup" style="display:none;position:fixed;inset:0;z-index:10000;align-items:center;justify-content:center;background:rgba(0,0,0,0.5);backdrop-filter:blur(2px);">
+
+  <div style="background:#222;padding:22px 18px;border-radius:12px;max-width:360px;width:92%;color:white;text-align:center;animation:popupShow 0.25s ease;">
+    <p style="margin-bottom:16px;font-size:15px;">Bạn có muốn dọn sạch dữ liệu không?</p>
+    <div style="display:flex;justify-content:center;gap:12px;">
+      <button onclick="confirmResetStorage()" style="background:#e74c3c;color:#fff;padding:8px 16px;border:none;border-radius:6px;font-weight:500;">Có, dọn ngay</button>
+      <button onclick="hideConfirmResetPopup()" style="background:#555;color:#fff;padding:8px 16px;border:none;border-radius:6px;">Hủy</button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+</style>
+
+
+<script>let currentStorageUsed = localStorage.getItem("storage_used");
+currentStorageUsed = currentStorageUsed !== null ? parseFloat(currentStorageUsed) : Math.floor(Math.random() * 40 + 10);
+
+function updateStorageBar() {
+  const percentEl = document.getElementById("storage-percent");
+  const sizeEl = document.getElementById("storage-size");
+  const bar = document.getElementById("storage-bar");
+
+  const usedMB = ((currentStorageUsed / 100) * 200).toFixed(1);
+  percentEl.innerText = `${currentStorageUsed}%`;
+  sizeEl.innerText = `${usedMB} MB`;
+  bar.style.width = `${currentStorageUsed}%`;
+  if (currentStorageUsed >= 100) {
+    bar.style.background = "linear-gradient(to right, #ff4d4f, #c0392b)";
+    bar.style.boxShadow = "0 0 10px #ff4d4f";
+    showToast(" Dung lượng đã đầy. Hãy dọn sạch để tiếp tục!", "warning");
+  } else {
+    bar.style.background = "linear-gradient(to right, #00c4ff, #007fff)";
+    bar.style.boxShadow = "0 0 10px #00c4ff";
+  }
+}
+function showStoragePopup() {
+  const popup = document.getElementById("storage-popup");
+  updateStorageBar();
+
+  popup.style.display = "flex";
+  popup.style.animation = "fadeIn 0.3s ease";
+}
+function hideStoragePopup() {
+  const popup = document.getElementById("storage-popup");
+  popup.style.display = "none";
+  popup.style.animation = ""; 
+}
+function showConfirmResetPopup() {
+  const popup = document.getElementById("confirm-reset-popup");
+  popup.style.display = "flex";
+  popup.style.animation = "fadeIn 0.3s ease";
+}
+function hideConfirmResetPopup() {
+  const popup = document.getElementById("confirm-reset-popup");
+  popup.style.display = "none";
+  popup.style.animation = "";
+}
+
+function confirmResetStorage() {
+  hideConfirmResetPopup(); 
+
+  const bar = document.getElementById("storage-bar");
+  const percentEl = document.getElementById("storage-percent");
+  const sizeEl = document.getElementById("storage-size");
+  percentEl.innerText = "Đang dọn...";
+  sizeEl.innerText = "🧹";
+  bar.style.width = "0%";
+  bar.style.transition = "width 0.6s ease-in-out";
+
+  setTimeout(() => {
+    currentStorageUsed = 0;
+    localStorage.setItem("storage_used", "0");
+    updateStorageBar();
+    bar.classList.remove("full-warning");
+    bar.style.background = "linear-gradient(to right, #00c4ff, #007fff)";
+    bar.style.boxShadow = "0 0 10px #00c4ff";
+    showToast("Đã dọn sạch!");
+    hideStoragePopup();
+  }, 1000);
+}
+
+function simulateStorageIncrease(amount = 0.2) {
+  if (currentStorageUsed < 100) {
+    currentStorageUsed += amount;
+    currentStorageUsed = Math.min(currentStorageUsed, 100);
+    localStorage.setItem("storage_used", currentStorageUsed.toString());
+    updateStorageBar();
+  } else {
+    updateStorageBar(); 
+  }
+}
+
+
+window.addEventListener("DOMContentLoaded", updateStorageBar);
+function closePlusMenu() {
+  const menu = document.getElementById("plus-menu");
+  if (menu) menu.style.display = "none"; 
+}
+
+function reportIssue() {
+  closePlusMenu();
+  window.location.href = "/gop-y";
+}
+</script>
+
+<div id="memory-popup" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1e1f;color:white;padding:28px;border-radius:18px;box-shadow:0 16px 60px rgba(0,0,0,0.75);width:430px;max-width:90%;z-index:9999;font-family:'Inter',sans-serif;border:1px solid #333;">
+<h2 style="margin-top:0;font-size:19px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;"><span style="font-size:20px;margin-right:8px;"></span>Bạn muốn SLV ghi nhớ điều gì?</h2>
+<label for="memory-category" style="font-size: 14px; margin-bottom: 6px; display: block; color: #ccc;">Loại thông tin</label>
+<select id="memory-category" style="width:100%;padding:10px 12px;background-color:#2a2a2b;border:1px solid #444;border-radius:10px;color:white;font-size:14px;margin-bottom:6px;transition:border 0.2s ease;"><option value="Nhiệm vụ mỗi ngày">Nhiệm vụ mỗi ngày</option><option value="Công việc sắp tới">Công việc sắp tới</option><option value="Ghi chú tài liệu">Ghi chú tài liệu</option><option value="Sở thích">Sở thích</option><option value="Điều bạn cần AI ghi nhớ">Điều bạn cần AI ghi nhớ</option><option value="Khác">Khác</option></select>
+<small style="color: #aaa; margin-bottom: 14px; display: block;">Chọn đúng mục để AI hiểu rõ hơn và phản hồi thông minh hơn.</small>
+<label for="memory-content" style="font-size: 14px; margin-bottom: 6px; display: block; color: #ccc;">Nội dung</label>
+<div id="memory-last-updated" style="font-size:12px;color:#888;margin-top:-2px;margin-bottom:6px;display:none;">Cập nhật gần nhất: <span id="last-updated-time"></span></div>
+<textarea id="memory-content" rows="4" placeholder="Nhập nội dung bạn muốn SLV ghi nhớ..." style="width:100%;padding:12px;background-color:#2a2a2b;border:1px solid #444;border-radius:10px;color:white;resize:none;font-size:14px;line-height:1.5;transition:border 0.2s ease;"></textarea>
+<div style="text-align:right;margin-top:26px;"><button onclick="saveMemory()" style="padding:10px 18px;background:#00b388;color:white;border:none;border-radius:8px;font-size:14px;margin-right:12px;cursor:pointer;transition:background 0.2s ease;" onmouseover="this.style.background='#00a07a'" onmouseout="this.style.background='#00b388'">Lưu</button><button onclick="closeMemoryPopup()" style="padding:10px 18px;background:#333;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer;transition:background 0.2s ease;" onmouseover="this.style.background='#444'" onmouseout="this.style.background='#333'">Đóng</button></div>
+</div>
+<script>
+  window.addEventListener("DOMContentLoaded", () => {
+    if (window.lucide) lucide.createIcons();
+  });
+  function openMemoryPopup() {
+    const popup = document.getElementById("memory-popup");
+    popup.style.display = "block";
+    popup.style.opacity = 0;
+    popup.style.transform = "translate(-50%, -48%)";
+
+    setTimeout(() => {
+      popup.style.opacity = 1;
+      popup.style.transform = "translate(-50%, -50%)";
+    }, 10);
+
+    loadMemory();
+  }
+  function closeMemoryPopup() {
+    const popup = document.getElementById("memory-popup");
+    popup.style.opacity = 0;
+    popup.style.transform = "translate(-50%, -48%)";
+
+    setTimeout(() => {
+      popup.style.display = "none";
+    }, 200);
+  }
+  function loadMemory() {
+    const category = document.getElementById("memory-category").value;
+    fetch("/get_user_memory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ category })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("memory-content").value = data.content || "";
+      if (data.last_updated) {
+        document.getElementById("memory-last-updated").style.display = "block";
+        document.getElementById("last-updated-time").textContent = data.last_updated;
+      } else {
+        document.getElementById("memory-last-updated").style.display = "none";
+      }
+    })
+    .catch(err => {
+      console.error("Lỗi tải ghi nhớ:", err);
+    });
+  }
+  function saveMemory() {
+    const category = document.getElementById("memory-category").value;
+    const content = document.getElementById("memory-content").value.trim();
+
+    if (!content) {
+      showToast("Vui lòng nhập nội dung!");
+      return;
+    }
+
+    const payload = { category, content };
+    if (category === "Bảo mật cá nhân") {
+      const password = prompt("Nhập mật khẩu để mã hóa ghi nhớ này:");
+      if (!password) {
+        showToast("Bạn chưa nhập mật khẩu!");
+        return;
+      }
+      payload.password = password;
+    }
+
+    fetch("/save_user_memory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "saved") {
+        showToast("Đã lưu thành công!");
+        closeMemoryPopup();
+      } else {
+        showToast(" Có lỗi xảy ra khi lưu.");
+      }
+    })
+    .catch(err => {
+      console.error(" Lỗi lưu:", err);
+      showToast(" Lỗi khi gửi dữ liệu.");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("memory-category").addEventListener("change", loadMemory);
+  });
+</script>
+<script>
+function goToCodeMode() {
+  window.location.href = "/solvervietCode";
+}
+</script>
+<div id="devcode-intro" style="display:none; position:fixed; inset:0; z-index:999999;">
+  <canvas id="matrix-canvas" style="position:absolute; inset:0; width:100%; height:100%; background:#000;"></canvas>
+  <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:24px;">
+    <div style="width:min(900px,92vw); background: #000; border:1px solid #00ffff;border-radius:14px; box-shadow:0 0 40px rgba(0,255,255,0.2); font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color:#ffffff; overflow:hidden;">
+      <div style="display:flex; align-items:center; gap:8px; padding:10px 14px; background:linear-gradient(180deg,#022,#000); border-bottom:1px solid #00ffff;">
+        <span style="width:10px; height:10px; border-radius:50%; background:#f66;"></span>
+        <span style="width:10px; height:10px; border-radius:50%; background:#fc3;"></span>
+        <span style="width:10px; height:10px; border-radius:50%; background:#00ffff;"></span>
+        <span style="margin-left:8px; color:#ffffff; letter-spacing:.3px">/dev/terminal — DevCode boot</span>
+      </div>
+      <div style="padding:18px; max-height:min(60vh,520px); overflow:auto; scrollbar-width:thin;">
+        <pre id="devcode-terminal" style="margin:0; white-space:pre-wrap; line-height:1.5; font-size:14px;">
+<span style="color:#00ffff;">Initializing DevCode environment...</span>
+        </pre>
+        <div style="margin-top:18px; display:flex; gap:10px; flex-wrap:wrap;">
+          <button id="devcode-start-btn" disabled
+            style="padding:10px 18px; border:none; border-radius:10px; background:#00bcd4; color:white; font-weight:700; letter-spacing:.4px; cursor:not-allowed; opacity:.6; box-shadow:0 10px 30px rgba(0,255,255,0.15); transition:.2s;">
+            Bắt đầu
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes caretBlink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+.devcode-caret { display:inline-block; width:8px; margin-left:2px; background:#ffffff; animation:caretBlink 1s step-end infinite; }
+</style>
+
+<script>
+(function(){
+  const canvas = document.getElementById('matrix-canvas');
+  let ctx, w, h, columns, drops, rafId;
+  const fontSize = 16;
+  const keywords = ["function", "console.log", "return", "let", "const", "import", "export", "class", "if", "else", "try", "catch", "await", "async", "def", "print", "while", "for", "lambda", "React", "Vue", "Flask", "pandas", "axios", "Math.random", "parseInt", "document", "querySelector", "getElementById"];
+
+  function resize(){
+    canvas.width = w = window.innerWidth;
+    canvas.height = h = window.innerHeight;
+    columns = Math.floor(w / fontSize);
+    drops = Array(columns).fill(Math.floor(Math.random() * h / fontSize));
+    ctx = canvas.getContext('2d');
+    ctx.font = fontSize + "px monospace";
+    ctx.textAlign = "center";
+  }
+
+  function draw(){
+    ctx.fillStyle = "rgba(0,0,0,0.08)";
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "#00ffff";
+
+    for (let i = 0; i < columns; i++) {
+      const word = keywords[Math.floor(Math.random() * keywords.length)];
+      ctx.fillText(word, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+    rafId = requestAnimationFrame(draw);
+  }
+
+  window.__devcodeMatrix = {
+    start(){ resize(); draw(); window.addEventListener('resize', resize) },
+    stop(){ cancelAnimationFrame(rafId); window.removeEventListener('resize', resize) }
+  };
+})();
+(function(){
+const lines = [
+  "$ git clone https://example.com/templates/code-chat .",
+  "Cloning into '.'... done.",
+  "$ yarn setup",
+  "$ node build.js",
+  "[Build] Compilation finished successfully.",
+  "✔ CPU ready · ✔ Memory ready · ✔ Network stable",
+  "C3 - 167 67 205 39252 a_ox fz dev.....",
+  "Unlock real-time fps...",
+  "READY...",
+  "Nhấn 'Bắt đầu' để vào trải nghiệm..."
+];
+
+  let i = 0, j = 0, typing = false, done = false;
+  const term = () => document.getElementById('devcode-terminal');
+  const startBtn = () => document.getElementById('devcode-start-btn');
+
+  function typeNext(){
+    if (i >= lines.length) { finish(); return; }
+    typing = true;
+    const current = lines[i];
+    const el = term();
+    if (j === 0) el.innerHTML += (i===0 ? "" : "\n") + "";
+    el.innerHTML = el.innerHTML.replace(/<span class="devcode-caret"><\/span>$/,"");
+    el.innerHTML += current[j] || "";
+    j++;
+    el.innerHTML += '<span class="devcode-caret"></span>';
+
+    const speed = current[j-1]===" " ? 6 : 12 + Math.random()*25;
+    if (j <= current.length) {
+      setTimeout(typeNext, speed);
+    } else {
+      j = 0; i++;
+      setTimeout(typeNext, 220);
+    }
+  }
+
+  function finish(){
+    typing = false; done = true;
+    const el = term();
+    el.innerHTML = el.innerHTML.replace(/<span class="devcode-caret"><\/span>$/,"") + '\n<span style="color:#00ffff;">>> Ready.</span>';
+    const btn = startBtn();
+    btn.disabled = false;
+    btn.style.cursor = "pointer";
+    btn.style.opacity = "1";
+    btn.onclick = () => window.location.href = "/solvervietCode";
+    document.getElementById('devcode-skip-btn').onclick = btn.onclick;
+  }
+
+  window.__devcodeIntro = {
+    play(){
+      if (typing || done) return;
+      typeNext();
+    }
+  };
+})();
+function goToCodeMode() {
+  const intro = document.getElementById('devcode-intro');
+  intro.style.display = 'block';
+  window.__devcodeMatrix.start();
+  window.__devcodeIntro.play();
+}
+</script>
+<input type="file" id="file-fallback" hidden>
+
+<div id="feedback-toast" style="display:none; position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#28a745; color:#fff; padding:10px 20px; border-radius:8px; z-index:9999; font-weight:bold;"></div>
+
+<div id="overlay" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.6); z-index: 9998;"></div>
+
+<div id="feedback-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+background: #fff; color: #000; padding: 24px; border-radius: 16px; z-index: 9999; max-width: 420px; width: 90%; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); text-align: center;">
+  <h2 id="feedback-question" style="font-size: 20px; margin-bottom: 16px;">Bạn thấy đoạn chat này thế nào?</h2>
+
+  <div id="star-container" style="font-size: 30px; margin-bottom: 8px;">
+    <span class="emoji-star" data-star="1">☆</span>
+    <span class="emoji-star" data-star="2">☆</span>
+    <span class="emoji-star" data-star="3">☆</span>
+    <span class="emoji-star" data-star="4">☆</span>
+    <span class="emoji-star" data-star="5">☆</span>
+  </div>
+
+  <div id="emoji-label" style="font-size: 18px; margin-bottom: 12px;"></div>
+
+  <textarea id="feedback-comment" placeholder="Bạn cảm thấy thế nào về đoạn chat này..." style="width:100%; padding:10px; border-radius:8px; border:1px solid #ccc; resize:none; height:80px;"></textarea>
+
+  <div class="popup-actions" style="margin-top: 16px; display: flex; justify-content: center; gap: 12px;">
+    <button onclick="submitFeedback()" style="background:#00bcd4; color:#fff; padding:8px 16px; border:none; border-radius:8px; cursor:pointer;">Gửi đánh giá</button>
+    <button onclick="closeFeedbackPopup()" class="skip" style="background:#ccc; padding:8px 16px; border:none; border-radius:8px; cursor:pointer;">Bỏ qua</button>
+  </div>
+</div>
+
+<script>
+let selectedStars = 0;
+
+document.querySelectorAll(".emoji-star").forEach(star => {
+  star.addEventListener("click", () => {
+    selectedStars = parseInt(star.dataset.star);
+    updateStarsDisplay(selectedStars);
+  });
+});
+
+function updateStarsDisplay(score) {
+  const stars = document.querySelectorAll(".emoji-star");
+  stars.forEach((s, i) => {
+    s.textContent = i < score ? "★" : "☆";
+  });
+
+  const emojis = ["😡", "😕", "😐", "😊", "😍"];
+  document.getElementById("emoji-label").textContent = emojis[score - 1] || "";
+}
+
+function showFeedbackPopup() {
+  document.getElementById("feedback-popup").style.display = "block";
+  document.getElementById("overlay").style.display = "block";
+}
+
+function closeFeedbackPopup() {
+  document.getElementById("feedback-popup").style.display = "none";
+  document.getElementById("overlay").style.display = "none";
+}
+
+function submitFeedback() {
+  const comment = document.getElementById("feedback-comment").value;
+
+  fetch("/submit_rating", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ score: selectedStars, comment })
+  }).then(() => {
+    closeFeedbackPopup();
+    showFeedbackToast(" Đã gửi đánh giá thành công!");
+  });
+}
+
+function showFeedbackToast(msg) {
+  const toast = document.getElementById("feedback-toast");
+  toast.textContent = msg;
+  toast.style.display = "block";
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 3000);
+}
+let chatCounter = 0;
+const surprisePoint = Math.random() < 0.5 ? 26 : 27;
+
+function checkShowRatingPopup() {
+  chatCounter++;
+  if (!sessionStorage.getItem("ratedThisSession") && chatCounter === surprisePoint) {
+    setTimeout(showFeedbackPopup, 1000);
+    sessionStorage.setItem("ratedThisSession", "yes");
+  }
+}
+
+</script>
+<div id="terms-popup" style="display:none; position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.7); align-items:center; justify-content:center;">
+  <div style="background:#1e1e1e; color:white; padding:24px 28px; border-radius:12px; max-width:600px; max-height:80vh; overflow-y:auto; position:relative; box-shadow: 0 0 30px rgba(0,0,0,0.5); font-family: 'Segoe UI', sans-serif;">
+    <button onclick="document.getElementById('terms-popup').style.display='none'"
+      style="position:absolute; top:10px; right:14px; font-size:18px; background:none; border:none; color:#cccccc; cursor:pointer;">
+      ✖
+    </button>
+    <h3 style="margin-bottom:16px; font-size:18px; font-weight:bold; color:#facc15;">📄 Điều khoản lưu trữ</h3>
+    <ul style="font-size:14px; line-height:1.7; padding-left:20px; list-style-type: disc;">
+      <li>Các đoạn chat đã lưu có thể được hệ thống ghi nhận thời gian lưu trữ để phục vụ việc dọn dẹp sau này.</li>
+      <li>Hãy đặt tiêu đề rõ ràng, dễ nhớ để thuận tiện cho việc tìm kiếm và quản lý.</li>
+      <li>Đoạn chat có thể bị xoá vĩnh viễn nếu vi phạm quy định hoặc điều khoản sử dụng của nền tảng.</li>
+      <li>Trong một số trường hợp bảo trì hệ thống, dữ liệu có thể tạm thời không truy cập được. Tuy nhiên, SolverViet cam kết giữ an toàn cho dữ liệu của bạn.</li>
+      <li>SolverViet không hỗ trợ khôi phục đoạn chat đã bị xoá. Vui lòng kiểm tra kỹ trước khi thực hiện thao tác xoá.</li>
+      <li>Dung lượng lưu trữ tối đa là <strong>70/70 đoạn chat</strong>. Khi đạt giới hạn, bạn cần xoá bớt để tiếp tục lưu mới.</li>
+    </ul>
+    <div style="margin-top: 20px; font-size: 13px; color: #999999; text-align: right;">
+      SolverViet • Cập nhật: 08/09/2025 
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

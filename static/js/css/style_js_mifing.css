@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&display=swap');
+body{margin:0;padding:0;font-family:'JetBrains Mono',monospace;background:linear-gradient(-45deg,#240046,#3c096c,#5a189a,#240046);background-size:400% 400%;animation:gradientBG 20s ease infinite;color:#f1f5f9;transition:background 0.5s,color 0.5s;}
+.CodeMirror{height:450px;font-family:'Fira Code',monospace;font-size:14px;border-radius:8px;border:1px solid #333;background-color:#0d1117;color:#c9d1d9;}
+.CodeMirror .CodeMirror-line-error{background-color:rgba(255,85,85,0.15)!important;color:#ff6b6b !important;font-weight:bold;}
+@media(prefers-color-scheme:light){body{background:linear-gradient(-45deg,#f8fafc,#e2e8f0,#f8fafc);color:#1e293b;}
+.CodeMirror{background-color:#ffffff;color:#1e293b;border:1px solid #cbd5e1;}
+.CodeMirror .CodeMirror-line-error{background-color:rgba(255,0,0,0.1)!important;color:#b91c1c !important;}
+select,option{background-color:#ffffff;color:#1e293b;}}
+@keyframes gradientBG{0%{background-position:0% 50%;}50%{background-position:100% 50%;}100%{background-position:0% 50%;}}
+.animate-slide-up {animation: slide-up 0.3s ease-out;}
+@keyframes slide-up {from { transform: translateY(20px); opacity: 0; }to { transform: translateY(0); opacity: 1; }}
+.animate-fade-lines {animation: fadeLines 4s ease-in-out infinite;}
+@keyframes fadeLines {0% { opacity: 0.05; transform: translateY(0px); }50% { opacity: 0.15; transform: translateY(-5px); }100% { opacity: 0.05; transform: translateY(0px); }}
+select, option {background-color: #0f172a;color: #f1f5f9;}

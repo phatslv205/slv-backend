@@ -1,0 +1,1 @@
+function showSmartDocTerms() { document.getElementById('smartdoc-terms-popup').classList.remove('hidden');}

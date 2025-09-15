@@ -1,0 +1,1 @@
+document.getElementById("download-btn").addEventListener("click",function(){setTimeout(()=>{location.reload()},2000)});

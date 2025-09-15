@@ -1,0 +1,81 @@
+<div class="popup-user-info">
+
+
+  <button class="close-popup" onclick="closeUserInfoPopup()">×</button>
+  <h2> Thông tin cá nhân</h2>
+   <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+  <div onclick="openAvatarPopup()" style="cursor: pointer;">
+    <img src="{{ user.avatar_url if user.avatar_url else url_for('static', filename='images/avatars/ai_avatar.png') }}"
+         alt="Avatar người dùng"
+         style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #00bcd4; object-fit: cover; box-shadow: 0 0 10px rgba(0,188,212,0.3);">
+  </div>
+</div>
+
+  <form id="user-info-form" onsubmit="return saveUserInfo(event)">
+    <div class="form-row">
+      <label>Tên để AI chat với bạn:</label>
+      <input id="popup_fullname" type="text" name="fullname" value="{{ user.fullname or '' }}">
+    </div>
+
+    <div class="form-row">
+      <label>Email:</label>
+      <input id="popup_email" type="email" name="email" value="{{ user.email or '' }}" readonly style="background-color:#eee; cursor: not-allowed;">
+    </div>
+
+<div class="form-row">
+  <label>Tính cách AI:</label>
+  <input type="text" readonly value="{{ user.ai_personality or 'Chưa có' }}">
+</div>
+
+    <div class="form-row">
+      <label>Mã giới thiệu:</label>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <input id="popup_referral" type="text" value="{{ user.referral_code or 'Không có' }}" readonly style="flex: 1;">
+        <button type="button" onclick="copyReferralCode()" class="copy-btn" title="Sao chép">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>ID người dùng:</label>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <input id="popup_user_id" type="text" value="{{ user.user_id or 'Không rõ' }}" readonly style="flex: 1;">
+        <button type="button" onclick="copyUserId()" class="copy-btn" title="Sao chép">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+        </button>
+      </div>
+          <div class="form-row">
+  <label>Gói đang sử dụng:</label>
+  <input type="text" readonly value="{{ current_plan }}">
+</div>
+
+<div class="form-row">
+  <label>Thời gian còn lại:</label>
+  <input type="text" readonly value="{{ days_left }} ngày">
+</div>
+
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="save-btn">Lưu thông tin</button>
+    </div>
+
+  </form>
+</div>
+<div id="avatar-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+     background-color: #111; padding: 20px; border-radius: 12px; box-shadow: 0 0 20px rgba(0,188,212,0.5); z-index: 9999;">
+  <img id="popup-avatar-img" src="" style="width: 220px; height: 220px; border-radius: 50%; border: 4px solid #00bcd4; object-fit: cover;">
+  <div style="text-align: center; margin-top: 10px;">
+    <button onclick="closeAvatarPopup()" style="padding: 6px 16px; background-color: #00bcd4; color: black; border: none; border-radius: 6px; cursor: pointer;">
+      Đóng lại
+    </button>
+  </div>
+</div>

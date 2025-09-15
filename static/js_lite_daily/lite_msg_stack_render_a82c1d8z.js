@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded", () => {const toast = document.getElementById("toast-verified");if (toast) toast.style.display = "block";});

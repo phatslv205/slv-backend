@@ -1,0 +1,1 @@
+function closePreview(){document.getElementById("smartdoc-preview").classList.add("hidden");}

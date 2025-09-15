@@ -36,6 +36,11 @@ def get_engine_url():
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+# ✅ Import models để Alembic thấy hết metadata
+from models import *
+from extensions import db  
+print(db.metadata.tables.keys())
+target_metadata = db.metadata 
 config.set_main_option('sqlalchemy.url', get_engine_url())
 target_db = current_app.extensions['migrate'].db
 
@@ -69,7 +74,7 @@ def run_migrations_offline():
     )
 
     with context.begin_transaction():
-        context.run_migrations()
+        context.run_migrations(compare_type=True)
 
 
 def run_migrations_online():

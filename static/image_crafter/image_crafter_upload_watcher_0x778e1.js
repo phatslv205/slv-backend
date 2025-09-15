@@ -1,0 +1,1 @@
+document.getElementById("showTerms").addEventListener("click",()=>{document.getElementById("termsModal").classList.remove("hidden");});document.getElementById("closeTerms").addEventListener("click",()=>{document.getElementById("termsModal").classList.add("hidden");});

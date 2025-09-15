@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ chat.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Roboto", sans-serif;
+      background: #ececec;
+      color: #000;
+    }
+
+.container {
+  max-width: 860px;
+  margin: auto;
+  padding: 24px 32px;
+  background: #ffffff;
+  color: #000000;
+  min-height: 100vh;
+  border-radius: 12px;
+  box-shadow: none; /* nếu bạn vẫn muốn gọn */
+}
+
+
+    .header {
+      text-align: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #ddd;
+      margin-bottom: 20px;
+    }
+
+    .header h2 {
+      font-size: 18px;
+      color: #0084ff;
+      margin: 4px 0;
+    }
+
+    .header p {
+      font-size: 13px;
+      color: #777;
+    }
+
+    .chat-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .msg {
+      display: flex;
+      margin-bottom: 10px;
+    }
+
+    .msg.user {
+      justify-content: flex-end;
+    }
+
+    .msg.bot {
+      justify-content: flex-start;
+    }
+
+    .bubble {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14.5px;
+      line-height: 1.7;
+      word-break: break-word;
+      white-space: pre-wrap;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+      cursor: default;
+    }
+
+.bubble {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+  box-shadow: none;
+  background: #f0f0f0;
+  color: #000;
+}
+
+/* Người dùng */
+.user .bubble {
+  background: none; /* màu xanh nhạt nhẹ, bạn có thể đổi */
+  color: #000;
+  border-radius: 18px 18px 4px 18px;
+}
+
+/* AI */
+.bot .bubble {
+  background: #f0f0f0;
+  color: #000;
+  border-radius: 18px 18px 18px 4px;
+}
+
+    .shared-img {
+      max-width: 75%;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .only-image {
+      font-style: italic;
+      color: #555;
+      text-align: center;
+      padding-top: 6px;
+    }
+
+    @media screen and (max-width: 480px) {
+      .bubble {
+        font-size: 13.5px;
+        padding: 10px 14px;
+      }
+
+      .shared-img {
+        max-width: 100%;
+      }
+    }
+    .bot .bubble svg {
+  display: none !important;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2>{{ chat.title }}</h2>
+      <p>Chia sẻ từ: <strong>{{ user_id }}</strong></p>
+    </div>
+
+<div class="chat-box">
+  {% for msg in chat.messages if not msg.content.startswith("[Thả cảm xúc") %}
+
+    <div class="msg {{ 'user' if msg.role == 'user' else 'bot' }}" style="width: 100%;">
+      <div style="display:flex;flex-direction:column;align-items:{{ 'flex-end' if msg.role == 'user' else 'flex-start' }};width:100%;">
+
+        {# ✅ SỬA Ở ĐÂY #}
+        {% set has_img_tag = "<img" in msg.content if msg.content else False %}
+
+        {% if msg.image_url and not has_img_tag %}
+          {% for img in msg.image_url %}
+            <img src="{{ img }}" alt="Ảnh từ đoạn chat" class="shared-img">
+          {% endfor %}
+        {% endif %}
+
+        {% if msg.content and msg.content != "__image_only__" %}
+          <div class="bubble {{ 'user' if msg.role == 'user' else 'bot' }}">
+            {{ msg.content | safe }}
+          </div>
+        {% elif not msg.image_url %}
+          <div class="bubble {{ 'user' if msg.role == 'user' else 'bot' }}">
+            <em style="color:#aaa;">(Tin nhắn rỗng)</em>
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+
+  {% endfor %}
+</div>
+
+  </div>
+</body>
+</html>

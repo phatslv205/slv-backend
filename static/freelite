@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Solver Chat Lite</title>
+  <link rel="icon" href="/static/logos/favicon.png">
+  <link rel="stylesheet" href="/static/js/css/style_slv.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github-dark.min.css">
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/highlight.min.js"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],      
+    displayMath: [['\\[', '\\]'], ['$$', '$$']]      
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+
+</head>
+<body class="dark">
+
+  <header style="background-color:#111;color:white;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #00bcd4;">
+    <div style="display:flex;flex-direction:column;">
+      <span style="font-size:22px;font-weight:bold;color:#00bcd4;">SolverViet</span>
+      <span style="font-size:12px;color:#aaa;margin-top:2px;">© 2025. All rights reserved.</span>
+    </div>
+    <div>
+      <a href="/" style="color:#00bcd4; text-decoration:none; display:flex; align-items:center; gap:10px;">
+        <i data-lucide="home" style="width: 24px; height: 24px;"></i>
+      </a>
+    </div>
+  </header>
+
+  <div id="chat-container"></div>
+
+
+<div id="preview-wrapper" style="max-width:700px; margin: 0 auto; padding: 8px 24px 0;">
+  <div id="image-preview" class="image-preview-container"></div>
+</div>
+
+  <div id="input-area">
+    <div class="chat-bar">
+      <div class="plus-container">
+        <button onclick="togglePlusMenu()"><i data-lucide='plus'></i></button>
+        <div id="plus-menu" class="plus-menu">
+          <button onclick="showVipWarning()"><i data-lucide='file'></i><span>Gửi file</span></button>
+          <button onclick="showVipWarning()"><i data-lucide='image'></i><span>Album ảnh</span></button>
+          <button onclick="showVipWarning()"><i data-lucide='map-pin'></i><span>Chia sẻ vị trí</span></button>
+          <button onclick="toggleTheme()"><i data-lucide='sun' id="theme-icon"></i><span>Chế độ sáng/tối</span></button>
+          <button onclick="startNewChat()"><i data-lucide='plus-circle'></i><span>Đoạn chat mới</span></button>
+        </div>
+      </div>
+      <div id="file-preview"></div>
+      <div id="chat-input"
+     contenteditable="true"
+     placeholder="Nhập tin nhắn..."
+     onkeydown="handleKey(event)"
+     style="flex:1;min-height:38px;max-height:120px;overflow-y:auto;padding:8px 12px;border-radius:20px;background:#ffffff;color:#000;font-size:15px;">
+</div>
+
+      <button id="upload-btn" onclick="document.getElementById('upload-input').click()">
+        <i data-lucide="image"></i>
+      </button>
+      <input type="file" id="upload-input" accept="image/*" multiple style="display:none;" />
+
+      <div id="mic-wrapper" style="display:inline-block; border-radius:50%;">
+        <button id="micBtn" onclick="startVoiceRecognition()"><i data-lucide="mic"></i></button>
+      </div>
+      <button id="send-btn" data-api="/chat_ai_lite">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#fff" viewBox="0 0 24 24">
+          <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+
+
+<p class="notice-lite" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; text-align:center;">
+  <span class="badge-beta">beta</span>
+  <span class="product">Lite</span>
+  <span>– phiên bản phản hồi ngắn gọn và hiệu quả.</span>
+  <span><b>Lưu ý:</b> hiện tại chưa hỗ trợ tạo ảnh.</span>
+</p>
+
+
+
+  <script>
+    lucide.createIcons();
+  </script>
+  <script>function togglePlusMenu() {
+  const menu = document.getElementById("plus-menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+function showVipWarning() {
+  const popup = document.createElement("div");
+  popup.textContent = "Tính năng này chỉ dành cho SLV (Premium)!";
+  popup.style.position = "fixed";
+  popup.style.bottom = "30px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#e74c3c";
+  popup.style.color = "white";
+  popup.style.padding = "10px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  popup.style.zIndex = "9999";
+  popup.style.fontWeight = "bold";
+  popup.style.animation = "fadeInOut 2.4s ease";
+
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2400);
+}
+
+
+function startNewChat() {
+  fetch("/new_chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      location.reload(); 
+    } else {
+      showToast("Lỗi khi tạo đoạn chat mới: " + data.error);
+    }
+  })
+  .catch(err => {
+    console.error("Lỗi khi gửi new_chat:", err);
+    showToast("Lỗi hệ thống, vui lòng thử lại.");
+  });
+}
+
+
+const toastFade = document.createElement("style");
+toastFade.innerHTML = `
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(10px); }
+}`;
+document.head.appendChild(toastFade);
+const MAX_IMAGES = 1;
+let selectedImages = []; 
+
+document.getElementById("upload-input").addEventListener("change", handleImages);
+
+function handleImages(event) {
+  const files = Array.from(event.target.files);
+
+  if (selectedImages.length >= MAX_IMAGES) {
+    showToast(" Tối đa 1 ảnh cho mỗi tin nhắn!");
+    return;
+  }
+
+  const availableSlots = MAX_IMAGES - selectedImages.length;
+  const newFiles = files.slice(0, availableSlots);
+
+  if (files.length > availableSlots) {
+    showToast(" Bạn chỉ có thể chọn thêm " + availableSlots + " ảnh nữa!");
+  }
+
+  selectedImages = [...selectedImages, ...newFiles];
+  renderImagePreview();
+}
+
+
+function renderImagePreview() {
+  const container = document.getElementById("image-preview");
+  container.innerHTML = "";
+
+  selectedImages.forEach((file, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "img-wrapper";
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+
+    const removeBtn = document.createElement("span");
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "×";
+    removeBtn.title = "Xóa ảnh";
+    removeBtn.onclick = () => removeImage(index);
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(removeBtn);
+    container.appendChild(wrapper);
+  });
+}
+
+
+function removeImage(index) {
+  selectedImages.splice(index, 1);
+  renderImagePreview();
+}
+
+
+function showToast(msg) {
+  const popup = document.createElement("div");
+  popup.textContent = msg;
+  popup.style.position = "fixed";
+  popup.style.bottom = "30px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#333";
+  popup.style.color = "white";
+  popup.style.padding = "10px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.fontWeight = "bold";
+  popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  popup.style.zIndex = "9999";
+  popup.style.animation = "fadeInOut 2.4s ease";
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2400);
+}
+let recognition;
+let isListening = false;
+let isSending = false;
+
+function startVoiceRecognition() {
+  if (!('webkitSpeechRecognition' in window)) {
+    showToast("Trình duyệt không hỗ trợ giọng nói.");
+    return;
+  }
+
+  if (isListening) {
+    recognition.stop();
+    isListening = false;
+    return;
+  }
+
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'vi-VN'; 
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    showToast(" Đang lắng nghe...");
+    document.getElementById("mic-wrapper").classList.add("active");
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    document.getElementById("chat-input").innerText = transcript;
+
+    showToast("Đã nhận diện xong. Bạn có thể gửi.");
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Lỗi mic:", event.error);
+    showToast("Lỗi mic: " + event.error);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById("mic-wrapper").classList.remove("active");
+  };
+
+  recognition.start();
+}
+function toggleTheme() {
+  const current = document.body.classList.contains("dark") ? "dark" : "light";
+  const newMode = current === "dark" ? "light" : "dark";
+
+  document.body.classList.remove(current);
+  document.body.classList.add(newMode);
+  localStorage.setItem("theme_mode", newMode);
+
+  updateThemeIcon(newMode);
+}
+
+function updateThemeIcon(mode) {
+  const icon = document.getElementById("theme-icon");
+  if (mode === "dark") {
+    icon.setAttribute("data-lucide", "sun");
+  } else {
+    icon.setAttribute("data-lucide", "moon");
+  }
+  lucide.createIcons(); 
+}
+
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedMode = localStorage.getItem("theme_mode");
+  if (savedMode === "light") {
+    document.body.classList.remove("dark");
+    document.body.classList.add("light");
+    updateThemeIcon("light");
+  } else {
+    document.body.classList.add("dark");
+    updateThemeIcon("dark");
+  }
+});
+
+async function sendMessage() {
+   if (isSending) return;
+  isSending = true;
+  document.getElementById("send-btn").disabled = true;
+  const input = document.getElementById("chat-input");
+  const message = input.innerText.trim();
+
+  if (!message && selectedImages.length === 0) {
+    showToast("Vui lòng nhập nội dung hoặc chọn ảnh!");
+    return;
+  }
+
+  const imagesToSend = [...selectedImages]; 
+  const messageToSend = message;
+
+
+  input.innerText = "";
+  selectedImages = [];
+  renderImagePreview();
+
+  addUserMessage(messageToSend, imagesToSend);
+  showLoadingBubble(messageToSend, imagesToSend);
+
+
+  const formData = new FormData();
+  formData.append("message", messageToSend);
+  formData.append("history", "[]");
+
+  imagesToSend.forEach((file, i) => {
+    formData.append(`image_${i}`, file);
+  });
+
+  try {
+    const res = await fetch("/chat_ai_lite", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+    removeLoadingBubble();
+
+    if (data.reply) {
+      addBotMessage(data.reply);
+    } else {
+      addBotMessage("Không nhận được phản hồi từ AI.");
+    }
+
+  } catch (err) {
+    removeLoadingBubble();
+    addBotMessage("Lỗi hệ thống khi gửi. Vui lòng thử lại sau.");
+    console.error("Lỗi gửi:", err);
+  }finally {
+  isSending = false;
+  document.getElementById("send-btn").disabled = false;
+}
+  
+}
+function addUserMessage(text, images) {
+  const container = document.getElementById("chat-container");
+  const div = document.createElement("div");
+  div.className = "message user";
+
+  let html = `<p>${text}</p>`;
+  if (images.length > 0) {
+    html += `<div class="msg-imgs">`;
+    images.forEach(file => {
+      const url = URL.createObjectURL(file);
+      html += `<img src="${url}" class="inline-img">`;
+    });
+    html += `</div>`;
+  }
+
+  div.innerHTML = html;
+  container.appendChild(div);
+  scrollToBottom(); 
+  
+}
+
+function addBotMessage(text) {
+  const container = document.getElementById("chat-container");
+  const div = document.createElement("div");
+  div.className = "message bot";
+  div.innerHTML = text;
+  container.appendChild(div);
+  if (window.MathJax) {
+  MathJax.typesetPromise();
+}
+  scrollToBottom();
+}
+
+function showLoadingBubble(messageText, imagesArray) {
+  const container = document.getElementById("chat-container");
+  const div = document.createElement("div");
+  div.className = "message bot";
+  div.id = "loading-bubble";
+
+  const text = (messageText || "").toLowerCase();
+  const mathKeywords = ["giải", "tính", "phân tích", "phương trình", "bài toán", "đáp án", "chứng minh", "số học"];
+  const isMath = mathKeywords.some(keyword => text.includes(keyword));
+  const hasImages = imagesArray && imagesArray.length > 0;
+
+  if (isMath || hasImages) {
+    div.innerHTML = "<i>Đang phân tích</i> <span class='dot'>.</span><span class='dot'>.</span><span class='dot'>.</span>";
+  } else {
+    div.innerHTML = "<span class='dot'>.</span><span class='dot'>.</span><span class='dot'>.</span>";
+  }
+
+  container.appendChild(div);
+  scrollToBottom();
+}
+
+
+function removeLoadingBubble() {
+  const loading = document.getElementById("loading-bubble");
+  if (loading) loading.remove();
+}
+function handleKey(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+}
+function scrollToBottom() {
+  const container = document.getElementById("chat-container");
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
+  }, 100);
+}
+
+</script><script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("send-btn").addEventListener("click", sendMessage);
+  });
+
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("inline-img")) {
+    const src = e.target.getAttribute("src");
+    const popup = document.getElementById("image-popup");
+    const popupImg = document.getElementById("popup-img");
+
+    popupImg.src = src;
+    popup.style.display = "flex";
+  }
+
+  if (e.target.id === "image-popup") {
+    document.getElementById("image-popup").style.display = "none";
+    document.getElementById("popup-img").src = "";
+  }
+});
+
+</script>
+
+<div id="image-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999;">
+  <img id="popup-img" src="" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 0 12px rgba(0,0,0,0.6);" />
+</div>
+<script>
+document.getElementById("chat-input").addEventListener("paste", function (event) {
+  const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+  let handled = false;
+
+  for (let index in items) {
+    const item = items[index];
+    if (item.kind === "file" && item.type.startsWith("image/")) {
+      event.preventDefault(); // ❗ Chặn dán vào nội dung
+      const blob = item.getAsFile();
+
+      if (selectedImages.length >= MAX_IMAGES) {
+        showToast("Bạn chỉ có thể gửi 1 ảnh mỗi lần!");
+        return;
+      }
+
+      selectedImages.push(blob);
+      renderImagePreview();
+      handled = true;
+    }
+  }
+
+  // Nếu không dán ảnh thì giữ nguyên text
+  if (!handled) {
+    // Cho phép paste nội dung văn bản như thường
+    const text = event.clipboardData.getData("text/plain");
+    if (text) {
+      document.execCommand("insertText", false, text);
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1203 @@
+{
+"chua ngoa": {
+  "nghia": "Nói năng ngoa ngoắt, lắm lời, nghe khó chịu (thường dùng để nói về phụ nữ).",
+  "vi_du": "Cô ấy ăn nói chua ngoa khiến ai cũng né tránh.",
+  "dong_nghia": ["ngoa ngoắt"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"oắt con": {
+  "nghia": "Từ chỉ đứa trẻ nhỏ, thường mang sắc thái bông đùa hoặc coi thường.",
+  "vi_du": "Ê, oắt con, lại đây tao bảo!",
+  "dong_nghia": ["nhãi con","nhóc","nhóc con","oắt"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"ranh rách": {
+  "nghia": "Chỉ kiểu lời nói láu cá, hỗn hào, lanh chanh (thường của trẻ con hoặc người ít tuổi nói hỗn).",
+  "vi_du": "Thằng nhỏ mới tí tuổi mà nói năng ranh rách ghê.",
+  "dong_nghia": ["hỗn láo","láu cá","hỗn xược"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"giẻ lao": {
+  "nghia": "Miếng vải vụn dùng để lau chùi, thường là đồ cũ đã qua sử dụng.",
+  "vi_du": "Mẹ tôi lấy giẻ lao để lau bàn bếp.",
+  "dong_nghia": ["giẻ lau","khăn lau","vải vụn"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"láo nháo": {
+  "nghia": "Chỉ sự lộn xộn, ồn ào, thiếu trật tự. Thường dùng để mô tả cảnh hỗn loạn hoặc người hành xử không nghiêm túc.",
+  "vi_du": "Đám đông láo nháo khi nghe tin khuyến mãi.",
+  "dong_nghia": ["lộn xộn","ồn ào","xô bồ"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"cái ca": {
+  "nghia": "Vật dụng hình trụ, có tay cầm, dùng để đựng hoặc uống nước, thường làm bằng nhựa, inox hoặc sứ.",
+  "vi_du": "Tôi rót nước sôi vào cái ca rồi đem ra bàn.",
+  "dong_nghia": ["cái cốc","ly có quai","cái chén (miền Nam)"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"ngoa ngoắt": {
+  "nghia": "Cụm từ <strong>ngoa ngoắt</strong>  dùng để chỉ người có tính cách hay nói quá, nói xấu hoặc xuyên tạc sự thật một cách cay nghiệt, thiếu trung thực.",
+  "vi_du": "Cô ấy thường xuyên<strong>ngoa ngoắt</strong>về đồng nghiệp của mình, khiến mọi người hiểu lầm và xa lánh họ.",
+  "dong_nghia": ["xuyên tạc","bịa đặt","nói xấu"],
+  "cap_nhat": "2025-08-02 21:32"
+},
+"đàn đúm": {
+  "nghĩa": "Cụm từ 'đàn đúm' thường dùng để chỉ hành động tụ tập, hội nhóm một cách không lành mạnh hoặc có mục đích không tốt, thường mang sắc thái chê bai.",
+  "ví_dụ": "Họ thường xuyên đàn đúm ở quán nước để nói xấu người khác và bàn chuyện thị phi.",
+  "đồng_nghĩa": ["tụ tập","kết bè","phe nhóm"],
+  "cập_nhật": "2025-08-03 19:30"
+},
+"phiêu du": {
+  "nghĩa": "Cụm từ 'phiêu du' chỉ việc đi đây đi đó, du ngoạn không mục đích cụ thể, thường mang sắc thái thơ mộng, tự do.",
+  "ví_dụ": "Sau khi nghỉ việc, anh quyết định phiêu du khắp đất nước để tìm cảm hứng sống mới.",
+  "đồng_nghĩa": ["lang thang", "du ngoạn", "rong ruổi"],
+  "cập_nhật": "2025-08-03 19:40"
+},
+"lơ đãng": {
+  "nghĩa": "Cụm từ 'lơ đãng' mô tả trạng thái không tập trung, mất chú ý vào việc đang làm.",
+  "ví_dụ": "Cô ấy cứ lơ đãng nhìn ra cửa sổ trong suốt buổi học.",
+  "đồng_nghĩa": ["mất tập trung", "thẫn thờ", "hờ hững"],
+  "cập_nhật": "2025-08-03 19:40"
+},
+"thốn nước": {
+  "nghĩa": "Cụm từ 'thốn nước' là cách nói dân gian chỉ cảm giác buốt bất ngờ khi bị nước lạnh hoặc chất kích thích chạm vào vùng nhạy cảm, thường dùng hài hước.",
+  "ví_dụ": "Ngồi xuống ghế ướt mà không để ý, tôi thốn nước cả người!",
+  "đồng_nghĩa": ["buốt người", "tê tái", "nhức buốt"],
+  "cập_nhật": "2025-08-03 19:40"
+},
+"hùm hổ": {
+  "nghĩa": "Cụm từ 'hùm hổ' mô tả trạng thái hung hăng, nổi nóng, hành động vội vã và thiếu kiểm soát.",
+  "ví_dụ": "Anh ta hùm hổ lao vào cuộc cãi vã mà chẳng cần nghe ai giải thích.",
+  "đồng_nghĩa": ["hung hăng", "nóng nảy", "thô bạo"],
+  "cập_nhật": "2025-08-03 19:40"
+},
+"xí quách": {
+  "nghĩa": "Cụm từ 'xí quách' dùng để chỉ phần xương và tủy bên trong, thường là phần ngon, béo trong các món hầm.",
+  "ví_dụ": "Tô phở đặc biệt này có cả xí quách siêu ngon, ăn là ghiền luôn!",
+  "đồng_nghĩa": ["xương hầm", "tủy xương", "xương ống"],
+  "cập_nhật": "2025-08-03 19:40"
+},
+"thăm thẳm": {
+  "nghĩa": "Cụm từ 'thăm thẳm' diễn tả độ sâu, rộng hoặc cảm xúc sâu sắc, thường gợi sự mênh mông, không thấy đáy.",
+  "ví_dụ": "Ánh mắt ấy nhìn tôi thăm thẳm, như chất chứa bao điều chưa nói.",
+  "đồng_nghĩa": ["sâu hun hút", "mênh mông", "vời vợi"],
+  "cập_nhật": "2025-08-03 19:40"
+},
+"đắng cay": {
+  "nghĩa": "Cụm từ 'đắng cay' mô tả những trải nghiệm đau khổ, buồn bã hoặc khó khăn trong cuộc sống, thường đi kèm với cảm xúc chua chát, tiếc nuối.",
+  "ví_dụ": "Cô ấy đã trải qua đủ đắng cay trong cuộc hôn nhân thất bại ấy.",
+  "đồng_nghĩa": ["chua chát", "tủi cực", "đau khổ"],
+  "cập_nhật": "2025-08-03 20:17"
+},
+"cay đắng": {
+  "nghĩa": "Cụm từ 'cay đắng' diễn tả cảm xúc đau lòng, buồn bã và chua chát trước một sự việc tổn thương, bất công hoặc thất bại.",
+  "ví_dụ": "Anh ấy cay đắng nhận ra rằng người mình tin tưởng nhất lại phản bội mình.",
+  "đồng_nghĩa": ["đắng cay", "tủi nhục", "chua xót"],
+  "cập_nhật": "2025-08-03 20:21"
+},
+"vồng tôm": {
+  "nghĩa": "Cụm từ 'vồng tôm' thường chỉ những ụ đất hoặc mô đất nhỏ nơi người dân nuôi tôm hoặc đào ao thả tôm. Ngoài ra, trong cách nói dân gian, 'vồng tôm' cũng có thể dùng để mô tả hình dáng cong cong, uốn lượn giống lưng tôm.",
+  "ví_dụ": "Những vồng tôm sau nhà là nguồn thu nhập chính của cả gia đình.",
+  "đồng_nghĩa": ["mô đất tôm", "bờ nuôi tôm", "luống tôm"],
+  "cập_nhật": "2025-08-03 20:26"
+},
+"sơ sài": {
+  "nghĩa": "Từ 'sơ sài' chỉ sự đơn giản, qua loa, thiếu cẩn thận hoặc không đầy đủ trong cách làm việc, trình bày hoặc chuẩn bị.",
+  "ví_dụ": "Bài thuyết trình của bạn quá sơ sài, thiếu chiều sâu và dẫn chứng cụ thể.",
+  "đồng_nghĩa": ["qua loa", "cẩu thả", "thiếu trau chuốt"],
+  "cập_nhật": "2025-08-03 20:30"
+},
+"sơ chế": {
+  "nghĩa": "Từ 'sơ chế' dùng để chỉ bước xử lý ban đầu nguyên liệu (thường là thực phẩm) trước khi chế biến chính thức.",
+  "ví_dụ": "Rau cần được sơ chế kỹ trước khi nấu để loại bỏ thuốc trừ sâu.",
+  "đồng_nghĩa": ["làm sạch", "xử lý ban đầu", "chuẩn bị nguyên liệu"],
+  "cập_nhật": "2025-08-03 20:30"
+},
+"chế tác": {
+  "nghĩa": "Từ 'chế tác' chỉ quá trình tạo ra một sản phẩm thủ công tinh xảo, thường là đồ mỹ nghệ, trang sức hoặc đồ nghệ thuật.",
+  "ví_dụ": "Chiếc vòng cổ được chế tác hoàn toàn bằng tay từ bạc nguyên chất.",
+  "đồng_nghĩa": ["gia công", "sáng tạo", "tạo hình thủ công"],
+  "cập_nhật": "2025-08-03 20:30"
+},
+"cục súc": {
+  "nghĩa": "Từ 'cục súc' là cách nói lóng mô tả người thô lỗ, cục cằn, thiếu tinh tế trong hành xử hoặc lời nói.",
+  "ví_dụ": "Anh ấy phản ứng một cách cục súc khi bị góp ý, khiến ai cũng khó chịu.",
+  "đồng_nghĩa": ["thô lỗ", "cộc cằn", "gắt gỏng"],
+  "cập_nhật": "2025-08-03 20:37"
+},
+"súc vật": {
+  "nghĩa": "Từ 'súc vật' chỉ các loài động vật nuôi trong nhà để lấy sức kéo, thịt, sữa...; ngoài ra còn được dùng để xúc phạm ai đó một cách nặng nề (nghĩa lóng, tiêu cực).",
+  "ví_dụ": "Nông dân chăn nuôi nhiều súc vật như trâu, bò, heo để phục vụ sản xuất.",
+  "đồng_nghĩa": ["gia súc", "động vật nuôi", "thú nuôi"],
+  "cập_nhật": "2025-08-03 20:37"
+},
+"sinh thể": {
+  "nghĩa": "Từ 'sinh thể' là cách gọi trang trọng hoặc khoa học để chỉ một thực thể sống, bao gồm cả con người, động vật, vi sinh vật,...",
+  "ví_dụ": "Mọi sinh thể trên Trái Đất đều chịu tác động từ biến đổi khí hậu.",
+  "đồng_nghĩa": ["thực thể sống", "cơ thể sống", "sinh vật"],
+  "cập_nhật": "2025-08-03 20:37"
+},
+"sinh hóa": {
+  "nghĩa": "Từ 'sinh hóa' là ngành khoa học nghiên cứu quá trình hoá học xảy ra trong cơ thể sống hoặc giữa các chất sinh học.",
+  "ví_dụ": "Cô ấy đang học ngành công nghệ sinh hóa để nghiên cứu về enzyme và protein.",
+  "đồng_nghĩa": ["hóa sinh", "sinh học hóa", "hóa học sinh học"],
+  "cập_nhật": "2025-08-03 20:37"
+},
+"tạo chất": {
+  "nghĩa": "Từ 'tạo chất' chỉ quá trình hình thành hoặc tổng hợp ra các chất mới, có thể là trong sinh học, hóa học, hoặc trong công nghiệp.",
+  "ví_dụ": "Cơ thể con người có khả năng tạo chất kháng thể để chống lại vi khuẩn.",
+  "đồng_nghĩa": ["tổng hợp chất", "hình thành chất", "sinh chất"],
+  "cập_nhật": "2025-08-03 20:37"
+},
+"lơ ngơ": {
+  "nghĩa": "Từ 'lơ ngơ' mô tả trạng thái thiếu hiểu biết, ngây ngô hoặc không nắm bắt được tình huống xung quanh, đôi khi mang sắc thái chọc ghẹo.",
+  "ví_dụ": "Mới vào công ty nên tôi còn lơ ngơ chẳng biết gì.",
+  "đồng_nghĩa": ["ngơ ngác", "ngây thơ", "khờ khạo"],
+  "cập_nhật": "2025-08-03 20:40"
+},
+"lẫn đẫn": {
+  "nghĩa": "Từ 'lẫn đẫn' mô tả cuộc sống gặp nhiều khó khăn, trắc trở, không suôn sẻ; thường dùng để nói về số phận long đong, lận đận.",
+  "ví_dụ": "Cô ấy có cuộc đời lẫn đẫn, mãi không tìm được bến đỗ bình yên.",
+  "đồng_nghĩa": ["lận đận", "long đong", "trắc trở"],
+  "cập_nhật": "2025-08-03 20:44"
+},
+"xuyên tạc": {
+  "nghĩa": "Từ 'xuyên tạc' chỉ hành vi bóp méo sự thật, trình bày sai lệch thông tin để gây hiểu nhầm hoặc phục vụ mục đích tiêu cực.",
+  "ví_dụ": "Anh ta đã cố tình xuyên tạc lời nói của tôi để khiến mọi người hiểu sai.",
+  "đồng_nghĩa": ["bóp méo", "vu khống", "bịa đặt"],
+  "cập_nhật": "2025-08-03 20:46"
+},
+"móp mèo": {
+  "nghĩa": "Từ 'móp mèo' là cách nói miêu tả vật bị móp méo, méo mó không còn nguyên vẹn, thường dùng để chỉ những vật bị méo mó xấu xí, đôi khi mang tính châm biếm.",
+  "ví_dụ": "Cái nồi bị rơi xuống đất giờ móp mèo trông tội nghiệp.",
+  "đồng_nghĩa": ["méo mó", "bẹp dúm", "xấu xí"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"sự thật": {
+  "nghĩa": "Từ 'sự thật' chỉ những điều đúng đắn, khách quan, đã xảy ra hoặc tồn tại, không bị bóp méo hay xuyên tạc.",
+  "ví_dụ": "Dù bị đe dọa, cô ấy vẫn đứng lên nói ra sự thật.",
+  "đồng_nghĩa": ["chân lý", "thực tế", "sự việc thật"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"biện hộ": {
+  "nghĩa": "Từ 'biện hộ' mô tả hành động đưa ra lý lẽ để tự bảo vệ mình hoặc bảo vệ người khác trước một cáo buộc hay chỉ trích.",
+  "ví_dụ": "Anh ta cố biện hộ cho hành vi sai trái của mình bằng cách đổ lỗi cho hoàn cảnh.",
+  "đồng_nghĩa": ["bào chữa", "tranh luận", "thanh minh"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"lóc chóc": {
+  "nghĩa": "Từ 'lóc chóc' chỉ người hay hành động nhanh nhảu, thiếu chín chắn, thường mang sắc thái chê bai hoặc hài hước.",
+  "ví_dụ": "Cậu bé ấy lóc chóc chạy nhảy khắp nhà chẳng chịu ngồi yên.",
+  "đồng_nghĩa": ["nhanh nhảu", "lăng xăng", "hiếu động"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"tài lanh": {
+  "nghĩa": "Từ 'tài lanh' là cách nói châm biếm để chỉ người hay tỏ ra giỏi giang, xen vào chuyện người khác nhưng thường gây phiền phức.",
+  "ví_dụ": "Chuyện người ta đang làm ngon lành, tự nhiên nhảy vô tài lanh phá hết.",
+  "đồng_nghĩa": ["xía vô", "giả giỏi", "thích thể hiện"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"tài lẹt": {
+  "nghĩa": "Từ 'tài lẹt' là từ lóng dân gian, chỉ người cố tỏ ra khéo léo hoặc giỏi giang nhưng thật ra vụng về, không hiệu quả.",
+  "ví_dụ": "Đã không biết làm còn tài lẹt đòi bày vẽ.",
+  "đồng_nghĩa": ["giả bộ giỏi", "vụng về", "làm màu"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"sỉ lẻ": {
+  "nghĩa": "Từ 'sỉ lẻ' chỉ cách bán hàng theo hai hình thức: bán buôn số lượng lớn (sỉ) và bán từng món nhỏ (lẻ).",
+  "ví_dụ": "Shop này chuyên bán sỉ lẻ quần áo, giá rất cạnh tranh.",
+  "đồng_nghĩa": ["bán buôn", "bán lẻ", "mua bán"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"ngộ ha": {
+  "nghĩa": "Cụm từ 'ngộ ha' là cách cảm thán trong văn nói miền Nam, thể hiện sự bất ngờ, thắc mắc hoặc nghi ngờ một cách hài hước.",
+  "ví_dụ": "Tự nhiên nó biến mất đúng lúc cần, ngộ ha!",
+  "đồng_nghĩa": ["lạ ha", "kỳ ha", "hỏi thiệt đó"],
+  "cập_nhật": "2025-08-03 20:52"
+},
+"bẹp dúm": {
+  "nghĩa": "Từ 'bẹp dúm' mô tả trạng thái bị ép mạnh đến mức méo mó, xẹp lép, mất hình dạng ban đầu. Thường dùng cho đồ vật bị đè, va chạm mạnh.",
+  "ví_dụ": "Chiếc lon nước rơi xuống bị xe cán bẹp dúm luôn.",
+  "đồng_nghĩa": ["móp méo", "xẹp lép", "dẹp lép"],
+  "cập_nhật": "2025-08-03 20:56"
+},
+"lúi cúi": {
+  "nghĩa": "Từ 'lúi cúi' mô tả dáng vẻ lom khom, cúi đầu xuống khi đang làm việc gì đó một cách chăm chỉ hoặc lặng lẽ.",
+  "ví_dụ": "Bà cụ lúi cúi nhặt từng cọng rau ngoài chợ.",
+  "đồng_nghĩa": ["lom khom", "khom lưng", "cúi gằm"],
+  "cập_nhật": "2025-08-03 20:59"
+},
+"tra khảo": {
+  "nghĩa": "Từ 'tra khảo' nghĩa là dùng các biện pháp ép buộc, thường là hình thức bạo lực, để buộc người khác khai báo thông tin.",
+  "ví_dụ": "Tên trộm bị công an tra khảo để khai ra đồng bọn.",
+  "đồng_nghĩa": ["hỏi cung", "thẩm vấn", "ép cung"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"xin chào": {
+  "nghĩa": "Cụm từ 'xin chào' là cách chào hỏi phổ biến khi gặp nhau trong văn hóa giao tiếp tiếng Việt.",
+  "ví_dụ": "Tôi mỉm cười và nói 'xin chào' với người lạ trên đường.",
+  "đồng_nghĩa": ["chào bạn", "chào anh", "chào em"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"một mình": {
+  "nghĩa": "Cụm từ 'một mình' dùng để chỉ trạng thái không có ai bên cạnh, đơn độc hoặc tự làm điều gì đó một mình.",
+  "ví_dụ": "Cô ấy đi du lịch một mình xuyên Việt.",
+  "đồng_nghĩa": ["đơn độc", "cô đơn", "tự thân"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"đười ươi": {
+  "nghĩa": "Từ 'đười ươi' chỉ loài linh trưởng lớn, sống chủ yếu ở rừng rậm Đông Nam Á, có tay dài và leo trèo giỏi.",
+  "ví_dụ": "Đười ươi là loài động vật quý hiếm cần được bảo vệ.",
+  "đồng_nghĩa": ["vượn lớn", "linh trưởng", "orangutan"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"mét rưỡi": {
+  "nghĩa": "Cụm từ 'mét rưỡi' dùng để chỉ chiều cao 1.5 mét, thường mang nghĩa ví von chiều cao khiêm tốn.",
+  "ví_dụ": "Tôi chỉ cao mét rưỡi nhưng luôn tự tin khi đứng trước đám đông.",
+  "đồng_nghĩa": ["1m5", "một mét rưỡi"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"lưỡi cưa": {
+  "nghĩa": "Từ 'lưỡi cưa' là phần kim loại có răng sắc nhọn dùng để cắt gỗ, kim loại hoặc vật liệu khác.",
+  "ví_dụ": "Anh thợ dùng lưỡi cưa để xẻ tấm gỗ ra làm bàn.",
+  "đồng_nghĩa": ["lưỡi dao cưa", "răng cưa", "dụng cụ cắt"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"cưa đồ": {
+  "nghĩa": "Từ 'cưa đồ' thường mang nghĩa lóng, chỉ hành động tiếp cận, tán tỉnh ai đó, hoặc cố gắng lấy lòng để được lợi.",
+  "ví_dụ": "Nó đang cưa đồ nhỏ bạn cùng lớp suốt mấy tuần nay.",
+  "đồng_nghĩa": ["tán tỉnh", "làm quen", "ve vãn"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"lỗ hổng": {
+  "nghĩa": "Cụm từ 'lổ hổng' (đúng chính tả: lỗ hổng) chỉ chỗ bị thiếu, bị trống, đặc biệt nói về sai sót, sơ hở trong hệ thống hay kiến thức.",
+  "ví_dụ": "Hệ thống bảo mật có một lổ hổng nghiêm trọng.",
+  "đồng_nghĩa": ["sơ hở", "kẽ hở", "thiếu sót"],
+  "cập_nhật": "2025-08-03 21:10"
+},
+"chí chóe": {
+  "nghĩa": "Cụm từ 'chí chóe' dùng để miêu tả âm thanh hoặc hành động cãi vã ồn ào, thường là trong trạng thái bực bội hay giận dữ.",
+  "ví_dụ": "Hai đứa nhỏ chí chóe nhau chỉ vì cái bánh.",
+  "đồng_nghĩa": ["cãi nhau", "om sòm", "nhao nhao"],
+  "nguoi_cung_cap": "Phát Nguyễn",
+  "cập_nhật": "2025-08-03 22:00"
+},
+"đầy rẫy": {
+  "nghĩa": "Từ 'đầy rẫy' chỉ tình trạng có rất nhiều thứ gì đó xuất hiện khắp nơi, thường mang ý nghĩa tiêu cực.",
+  "ví_dụ": "Trên mạng xã hội hiện nay đầy rẫy những thông tin giả mạo.",
+  "đồng_nghĩa": ["la liệt", "nhan nhản", "tràn lan"],
+  "cập_nhật": "2025-08-03 22:05"
+},
+"la liệt": {
+  "nghĩa": "Từ 'la liệt' diễn tả sự bày biện hoặc hiện diện của nhiều vật thể nằm san sát nhau, không có khoảng trống.",
+  "ví_dụ": "Hàng hóa bày la liệt khắp vỉa hè.",
+  "đồng_nghĩa": ["đầy rẫy", "tràn lan", "chen chúc"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"liệt dương": {
+  "nghĩa": "Từ 'liệt dương' chỉ tình trạng rối loạn chức năng sinh lý ở nam giới, không thể hoặc khó đạt được sự cương cứng.",
+  "ví_dụ": "Căng thẳng kéo dài có thể gây liệt dương.",
+  "đồng_nghĩa": ["rối loạn cương dương", "bất lực"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"liệt người": {
+  "nghĩa": "Từ 'liệt người' chỉ tình trạng không thể cử động toàn thân hoặc một phần cơ thể do tổn thương thần kinh hoặc bệnh lý.",
+  "ví_dụ": "Sau tai nạn, ông ấy bị liệt người nửa thân dưới.",
+  "đồng_nghĩa": ["tê liệt", "bại liệt"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"lung lay": {
+  "nghĩa": "Từ 'lung lay' chỉ trạng thái không vững chắc, dễ bị rơi, ngã hoặc mất ổn định.",
+  "ví_dụ": "Chiếc bàn cũ bị lung lay mỗi khi có ai dựa vào.",
+  "đồng_nghĩa": ["rung rinh", "dao động", "lắc lư"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"lao động": {
+  "nghĩa": "Từ 'lao động' chỉ hành động làm việc, tạo ra của cải vật chất hoặc giá trị tinh thần.",
+  "ví_dụ": "Lao động là vinh quang.",
+  "đồng_nghĩa": ["làm việc", "công tác", "mưu sinh"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"lĩnh hội": {
+  "nghĩa": "Từ 'lĩnh hội' có nghĩa là tiếp nhận và hiểu sâu sắc một kiến thức hoặc kinh nghiệm nào đó.",
+  "ví_dụ": "Sau buổi học, cô bé đã lĩnh hội được nhiều điều mới mẻ.",
+  "đồng_nghĩa": ["tiếp thu", "hiểu được", "nắm bắt"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"tôn phùng": {
+  "nghĩa": "Từ 'tôn phùng' mang nghĩa là tôn trọng và phụng sự ai đó một cách thành kính, thường là người cao quý hoặc linh thiêng.",
+  "ví_dụ": "Dân làng tôn phùng vị thần bảo hộ với lòng thành kính.",
+  "đồng_nghĩa": ["tôn kính", "sùng bái", "phụng thờ"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"chấm dứt": {
+  "nghĩa": "Từ 'chấm dứt' có nghĩa là kết thúc một sự việc, quá trình hoặc trạng thái nào đó.",
+  "ví_dụ": "Cuộc họp đã chấm dứt sau hai tiếng tranh luận.",
+  "đồng_nghĩa": ["kết thúc", "dừng lại", "kết thúc hoàn toàn"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"lượng tử": {
+  "nghĩa": "Từ 'lượng tử' thường dùng trong vật lý, chỉ đơn vị nhỏ nhất không thể chia cắt của năng lượng trong một hệ thống.",
+  "ví_dụ": "Cơ học lượng tử nghiên cứu hành vi của vật chất ở cấp độ vi mô.",
+  "đồng_nghĩa": ["quantum", "vi lượng"],
+  "cập_nhật": "2025-08-03 22:08"
+},
+"hoang tưởng": {
+  "nghĩa": "Từ 'hoang tưởng' chỉ trạng thái tâm lý khi một người tin vào điều không có thật, không có cơ sở thực tế. Đây là một dạng rối loạn nhận thức, thường gặp trong một số bệnh lý tâm thần.",
+  "ví_dụ": "Anh ta mắc chứng hoang tưởng rằng có người đang theo dõi mình mọi lúc.",
+  "đồng_nghĩa": ["ảo giác", "ảo tưởng", "mộng tưởng"],
+  "cập_nhật": "2025-08-03 22:15"
+},
+"hoang đường": {
+  "nghĩa": "Từ 'hoang đường' mô tả điều không có thật, bịa đặt, phi lý và không đáng tin. Thường dùng để nói về các câu chuyện, suy nghĩ hoặc lập luận vô căn cứ.",
+  "ví_dụ": "Câu chuyện về kho báu bị yểm bùa nghe thật hoang đường.",
+  "đồng_nghĩa": ["vô lý", "bịa đặt", "ảo tưởng"],
+  "cập_nhật": "2025-08-03 22:19"
+},
+"tôn sùng": {
+  "nghĩa": "Từ 'tôn sùng' chỉ sự kính trọng và coi ai đó hoặc cái gì đó như hình mẫu cao quý để noi theo.",
+  "ví_dụ": "Người dân tôn sùng vị anh hùng dân tộc.",
+  "đồng_nghĩa": ["tôn kính", "kính trọng", "sùng bái"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"sùng bái": {
+  "nghĩa": "Từ 'sùng bái' chỉ sự tôn kính, yêu mến và xem ai đó như thần tượng hoặc mẫu mực.",
+  "ví_dụ": "Nhiều bạn trẻ sùng bái những ca sĩ nổi tiếng.",
+  "đồng_nghĩa": ["tôn sùng", "tôn kính", "ngưỡng mộ"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"bái đường": {
+  "nghĩa": "Từ 'bái đường' dùng trong đám cưới truyền thống, chỉ nghi thức vái lạy để ra mắt tổ tiên và cha mẹ hai bên.",
+  "ví_dụ": "Cô dâu chú rể làm lễ bái đường trước bàn thờ gia tiên.",
+  "đồng_nghĩa": ["nghi lễ cưới", "lễ thành hôn"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"hủy hoại": {
+  "nghĩa": "Từ 'hủy hoại' chỉ hành động làm phá hỏng, làm mất đi giá trị hoặc công dụng ban đầu.",
+  "ví_dụ": "Chiến tranh đã hủy hoại nhiều công trình lịch sử.",
+  "đồng_nghĩa": ["tàn phá", "phá hủy", "phá hoại"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"hoại tử": {
+  "nghĩa": "Từ 'hoại tử' chỉ hiện tượng chết và phân hủy của một bộ phận mô hoặc tế bào trong cơ thể.",
+  "ví_dụ": "Vết thương bị nhiễm trùng dẫn đến hoại tử.",
+  "đồng_nghĩa": ["thối rữa", "thoái hóa mô"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"tử thi": {
+  "nghĩa": "Từ 'tử thi' chỉ xác chết của con người.",
+  "ví_dụ": "Cảnh sát phát hiện một tử thi trong căn nhà bỏ hoang.",
+  "đồng_nghĩa": ["thi thể", "xác chết"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"thi cử": {
+  "nghĩa": "Từ 'thi cử' chỉ quá trình tham gia kỳ thi để đánh giá năng lực học tập hoặc kỹ năng.",
+  "ví_dụ": "Kỳ thi cử năm nay rất căng thẳng.",
+  "đồng_nghĩa": ["kỳ thi", "kiểm tra"],
+  "cập_nhật": "2025-08-03 22:23"
+},
+"tuyệt thực": {
+  "nghĩa": "Từ 'tuyệt thực' chỉ hành động cố ý nhịn ăn để phản đối, đấu tranh hoặc thể hiện lập trường cá nhân.",
+  "ví_dụ": "Người tù nhân tuyệt thực để phản đối bản án không công bằng.",
+  "đồng_nghĩa": ["nhịn ăn", "đình thực"],
+  "cập_nhật": "2025-08-03 22:28"
+},
+"tuyệt đối": {
+  "nghĩa": "Từ 'tuyệt đối' chỉ mức độ cao nhất, không có gì hơn nữa, không bị giới hạn hay điều kiện.",
+  "ví_dụ": "Bạn phải giữ bí mật tuyệt đối về kế hoạch này.",
+  "đồng_nghĩa": ["hoàn toàn", "trọn vẹn", "toàn diện"],
+  "cập_nhật": "2025-08-03 22:28"
+},
+"âm vang": {
+  "nghĩa": "Từ 'âm vang' chỉ tiếng vang vọng lại sau một âm thanh lớn, hoặc ý nghĩa lan tỏa sau một sự kiện.",
+  "ví_dụ": "Âm vang của bài diễn văn vẫn còn đọng lại trong lòng người nghe.",
+  "đồng_nghĩa": ["tiếng vang", "vọng âm"],
+  "cập_nhật": "2025-08-03 22:28"
+},
+"vang danh": {
+  "nghĩa": "Từ 'vang danh' chỉ việc nổi tiếng, được nhiều người biết đến nhờ thành tích hay phẩm chất đáng nể.",
+  "ví_dụ": "Vị tướng vang danh khắp chiến trường.",
+  "đồng_nghĩa": ["nổi danh", "lừng lẫy", "lừng danh"],
+  "cập_nhật": "2025-08-03 22:28"
+},
+"vang tiếng": {
+  "nghĩa": "Từ 'vang tiếng' mô tả âm thanh dội lại mạnh mẽ, hoặc người có tiếng tăm vang xa.",
+  "ví_dụ": "Tiếng trống vang tiếng khắp núi rừng.",
+  "đồng_nghĩa": ["vang vọng", "vang dội"],
+  "cập_nhật": "2025-08-03 22:28"
+},
+"vang vọng": {
+  "nghĩa": "Từ 'vang vọng' mô tả âm thanh phát ra và dội lại nhiều lần trong không gian rộng lớn.",
+  "ví_dụ": "Tiếng chuông chùa vang vọng khắp thung lũng.",
+  "đồng_nghĩa": ["vọng lại", "vang xa", "dội âm"],
+  "cập_nhật": "2025-08-03 22:34"
+},
+"vọng cổ": {
+  "nghĩa": "Từ 'vọng cổ' là một thể loại nhạc truyền thống Nam Bộ Việt Nam, thường thể hiện sự da diết, trữ tình.",
+  "ví_dụ": "Nghệ sĩ cải lương cất giọng hát vọng cổ đầy cảm xúc.",
+  "đồng_nghĩa": ["nhạc cổ", "hát cải lương"],
+  "cập_nhật": "2025-08-03 22:34"
+},
+"cổ loa": {
+  "nghĩa": "Từ 'cổ loa' chỉ khu vực cổ của loa phóng thanh, hoặc tên gọi địa danh Cổ Loa (nơi có di tích lịch sử Việt Nam).",
+  "ví_dụ": "Di tích thành Cổ Loa gắn liền với truyền thuyết An Dương Vương.",
+  "đồng_nghĩa": ["loa cổ", "Cổ Loa"],
+  "cập_nhật": "2025-08-03 22:34"
+},
+"loa thành": {
+  "nghĩa": "Từ 'loa thành' thường dùng để chỉ kiểu kiến trúc thành có kết cấu xoáy ốc như ở di tích Cổ Loa.",
+  "ví_dụ": "Thành Cổ Loa có kiến trúc kiểu loa thành độc đáo thời cổ đại.",
+  "đồng_nghĩa": ["thành xoáy", "kiến trúc vòng"],
+  "cập_nhật": "2025-08-03 22:34"
+},
+"thành trì": {
+  "nghĩa": "Từ 'thành trì' là hệ thống thành lũy kiên cố dùng để phòng thủ hoặc biểu tượng cho một giá trị được bảo vệ.",
+  "ví_dụ": "Tự do ngôn luận là một thành trì của nền dân chủ.",
+  "đồng_nghĩa": ["thành lũy", "pháo đài"],
+  "cập_nhật": "2025-08-03 22:34"
+},
+"trì hoãn": {
+  "nghĩa": "Từ 'trì hoãn' chỉ hành động kéo dài thời gian, không thực hiện việc gì đó ngay lập tức.",
+  "ví_dụ": "Cuộc họp bị trì hoãn do giám đốc bận công tác đột xuất.",
+  "đồng_nghĩa": ["chậm trễ", "kéo dài", "hoãn lại"],
+  "cập_nhật": "2025-08-03 22:34"
+},
+"cử tuyệt": {
+  "nghĩa": "Từ 'cử tuyệt' mang nghĩa từ chối hoàn toàn, bác bỏ dứt khoát một lời đề nghị, hành động hoặc mối quan hệ nào đó.",
+  "ví_dụ": "Anh ta đã cử tuyệt mọi lời mời hợp tác từ đối thủ.",
+  "đồng_nghĩa": ["từ chối", "khước từ", "bác bỏ"],
+  "cập_nhật": "2025-08-03 22:36"
+},
+"cung đàn": {
+  "nghĩa": "Từ 'cung đàn' chỉ các âm thanh trong một bản nhạc, gắn với dây đàn, giai điệu hoặc cảm xúc của bản nhạc.",
+  "ví_dụ": "Những cung đàn da diết làm lay động trái tim người nghe.",
+  "đồng_nghĩa": ["giai điệu", "âm điệu", "tiếng đàn"],
+  "cập_nhật": "2025-08-03 22:38"
+},
+"màn thầu": {
+  "nghĩa": "Từ 'màn thầu' chỉ loại bánh hấp làm từ bột mì, phổ biến trong ẩm thực Trung Hoa và một số vùng của Việt Nam.",
+  "ví_dụ": "Bữa sáng hôm nay chỉ có màn thầu và sữa đậu nành.",
+  "đồng_nghĩa": ["bánh bao chay"],
+  "cập_nhật": "2025-08-03 22:38"
+},
+"thầu xây": {
+  "nghĩa": "Từ 'thầu xây' chỉ người hoặc đơn vị nhận thi công các công trình xây dựng theo hợp đồng.",
+  "ví_dụ": "Thầu xây đã hoàn thành phần móng đúng thời hạn.",
+  "đồng_nghĩa": ["nhà thầu", "thầu thi công"],
+  "cập_nhật": "2025-08-03 22:38"
+},
+"thầu đề": {
+  "nghĩa": "Từ 'thầu đề' chỉ người đứng ra tổ chức và nhận ghi số đề trong các hoạt động cờ bạc bất hợp pháp.",
+  "ví_dụ": "Công an vừa triệt phá một đường dây thầu đề lớn ở thành phố.",
+  "đồng_nghĩa": ["chủ đề", "người ghi đề"],
+  "cập_nhật": "2025-08-03 22:38"
+},
+"tích trữ": {
+  "nghĩa": "Từ 'tích trữ' chỉ hành động thu gom, để dành một lượng lớn vật phẩm hoặc tài nguyên dùng cho tương lai.",
+  "ví_dụ": "Người dân tích trữ lương thực trước mùa mưa bão.",
+  "đồng_nghĩa": ["dự trữ", "dành dụm", "gom góp"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"tích phân": {
+  "nghĩa": "Từ 'tích phân' là một khái niệm trong toán học, dùng để tính diện tích dưới đường cong hoặc tổng các giá trị vi phân.",
+  "ví_dụ": "Bài kiểm tra toán hôm nay có phần tích phân hàm số bậc ba.",
+  "đồng_nghĩa": ["phép tính tích phân"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"đái dầm": {
+  "nghĩa": "Từ 'đái dầm' chỉ hiện tượng tiểu tiện không kiểm soát, thường xảy ra vào ban đêm khi đang ngủ.",
+  "ví_dụ": "Trẻ nhỏ thường đái dầm trong giấc ngủ.",
+  "đồng_nghĩa": ["tiểu đêm", "tiểu không kiểm soát"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"dầm mưa": {
+  "nghĩa": "Từ 'dầm mưa' chỉ hành động đứng hoặc đi ngoài trời dưới cơn mưa trong một thời gian dài.",
+  "ví_dụ": "Anh ấy dầm mưa suốt để chờ cô ấy trở về.",
+  "đồng_nghĩa": ["ướt mưa", "chịu mưa"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"mưa gió": {
+  "nghĩa": "Từ 'mưa gió' chỉ thời tiết xấu với mưa và gió mạnh, cũng có thể mang nghĩa ẩn dụ cho khó khăn, trắc trở.",
+  "ví_dụ": "Dù mưa gió thế nào, anh vẫn đến đúng giờ.",
+  "đồng_nghĩa": ["giông tố", "gió mưa", "bão bùng"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"gió về": {
+  "nghĩa": "Từ 'gió về' mang tính miêu tả thời tiết chuyển lạnh, gió mùa đến hoặc tạo cảm giác hoài niệm trong văn học.",
+  "ví_dụ": "Mỗi khi gió về, tôi lại nhớ những ngày cũ.",
+  "đồng_nghĩa": ["gió trở", "gió mùa về"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"bè lũ": {
+  "nghĩa": "Từ 'bè lũ' mang sắc thái tiêu cực, chỉ nhóm người có hành vi xấu, cấu kết với nhau để làm việc sai trái.",
+  "ví_dụ": "Cảnh sát đã triệt phá bè lũ buôn bán ma túy.",
+  "đồng_nghĩa": ["nhóm tội phạm", "phe nhóm", "đám người xấu"],
+  "cập_nhật": "2025-08-03 22:41"
+},
+"bè phái": {
+  "nghĩa": "Từ 'bè phái' chỉ nhóm người kết thành phe cánh, thường mang mục đích lợi ích riêng, đôi khi đi ngược lại lợi ích chung.",
+  "ví_dụ": "Sự chia rẽ trong nội bộ do các bè phái gây ra đã làm suy yếu tổ chức.",
+  "đồng_nghĩa": ["phe nhóm", "phe phái", "đảng phái"],
+  "cập_nhật": "2025-08-03 22:49"
+},
+"phái đẹp": {
+  "nghĩa": "Từ 'phái đẹp' là cách gọi lịch sự và trân trọng dành cho phụ nữ.",
+  "ví_dụ": "Những bông hoa được dành tặng cho phái đẹp nhân dịp 8/3.",
+  "đồng_nghĩa": ["phụ nữ", "nữ giới", "nửa thế giới"],
+  "cập_nhật": "2025-08-03 22:49"
+},
+"khoái thích": {
+  "nghĩa": "Từ 'khoái thích' chỉ trạng thái rất thích thú, vui vẻ hoặc mê mẩn điều gì đó.",
+  "ví_dụ": "Cậu bé khoái thích trò chơi mới mà mẹ tặng.",
+  "đồng_nghĩa": ["thích thú", "mê mẩn", "say mê"],
+  "cập_nhật": "2025-08-03 22:49"
+},
+"khoái khẩu": {
+  "nghĩa": "Từ 'khoái khẩu' chỉ món ăn hoặc hương vị hợp khẩu vị, ăn rất ngon miệng.",
+  "ví_dụ": "Món canh chua là món khoái khẩu của bố tôi.",
+  "đồng_nghĩa": ["ngon miệng", "ưa thích", "hợp vị"],
+  "cập_nhật": "2025-08-03 22:49"
+},
+"khẩu hiệu": {
+  "nghĩa": "Từ 'khẩu hiệu' là câu ngắn gọn, súc tích mang nội dung tuyên truyền hoặc cổ vũ cho mục tiêu, hành động nào đó.",
+  "ví_dụ": "Khẩu hiệu trong buổi mít tinh là 'Hành động vì môi trường xanh'.",
+  "đồng_nghĩa": ["slogan", "lời hiệu triệu", "câu kêu gọi"],
+  "cập_nhật": "2025-08-03 22:49"
+},
+"gối nằm": {
+  "nghĩa": "Vật dụng dùng để kê đầu khi nằm ngủ, giúp tạo cảm giác thoải mái.",
+  "ví_dụ": "Cô bé ôm chặt chiếc gối nằm quen thuộc mỗi đêm.",
+  "đồng_nghĩa": ["gối ngủ", "gối kê đầu"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"gối ngủ": {
+  "nghĩa": "Một loại gối dùng để hỗ trợ đầu khi ngủ, thường mềm và êm.",
+  "ví_dụ": "Anh ấy không thể ngủ nếu thiếu chiếc gối ngủ quen thuộc.",
+  "đồng_nghĩa": ["gối nằm", "gối kê đầu"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"ngủ gật": {
+  "nghĩa": "Trạng thái ngủ trong lúc đang làm việc hoặc ngồi, thường là vô thức.",
+  "ví_dụ": "Cậu học sinh ngủ gật trong lớp vì tối qua thức khuya.",
+  "đồng_nghĩa": ["thiếp đi", "chợp mắt"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"gật gù": {
+  "nghĩa": "Hành động gật đầu nhẹ liên tục, thường do buồn ngủ hoặc đồng tình.",
+  "ví_dụ": "Ông cụ gật gù khi nghe bản nhạc yêu thích.",
+  "đồng_nghĩa": ["gật đầu", "gục gặc"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"gù lưng": {
+  "nghĩa": "Tình trạng cột sống cong về phía trước, khiến người bị cúi xuống.",
+  "ví_dụ": "Ông lão gù lưng do làm việc nặng nhọc nhiều năm.",
+  "đồng_nghĩa": ["lưng cong", "khòm lưng"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"lưng dài": {
+  "nghĩa": "Mô tả người có phần lưng kéo dài hơn so với tỷ lệ cơ thể thông thường.",
+  "ví_dụ": "Cô người mẫu có thân hình lưng dài và đôi chân thon.",
+  "đồng_nghĩa": ["lưng thẳng", "thân dài"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"lưng thon": {
+  "nghĩa": "Mô tả phần lưng nhỏ gọn, mềm mại, thường dùng để khen dáng người.",
+  "ví_dụ": "Chiếc váy khoe trọn vòng eo và lưng thon của cô ấy.",
+  "đồng_nghĩa": ["eo thon", "lưng nhỏ"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"thon thả": {
+  "nghĩa": "Dáng vóc thanh mảnh, nhẹ nhàng và cân đối.",
+  "ví_dụ": "Người con gái với dáng đi thon thả làm ai cũng ngoái nhìn.",
+  "đồng_nghĩa": ["mảnh mai", "nhẹ nhàng"],
+  "cập_nhật": "2025-08-03 22:31"
+},
+"đầu gối": {
+  "nghĩa": "Phần khớp nối giữa đùi và cẳng chân, giúp chân gập lại và linh hoạt khi di chuyển.",
+  "ví_dụ": "Cậu bé bị trầy đầu gối khi ngã xe.",
+  "đồng_nghĩa": ["khớp gối"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"dầu gội": {
+  "nghĩa": "Sản phẩm dùng để làm sạch tóc và da đầu.",
+  "ví_dụ": "Mỗi tuần tôi thường dùng dầu gội hai lần.",
+  "đồng_nghĩa": ["shampoo"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"gội đầu": {
+  "nghĩa": "Hành động rửa và làm sạch tóc bằng nước và dầu gội.",
+  "ví_dụ": "Mẹ đang gội đầu cho em bé.",
+  "đồng_nghĩa": ["rửa tóc", "tắm đầu"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"xả tóc": {
+  "nghĩa": "Công đoạn sử dụng dầu xả để làm mềm tóc sau khi gội.",
+  "ví_dụ": "Sau khi gội, bạn nên xả tóc để tóc mượt hơn.",
+  "đồng_nghĩa": ["xả kem", "dưỡng tóc"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"tóc tai": {
+  "nghĩa": "Cách gọi chung về mái tóc và vẻ ngoài của đầu.",
+  "ví_dụ": "Tóc tai bù xù trông thật luộm thuộm.",
+  "đồng_nghĩa": ["tóc", "đầu tóc"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"miệng to": {
+  "nghĩa": "Chỉ người có phần miệng lớn hoặc rộng, đôi khi dùng để chỉ người hay nói nhiều.",
+  "ví_dụ": "Cô ấy có cái miệng to nhưng rất duyên.",
+  "đồng_nghĩa": ["mồm rộng"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"miệng mỏng": {
+  "nghĩa": "Chỉ người có đôi môi mỏng, thường được gắn với sự lanh lợi hoặc sắc sảo.",
+  "ví_dụ": "Anh ta có cái miệng mỏng và nói chuyện sắc bén.",
+  "đồng_nghĩa": ["môi mỏng"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"sát gái": {
+  "nghĩa": "Thuật ngữ chỉ người đàn ông có sức hút mạnh mẽ với phụ nữ.",
+  "ví_dụ": "Anh ấy đẹp trai và rất sát gái.",
+  "đồng_nghĩa": ["đào hoa", "hấp dẫn"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"đau rát": {
+  "nghĩa": "Cảm giác đau kèm theo nóng rát, thường do bị thương, bỏng hoặc kích ứng.",
+  "ví_dụ": "Tôi cảm thấy đau rát ở cổ họng khi uống nước đá.",
+  "đồng_nghĩa": ["xót", "nóng rát"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"bồ kết": {
+  "nghĩa": "Một loại trái cây dùng để nấu nước gội đầu, giúp tóc mượt và sạch gàu.",
+  "ví_dụ": "Bà tôi thường nấu bồ kết để gội đầu.",
+  "đồng_nghĩa": ["trái bồ kết"],
+  "cập_nhật": "2025-08-03 22:55"
+},
+"bể kèo": {
+  "nghĩa": "Thành ngữ chỉ việc thỏa thuận hay kế hoạch bị hủy bỏ vào phút chót.",
+  "ví_dụ": "Tối nay định đi chơi mà bể kèo rồi.",
+  "đồng_nghĩa": ["hủy kèo", "trật kèo"],
+  "cập_nhật": "2025-08-03 23:01"
+},
+"kẻo lỡ": {
+  "nghĩa": "Cụm từ mang tính cảnh báo, thúc giục làm gì đó ngay để tránh bỏ lỡ cơ hội.",
+  "ví_dụ": "Đi nhanh đi kẻo lỡ chuyến tàu.",
+  "đồng_nghĩa": ["nếu không thì lỡ", "kẻo mất"],
+  "cập_nhật": "2025-08-03 23:01"
+},
+"lỡ làng": {
+  "nghĩa": "Chỉ tình cảnh dang dở, không trọn vẹn như kỳ vọng (thường dùng trong tình yêu, hôn nhân).",
+  "ví_dụ": "Chuyện tình của họ lỡ làng vì sự phản đối của gia đình.",
+  "đồng_nghĩa": ["dang dở", "dang dang"],
+  "cập_nhật": "2025-08-03 23:01"
+},
+"làng xóm": {
+  "nghĩa": "Tập hợp các hộ dân sinh sống gần nhau ở nông thôn, tạo nên cộng đồng nhỏ.",
+  "ví_dụ": "Làng xóm tôi rất thân thiện và giúp đỡ nhau.",
+  "đồng_nghĩa": ["thôn làng", "xóm làng"],
+  "cập_nhật": "2025-08-03 23:01"
+},
+"xóm giềng": {
+  "nghĩa": "Những người dân sống gần nhau trong một khu vực nhỏ, thường quen biết và giao tiếp thường xuyên.",
+  "ví_dụ": "Xóm giềng đoàn kết là điều quý báu.",
+  "đồng_nghĩa": ["láng giềng", "hàng xóm"],
+  "cập_nhật": "2025-08-03 23:01"
+},
+"giằng vặt": {
+  "nghĩa": "Từ 'giằng vặt' diễn tả trạng thái nội tâm đầy mâu thuẫn, dằn vặt, day dứt trong tâm trí vì một việc đã làm hoặc chưa làm.",
+  "ví_dụ": "Anh ấy luôn giằng vặt về quyết định rời bỏ quê hương.",
+  "đồng_nghĩa": ["dằn vặt", "day dứt", "đau đáu"],
+  "cập_nhật": "2025-08-03 22:12"
+},
+"vặt cỏ": {
+  "nghĩa": "Từ 'vặt cỏ' chỉ hành động dùng tay nhổ hoặc bứt cỏ, thường là để làm sạch khu vực nào đó.",
+  "ví_dụ": "Bọn trẻ ngồi vặt cỏ chơi dưới sân chùa.",
+  "đồng_nghĩa": ["nhổ cỏ", "bứt cỏ"],
+  "cập_nhật": "2025-08-03 22:12"
+},
+"xương xóc": {
+  "nghĩa": "Biểu thị thân hình gầy guộc, lộ cả xương, thiếu sức sống. Dùng trong văn nói, ít phổ biến trong văn viết.",
+  "ví_dụ": "Cậu bé xương xóc đi lang thang giữa chợ đông người.",
+  "đồng_nghĩa": ["gầy trơ xương", "xương xẩu", "gầy còm"],
+  "cập_nhật": "2025-08-03 22:35"
+},
+"ăn tạp": {
+  "nghĩa": "Chỉ người hay loài vật ăn nhiều loại thức ăn khác nhau, không kén chọn.",
+  "ví_dụ": "Lợn là loài ăn tạp nên nuôi rất dễ.",
+  "đồng_nghĩa": ["không kén ăn", "ăn đủ thứ"],
+  "cập_nhật": "2025-08-03 22:42"
+},
+"tạp chí": {
+  "nghĩa": "Ấn phẩm định kỳ chứa các bài viết về nhiều lĩnh vực, chuyên đề hoặc giải trí.",
+  "ví_dụ": "Anh ấy thường đọc tạp chí khoa học mỗi tuần.",
+  "đồng_nghĩa": ["báo chí", "ấn phẩm"],
+  "cập_nhật": "2025-08-03 22:42"
+},
+"chí khí": {
+  "nghĩa": "Tinh thần mạnh mẽ, kiên cường, dám nghĩ dám làm và theo đuổi lý tưởng.",
+  "ví_dụ": "Người quân tử luôn giữ vững chí khí trước gian nan.",
+  "đồng_nghĩa": ["ý chí", "tinh thần", "khí phách"],
+  "cập_nhật": "2025-08-03 22:42"
+},
+"khá khẳm": {
+  "nghĩa": "Tình trạng hoặc mức độ tương đối tốt hơn, khá hơn nhiều so với trước đó (thường dùng để mô tả kinh tế, sức khỏe, hoàn cảnh).",
+  "ví_dụ": "Dạo này gia đình nó khá khẳm hơn xưa nhiều rồi.",
+  "đồng_nghĩa": ["khá hơn", "tốt lên"],
+  "cập_nhật": "2025-08-03 22:46"
+},
+"buồn tè": {
+  "nghĩa": "Cảm giác mắc tiểu, muốn đi vệ sinh.",
+  "ví_dụ": "Tôi đang buồn tè quá mà không có nhà vệ sinh.",
+  "đồng_nghĩa": ["mắc tè", "mắc tiểu"],
+  "cập_nhật": "2025-08-03 22:46"
+},
+"mắc đái": {
+  "nghĩa": "Tiếng nói dân dã chỉ cảm giác muốn đi tiểu.",
+  "ví_dụ": "Tự nhiên đang học lại mắc đái giữa chừng.",
+  "đồng_nghĩa": ["mắc tiểu", "buồn tè"],
+  "cập_nhật": "2025-08-03 22:46"
+},
+"mắc tè": {
+  "nghĩa": "Cách nói thân mật hoặc dân dã để chỉ cảm giác muốn đi tiểu.",
+  "ví_dụ": "Con bé mắc tè nên chạy vội vào nhà vệ sinh.",
+  "đồng_nghĩa": ["buồn tè", "mắc tiểu"],
+  "cập_nhật": "2025-08-03 22:46"
+},
+"tè dầm": {
+  "nghĩa": "Chỉ hành động tiểu tiện không kiểm soát được trong khi ngủ, thường xảy ra ở trẻ nhỏ.",
+  "ví_dụ": "Thằng bé ngủ tè dầm ra cả giường.",
+  "đồng_nghĩa": ["đái dầm"],
+  "cập_nhật": "2025-08-03 22:46"
+},
+"dã rượu": {
+  "nghĩa": "Chỉ quá trình làm giảm tác động của rượu trong cơ thể sau khi uống, giúp tỉnh táo lại.",
+  "ví_dụ": "Anh ấy uống nước chanh để dã rượu sau buổi tiệc.",
+  "đồng_nghĩa": ["giải rượu", "tỉnh rượu"],
+  "cập_nhật": "2025-08-03 22:52"
+},
+"rượu vang": {
+  "nghĩa": "Loại rượu được làm từ nước ép nho lên men, phổ biến ở châu Âu và dùng trong các dịp trang trọng.",
+  "ví_dụ": "Họ khui chai rượu vang đỏ để chúc mừng sinh nhật.",
+  "đồng_nghĩa": ["vang đỏ", "vang trắng"],
+  "cập_nhật": "2025-08-03 22:52"
+},
+"vang dọng": {
+  "nghĩa": "Âm thanh phát ra và dội lại trong không gian, thường tạo cảm giác lan xa, sâu lắng.",
+  "ví_dụ": "Tiếng trống vang dọng khắp núi rừng.",
+  "đồng_nghĩa": ["vọng lại", "dội lại", "vang xa"],
+  "cập_nhật": "2025-08-03 22:52"
+},
+"danh tiếng": {
+  "nghĩa": "Từ 'danh tiếng' chỉ sự nổi tiếng, uy tín hoặc tiếng tăm của một người hay tổ chức trong xã hội.",
+  "ví_dụ": "Công ty này có danh tiếng tốt trong ngành công nghệ.",
+  "đồng_nghĩa": ["tiếng tăm", "uy tín", "nổi danh"],
+  "cập_nhật": "2025-08-03 23:02"
+},
+"tiếng tăm": {
+  "nghĩa": "Từ 'tiếng tăm' là cách nói về sự nổi tiếng, sự được biết đến rộng rãi trong xã hội.",
+  "ví_dụ": "Ông ấy có tiếng tăm lẫy lừng trong giới nghệ thuật.",
+  "đồng_nghĩa": ["danh tiếng", "nổi tiếng", "tên tuổi"],
+  "cập_nhật": "2025-08-03 23:02"
+},
+"tào tháo": {
+  "nghĩa": "Tào Tháo là một nhân vật lịch sử nổi tiếng thời Tam Quốc trong lịch sử Trung Hoa, thường được nhắc đến với sự mưu lược và tàn nhẫn. Ngoài ra, trong tiếng lóng, 'Tào Tháo rượt' còn chỉ việc bị đau bụng đi ngoài gấp.",
+  "ví_dụ": "Nghe xong tô bún đó là Tào Tháo rượt luôn.",
+  "đồng_nghĩa": ["đi ngoài", "tiêu chảy", "đau bụng"],
+  "cập_nhật": "2025-08-03 23:05"
+},
+"tháo nút": {
+  "nghĩa": "Từ 'tháo nút' mô tả hành động mở hoặc gỡ bỏ một nút (cài, nút chai, nút nhấn...).",
+  "ví_dụ": "Anh ấy nhẹ nhàng tháo nút chai rượu vang.",
+  "đồng_nghĩa": ["mở nút", "gỡ nút"],
+  "cập_nhật": "2025-08-03 23:05"
+},
+"bấm nút": {
+  "nghĩa": "Từ 'bấm nút' ám chỉ hành động nhấn vào nút để kích hoạt một cơ chế, hành động hoặc lệnh nào đó.",
+  "ví_dụ": "Cô ấy bấm nút thang máy để lên tầng 5.",
+  "đồng_nghĩa": ["nhấn nút", "ấn nút"],
+  "cập_nhật": "2025-08-03 23:05"
+},
+"biến đi": {
+  "nghĩa": "Cụm 'biến đi' là cách nói thô, mang sắc thái ra lệnh, yêu cầu ai đó rời khỏi chỗ.",
+  "ví_dụ": "Cút! Biến đi khỏi đây ngay!",
+  "đồng_nghĩa": ["cút đi", "xéo đi", "đi chỗ khác"],
+  "cập_nhật": "2025-08-03 23:05"
+},
+"cút xéo": {
+  "nghĩa": "Từ ngữ cảm thán dùng để xua đuổi ai đó đi chỗ khác, mang nghĩa thô và gay gắt.",
+  "ví_dụ": "Cút xéo đi cho khuất mắt tao!",
+  "đồng_nghĩa": ["biến đi", "xéo đi", "cút đi"],
+  "cập_nhật": "2025-08-03 23:05"
+},
+"xéo xắc": {
+  "nghĩa": "Từ 'xéo xắc' dùng để miêu tả người (thường là phụ nữ) có tính cách chua ngoa, đanh đá, ăn nói sắc sảo và đôi khi hỗn hào.",
+  "ví_dụ": "Con nhỏ đó thì nổi tiếng xéo xắc với em chồng lắm!",
+  "đồng_nghĩa": ["chua ngoa", "đanh đá", "nanh nọc"],
+  "cập_nhật": "2025-08-03 23:11"
+},
+"đanh đá": {
+  "nghĩa": "Từ 'đanh đá' dùng để miêu tả người (thường là phụ nữ) hay nói năng chua ngoa, sắc sảo, dễ gây gổ.",
+  "ví_dụ": "Cô ấy nổi tiếng là người đanh đá trong xóm.",
+  "đồng_nghĩa": ["chua ngoa", "nanh nọc", "xéo xắc"],
+  "cập_nhật": "2025-08-03 23:13"
+},
+"đã đời": {
+  "nghĩa": "Từ 'đã đời' thường được dùng để diễn tả cảm giác cực kỳ thỏa mãn, sung sướng khi làm điều gì đó.",
+  "ví_dụ": "Uống ly trà đá lạnh giữa trời nắng đúng là đã đời!",
+  "đồng_nghĩa": ["sướng tê", "thỏa thích", "sướng rơn"],
+  "cập_nhật": "2025-08-03 23:13"
+},
+"ganh tị": {
+  "nghĩa": "Từ 'ganh tị' thể hiện cảm giác khó chịu, không vui khi thấy người khác có điều tốt đẹp hơn mình.",
+  "ví_dụ": "Cô ấy luôn ganh tị khi bạn mình được khen.",
+  "đồng_nghĩa": ["ghen tị", "đố kỵ"],
+  "cập_nhật": "2025-08-03 23:13"
+},
+"nạnh bợ": {
+  "nghĩa": "Từ 'nạnh bợ' là cách nói thông dụng ở miền Nam, chỉ hành vi né tránh trách nhiệm bằng cách giả vờ thân thiết, nịnh nọt hoặc viện cớ. Thường dùng trong ngữ cảnh đời sống gia đình.",
+  "ví_dụ": "Người mẹ kêu chị hai rửa chén, mà chị hay nạnh bợ qua em trai nên kết quả người rửa chén là em trai.",
+  "đồng_nghĩa": ["né việc", "lách trách nhiệm", "làm thân để khỏi làm"],
+  "cập_nhật": "2025-08-03 23:16"
+},
+"nịnh bợ": {
+  "nghĩa": "Từ 'nịnh bợ' chỉ hành động tâng bốc, lấy lòng ai đó một cách quá mức với mục đích vụ lợi, thường mang hàm ý tiêu cực.",
+  "ví_dụ": "Anh ta suốt ngày nịnh bợ sếp để được thăng chức.",
+  "đồng_nghĩa": ["xu nịnh", "tâng bốc", "lấy lòng"],
+  "cập_nhật": "2025-08-03 23:18"
+},
+"nịnh nọt": {
+  "nghĩa": "Từ 'nịnh nọt' dùng để chỉ hành vi nói lời ngon ngọt, tâng bốc ai đó một cách quá mức nhằm đạt mục đích cá nhân. Thường mang hàm ý tiêu cực.",
+  "ví_dụ": "Cô ta cứ nịnh nọt thầy giáo để được điểm cao.",
+  "đồng_nghĩa": ["xu nịnh", "tâng bốc", "lấy lòng", "nịnh bợ"],
+  "cập_nhật": "2025-08-03 23:21"
+},
+"xu nịnh": {
+  "nghĩa": "Từ 'xu nịnh' chỉ hành động tâng bốc, khen ngợi người khác một cách giả tạo để lấy lòng hoặc mưu cầu lợi ích cá nhân.",
+  "ví_dụ": "Anh ta suốt ngày xu nịnh sếp để được thăng chức.",
+  "đồng_nghĩa": ["nịnh nọt", "nịnh bợ", "tâng bốc"],
+  "cập_nhật": "2025-08-03 23:24"
+},
+"lấy lòng": {
+  "nghĩa": "Từ 'lấy lòng' diễn tả hành động làm hài lòng hoặc khiến ai đó vui để được yêu mến hoặc chấp nhận.",
+  "ví_dụ": "Cô ấy thường xuyên giúp đỡ mọi người để lấy lòng đồng nghiệp.",
+  "đồng_nghĩa": ["lấy lòng tin", "làm vừa lòng", "nịnh nọt"],
+  "cập_nhật": "2025-08-03 23:24"
+},
+"tâng bốc": {
+  "nghĩa": "Từ 'tâng bốc' dùng để mô tả việc khen ngợi người khác một cách phóng đại, thường là để mưu cầu lợi ích.",
+  "ví_dụ": "Cậu ta luôn tâng bốc thầy giáo để được điểm cao.",
+  "đồng_nghĩa": ["nịnh nọt", "xu nịnh", "nịnh bợ"],
+  "cập_nhật": "2025-08-03 23:24"
+},
+"cái tô": {
+  "nghĩa": "Từ 'cái tô' chỉ một loại bát to, thường dùng để đựng canh, phở hoặc thức ăn lỏng.",
+  "ví_dụ": "Mẹ múc cho tôi một cái tô đầy phở nóng hổi.",
+  "đồng_nghĩa": ["cái bát", "bát lớn"],
+  "cập_nhật": "2025-08-03 23:26"
+},
+"chiếc dép": {
+  "nghĩa": "Từ 'chiếc dép' là đơn vị chỉ một bên của đôi dép dùng để đi dưới chân.",
+  "ví_dụ": "Tôi chỉ tìm thấy một chiếc dép bên trái.",
+  "đồng_nghĩa": ["một chiếc", "một bên dép"],
+  "cập_nhật": "2025-08-03 23:26"
+},
+"dép lào": {
+  "nghĩa": "Từ 'dép lào' là cách nói phổ biến ở miền Nam, chỉ dép xỏ ngón bằng nhựa hoặc cao su.",
+  "ví_dụ": "Anh ấy đi đôi dép lào ra chợ mua đồ.",
+  "đồng_nghĩa": ["dép xỏ ngón", "dép nhựa"],
+  "cập_nhật": "2025-08-03 23:26"
+},
+"quai hậu": {
+  "nghĩa": "Từ 'quai hậu' chỉ phần dây hoặc quai nằm phía sau gót chân để giữ dép hoặc sandal chắc chắn hơn khi đi.",
+  "ví_dụ": "Trẻ em thường đi dép có quai hậu để dễ vận động.",
+  "đồng_nghĩa": ["dây sau", "quai sau"],
+  "cập_nhật": "2025-08-03 23:26"
+},
+"dép lèo": {
+  "nghĩa": "Cách phát âm phổ biến ở miền Nam, thực chất chỉ 'dép lào' – loại dép xỏ ngón bằng cao su.",
+  "ví_dụ": "Bà ngoại hay gọi dép lào là dép lèo.",
+  "đồng_nghĩa": ["dép lào"],
+  "cập_nhật": "2025-08-03 23:30"
+},
+"hậu cần": {
+  "nghĩa": "Từ 'hậu cần' chỉ các công việc cung ứng, vận chuyển, chuẩn bị về lương thực, trang bị, hậu phương,... phục vụ cho tổ chức hoặc chiến đấu.",
+  "ví_dụ": "Lực lượng hậu cần đã chuẩn bị đầy đủ nhu yếu phẩm cho chiến sĩ.",
+  "đồng_nghĩa": ["cung ứng", "tiếp tế"],
+  "cập_nhật": "2025-08-03 23:35"
+},
+"hậu phương": {
+  "nghĩa": "Từ 'hậu phương' chỉ vùng phía sau mặt trận, nơi đảm bảo hậu cần và hỗ trợ tinh thần, vật chất cho tiền tuyến.",
+  "ví_dụ": "Người dân ở hậu phương luôn hướng về tiền tuyến.",
+  "đồng_nghĩa": ["phía sau chiến tuyến", "vùng an toàn"],
+  "cập_nhật": "2025-08-03 23:35"
+},
+"phương châm": {
+  "nghĩa": "Từ 'phương châm' chỉ nguyên tắc hoặc khẩu hiệu định hướng hành động, suy nghĩ.",
+  "ví_dụ": "Phương châm sống của anh ấy là 'Sống chậm, nghĩ kỹ'.",
+  "đồng_nghĩa": ["nguyên tắc", "châm ngôn"],
+  "cập_nhật": "2025-08-03 23:35"
+},
+"châm cứu": {
+  "nghĩa": "Từ 'châm cứu' chỉ phương pháp trị bệnh bằng cách châm kim và hơ lửa vào các huyệt đạo.",
+  "ví_dụ": "Bác sĩ sử dụng châm cứu để giảm đau lưng cho bệnh nhân.",
+  "đồng_nghĩa": ["châm kim", "liệu pháp huyệt đạo"],
+  "cập_nhật": "2025-08-03 23:35"
+},
+"tươi tắn": {
+  "nghĩa": "Từ 'tươi tắn' chỉ vẻ ngoài rạng rỡ, đầy sức sống, thường dùng để mô tả khuôn mặt, làn da hay trạng thái của ai đó.",
+  "ví_dụ": "Cô ấy trông thật tươi tắn trong bộ váy mới.",
+  "đồng_nghĩa": ["rạng rỡ", "hồng hào", "tươi trẻ"],
+  "cập_nhật": "2025-08-03 23:37"
+},
+"xỉa răng": {
+  "nghĩa": "Hành động dùng tăm hoặc dụng cụ để làm sạch thức ăn bám giữa các kẽ răng.",
+  "ví_dụ": "Ông lão vừa ăn xong liền xỉa răng bằng que tăm.",
+  "đồng_nghĩa": ["lấy tăm", "làm sạch răng"],
+  "cập_nhật": "2025-08-03 23:39"
+},
+"răng sâu": {
+  "nghĩa": "Chỉ tình trạng răng bị tổn thương do vi khuẩn, thường gây đau và có lỗ sâu.",
+  "ví_dụ": "Bé khóc vì bị răng sâu hành hạ suốt đêm.",
+  "đồng_nghĩa": ["sâu răng"],
+  "cập_nhật": "2025-08-03 23:39"
+},
+"răng vàng": {
+  "nghĩa": "Mô tả răng có màu vàng do vệ sinh kém, hút thuốc, hoặc ăn uống không đúng cách.",
+  "ví_dụ": "Anh ta bị răng vàng do uống nhiều cà phê.",
+  "đồng_nghĩa": ["ố răng", "ngả màu"],
+  "cập_nhật": "2025-08-03 23:39"
+},
+"vàng khè": {
+  "nghĩa": "Chỉ màu vàng đậm, thường được dùng để mô tả thứ gì đó bị ngả màu mạnh, trông xấu hoặc mất vệ sinh.",
+  "ví_dụ": "Chiếc áo trắng để lâu bị vàng khè.",
+  "đồng_nghĩa": ["vàng úa", "ngả vàng"],
+  "cập_nhật": "2025-08-03 23:39"
+},
+"khè lửa": {
+  "nghĩa": "Mô tả hành động phun ra lửa (thường là hình ảnh liên tưởng đến rồng hoặc người biểu diễn lửa).",
+  "ví_dụ": "Con rồng trong truyện có thể khè lửa.",
+  "đồng_nghĩa": ["phun lửa", "nhả lửa"],
+  "cập_nhật": "2025-08-03 23:39"
+},
+"khò lửa": {
+  "nghĩa": "Chỉ hành động dùng thiết bị như đèn khò để tạo lửa mạnh, thường dùng trong chế biến món ăn hoặc cơ khí.",
+  "ví_dụ": "Đầu bếp dùng đèn khò lửa để làm chín lớp mặt của món ăn.",
+  "đồng_nghĩa": ["khè lửa", "đốt lửa"],
+  "cập_nhật": "2025-08-03 23:39"
+},
+"chín chắn": {
+  "nghĩa": "Từ mô tả sự suy nghĩ kỹ lưỡng, trưởng thành và có trách nhiệm trong hành động hay quyết định.",
+  "ví_dụ": "Anh ấy rất chín chắn trong cách giải quyết vấn đề.",
+  "đồng_nghĩa": ["trưởng thành", "điềm đạm", "cẩn trọng"],
+  "cập_nhật": "2025-08-03 23:41"
+},
+"chắn trước": {
+  "nghĩa": "Chỉ hành động đứng hoặc đặt vật gì đó phía trước để ngăn cản, bảo vệ hoặc che chắn.",
+  "ví_dụ": "Người bảo vệ đứng chắn trước cổng không cho ai vào.",
+  "đồng_nghĩa": ["che chắn", "ngăn lại"],
+  "cập_nhật": "2025-08-03 23:41"
+},
+"đầu đất": {
+  "nghĩa": "Từ lóng mang nghĩa chê bai người khác là ngu ngốc, chậm hiểu.",
+  "ví_dụ": "Sao cậu đầu đất thế, chuyện đó nói hoài không hiểu!",
+  "đồng_nghĩa": ["ngu ngốc", "chậm hiểu", "khờ khạo"],
+  "cập_nhật": "2025-08-03 23:45"
+},
+"đất trời": {
+  "nghĩa": "Chỉ không gian rộng lớn bao gồm cả đất và trời; thường dùng để chỉ tạo hóa, thiên nhiên.",
+  "ví_dụ": "Giữa đất trời bao la, con người chỉ là hạt bụi nhỏ bé.",
+  "đồng_nghĩa": ["thiên nhiên", "tạo hóa"],
+  "cập_nhật": "2025-08-03 23:45"
+},
+"trời cao": {
+  "nghĩa": "Chỉ bầu trời phía trên rất xa và rộng; cũng có thể dùng với nghĩa ẩn dụ chỉ số phận hoặc quyền lực lớn.",
+  "ví_dụ": "Anh ta ngẩng đầu nhìn trời cao thở dài.",
+  "đồng_nghĩa": ["thiên đình", "thượng giới"],
+  "cập_nhật": "2025-08-03 23:45"
+},
+"cao nhòng": {
+  "nghĩa": "Từ dân gian, thường dùng để chỉ người có dáng vóc cao và gầy, trông hơi cồng kềnh.",
+  "ví_dụ": "Cậu bé đó cao nhòng mà vẫn chưa dậy thì.",
+  "đồng_nghĩa": ["cao lêu nghêu", "cao lêu khêu"],
+  "cập_nhật": "2025-08-03 23:45"
+},
+"thẻ game": {
+  "nghĩa": "Thẻ dùng để nạp tiền vào trò chơi điện tử, thường có mã số để quy đổi thành tiền ảo.",
+  "ví_dụ": "Anh ta mua một thẻ game 100.000 đồng để nạp vào trò chơi.",
+  "đồng_nghĩa": ["thẻ nạp game", "thẻ nạp tiền"],
+  "cập_nhật": "2025-08-03 23:50"
+},
+"thẻ đỏ": {
+  "nghĩa": "Thẻ do trọng tài rút ra để truất quyền thi đấu của cầu thủ trong bóng đá.",
+  "ví_dụ": "Cầu thủ bị nhận thẻ đỏ sau pha phạm lỗi thô bạo.",
+  "đồng_nghĩa": ["truất quyền thi đấu", "đuổi khỏi sân"],
+  "cập_nhật": "2025-08-03 23:50"
+},
+"thẻ vàng": {
+  "nghĩa": "Thẻ cảnh cáo của trọng tài trong bóng đá đối với cầu thủ phạm lỗi.",
+  "ví_dụ": "Cầu thủ nhận thẻ vàng vì chơi xấu.",
+  "đồng_nghĩa": ["cảnh cáo", "nhắc nhở"],
+  "cập_nhật": "2025-08-03 23:50"
+},
+"nhắc nhở": {
+  "nghĩa": "Hành động nói hoặc làm để khiến ai đó nhớ và không quên điều gì.",
+  "ví_dụ": "Cô giáo thường xuyên nhắc nhở học sinh giữ trật tự.",
+  "đồng_nghĩa": ["nhắn nhủ", "cảnh báo"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"báo cáo": {
+  "nghĩa": "Trình bày thông tin, kết quả hoặc sự việc lên cấp trên hoặc cơ quan chức năng.",
+  "ví_dụ": "Anh ấy phải báo cáo công việc hàng tuần cho trưởng phòng.",
+  "đồng_nghĩa": ["trình báo", "thông báo"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"xuất cảnh": {
+  "nghĩa": "Rời khỏi lãnh thổ quốc gia để đi sang nước khác.",
+  "ví_dụ": "Anh ta bị từ chối xuất cảnh vì chưa hoàn thành nghĩa vụ tài chính.",
+  "đồng_nghĩa": ["ra nước ngoài"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"cảnh vật": {
+  "nghĩa": "Những thứ hiện diện trong không gian nhìn thấy được, như cây cối, nhà cửa, sông núi,...",
+  "ví_dụ": "Cảnh vật nơi đây thật thanh bình.",
+  "đồng_nghĩa": ["phong cảnh", "khung cảnh"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"vật lộn": {
+  "nghĩa": "Giằng co, đấu tranh với ai đó hoặc một hoàn cảnh khó khăn.",
+  "ví_dụ": "Anh ta vật lộn với cuộc sống ở thành phố lớn.",
+  "đồng_nghĩa": ["đấu tranh", "giằng co"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"vật nhau": {
+  "nghĩa": "Đánh nhau, quật ngã nhau, thường dùng trong bối cảnh giao đấu tay đôi.",
+  "ví_dụ": "Hai đứa trẻ vật nhau dưới đất sau cuộc tranh cãi.",
+  "đồng_nghĩa": ["đấu vật", "ẩu đả"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"nhau thai": {
+  "nghĩa": "Cơ quan trong tử cung người mẹ giúp cung cấp dưỡng chất và oxy cho thai nhi.",
+  "ví_dụ": "Nhau thai đóng vai trò quan trọng trong sự phát triển của em bé.",
+  "đồng_nghĩa": ["bánh nhau"],
+  "cập_nhật": "2025-08-03 23:55"
+},
+"thai nhi": {
+  "nghĩa": "Em bé đang phát triển trong bụng mẹ, ở giai đoạn từ sau khi thụ tinh đến lúc sinh.",
+  "ví_dụ": "Bác sĩ theo dõi sự phát triển của thai nhi từng tuần.",
+  "đồng_nghĩa": ["bào thai"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"nhi đồng": {
+  "nghĩa": "Trẻ em, đặc biệt là ở độ tuổi nhỏ từ sơ sinh đến khoảng 6–12 tuổi.",
+  "ví_dụ": "Trung tâm bảo trợ nhi đồng vừa tiếp nhận 10 em nhỏ mồ côi.",
+  "đồng_nghĩa": ["thiếu nhi", "trẻ nhỏ"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"đồng bào": {
+  "nghĩa": "Người dân cùng một đất nước, dân tộc.",
+  "ví_dụ": "Đồng bào miền Trung đang gồng mình chống lũ.",
+  "đồng_nghĩa": ["người dân", "đồng hương"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"bào tiền": {
+  "nghĩa": "Nói về hành vi tiêu tiền người thân quen, bạn bè một cách vô lý hoặc quá mức. Mang sắc thái tiêu cực.",
+  "ví_dụ": "Nó quen bạn gái được vài hôm mà cô kia đã bào tiền như nước.",
+  "đồng_nghĩa": ["hút máu", "đào mỏ"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"bào ăn": {
+  "nghĩa": "Chỉ hành vi ăn ké, ăn nhờ một cách tận dụng quá mức khiến người khác khó chịu.",
+  "ví_dụ": "Thằng đó cứ tới giờ cơm là qua bào ăn nhà tao.",
+  "đồng_nghĩa": ["ăn chực", "ké ăn"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"ăn cám": {
+  "nghĩa": "Chỉ tình trạng khốn khó, không đủ ăn, hoặc chế giễu ai đó bị sa sút kinh tế.",
+  "ví_dụ": "Làm ăn kiểu đó thì sớm muộn gì cũng ăn cám.",
+  "đồng_nghĩa": ["nghèo đói", "bần hàn"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"cám dỗ": {
+  "nghĩa": "Sự hấp dẫn khiến con người khó cưỡng lại, thường là điều xấu hoặc nguy hiểm.",
+  "ví_dụ": "Anh ấy không thể vượt qua được cám dỗ của đồng tiền.",
+  "đồng_nghĩa": ["quyến rũ", "mê hoặc"],
+  "cập_nhật": "2025-08-03 23:58"
+},
+"ăn ké": {
+  "nghĩa": "Chỉ hành động ăn nhờ, ăn cùng người khác mà không chuẩn bị hay mời trước.",
+  "ví_dụ": "Thằng đó chuyên đi ăn ké tiệc nhà người ta.",
+  "đồng_nghĩa": ["ăn chực", "ké ăn", "bào ăn"],
+  "cập_nhật": "2025-08-03 23:59"
+},
+"ăn trực": {
+  "nghĩa": "Nghĩa tương tự 'ăn chực', chỉ hành vi ăn nhờ không mời mà đến.",
+  "ví_dụ": "Tết đến mà đi ăn trực nhà người khác thì kì lắm.",
+  "đồng_nghĩa": ["ăn chực", "ăn ké"],
+  "cập_nhật": "2025-08-03 23:59"
+},
+"trực nhật": {
+  "nghĩa": "Lượt trực được phân công để giữ gìn vệ sinh lớp học, cơ quan,... theo ngày.",
+  "ví_dụ": "Hôm nay nhóm 2 trực nhật nên phải lau bảng và quét lớp.",
+  "đồng_nghĩa": ["trực lớp", "gác ngày"],
+  "cập_nhật": "2025-08-03 23:59"
+},
+"ăn bám": {
+  "nghĩa": "Chỉ người sống phụ thuộc vào người khác mà không tự lao động hay đóng góp.",
+  "ví_dụ": "Anh ta đã ngoài ba mươi tuổi mà vẫn ăn bám cha mẹ.",
+  "đồng_nghĩa": ["phụ thuộc", "sống nhờ", "ăn theo"],
+  "cập_nhật": "2025-08-04 00:04"
+},
+"ngu si": {
+  "nghĩa": "Chỉ người kém thông minh, thiếu hiểu biết.",
+  "ví_dụ": "Làm việc mà không suy nghĩ gì cả đúng là ngu si thật.",
+  "đồng_nghĩa": ["ngu ngốc", "đần độn", "khờ khạo"],
+  "cập_nhật": "2025-08-04 00:04"
+},
+"đần độn": {
+  "nghĩa": "Chỉ người phản ứng chậm chạp, không nhanh nhạy.",
+  "ví_dụ": "Tính nó hơi đần độn nhưng thật thà lắm.",
+  "đồng_nghĩa": ["ngu si", "chậm hiểu", "kém nhạy bén"],
+  "cập_nhật": "2025-08-04 00:04"
+},
+"đờ đẫn": {
+  "nghĩa": "Chỉ trạng thái mất tập trung, lơ đãng, thiếu sức sống.",
+  "ví_dụ": "Cậu ấy trông đờ đẫn sau một đêm mất ngủ.",
+  "đồng_nghĩa": ["lờ đờ", "mơ màng", "thiếu sức sống"],
+  "cập_nhật": "2025-08-04 00:04"
+},
+"hoài vậy": {
+  "nghĩa": "Câu nói thường dùng trong khẩu ngữ miền Nam, thể hiện sự khó chịu hoặc thắc mắc vì điều gì đó cứ lặp lại.",
+  "ví_dụ": "Mày cứ gọi tao hoài vậy trời?",
+  "đồng_nghĩa": ["lặp lại", "cứ như vậy", "vậy hoài"],
+  "cập_nhật": "2025-08-04 00:08"
+},
+"đánh rắm": {
+  "nghĩa": "Hành động xì hơi ra ngoài bằng đường hậu môn.",
+  "ví_dụ": "Nó lỡ đánh rắm giữa buổi họp làm ai cũng nhịn cười.",
+  "đồng_nghĩa": ["xì hơi", "thả bom"],
+  "cập_nhật": "2025-08-04 00:08"
+},
+"rắm thối": {
+  "nghĩa": "Chỉ mùi khó chịu phát ra khi đánh rắm.",
+  "ví_dụ": "Ai đánh rắm thối mà không nhận vậy?",
+  "đồng_nghĩa": ["mùi hôi", "xì hơi nặng mùi"],
+  "cập_nhật": "2025-08-04 00:08"
+},
+"địch thúi": {
+  "nghĩa": "Cách nói dân dã trong miền Nam để chỉ việc đánh rắm có mùi hôi.",
+  "ví_dụ": "Thằng Nam mới địch thúi nguyên phòng luôn.",
+  "đồng_nghĩa": ["rắm thối", "xì hơi", "thả bom"],
+  "cập_nhật": "2025-08-04 00:08"
+},
+"ám hiệu": {
+  "nghĩa": "Dấu hiệu hoặc tín hiệu được thỏa thuận trước giữa các bên để nhận biết hoặc giao tiếp bí mật.",
+  "ví_dụ": "Hai gián điệp trao đổi thông tin bằng ám hiệu.",
+  "đồng_nghĩa": ["tín hiệu bí mật", "dấu hiệu"],
+  "cập_nhật": "2025-08-04 00:12"
+},
+"đồ dùng": {
+  "nghĩa": "Các vật dụng được sử dụng trong đời sống hoặc công việc.",
+  "ví_dụ": "Mẹ tôi sắm nhiều đồ dùng học tập cho em bé.",
+  "đồng_nghĩa": ["dụng cụ", "vật dụng"],
+  "cập_nhật": "2025-08-04 00:12"
+}
+}

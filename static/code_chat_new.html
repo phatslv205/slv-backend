@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title id="page-title">SolverViet - DevCodeMod </title><link rel="icon" href="/static/logos/favicon.png"><link rel="stylesheet" href="/static/js/css/style_code_chat.css"><script src="https://unpkg.com/lucide@latest"></script>
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],      
+    displayMath: [['\\[', '\\]'], ['$$', '$$']]      
+  },
+  svg: {
+    fontCache: 'global'
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+</head>
+<body class="dark">
+
+<header style="background-color:#111;color:white;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #00bcd4;">
+  <div style="display:flex;flex-direction:column;">
+    <a href="/" style="font-size:22px;font-weight:bold;color:#00bcd4;text-decoration:none;">SolverViet</a>
+    <span style="font-size:12px;color:#aaa;margin-top:2px;">© 2025. All rights reserved.</span>
+    <div id="current-language" class="current-language-info" data-lang style="padding: 5px 12px; font-style: italic;">
+      Bạn đang dùng ngôn ngữ <span class="lang-colored">Python</span>
+    </div>
+  </div>
+  <div>
+    <a href="/chat_redirect" style="color:#00bcd4; text-decoration:none; display:inline-flex; align-items:center; gap:6px; font-weight:500;">
+      <i data-lucide="arrow-left" style="width: 20px; height: 20px;"></i> Trở lại
+    </a>
+  </div>
+</header>
+
+<div id="chat-container" data-session-id="{{ code_session_id }}"></div>
+
+
+<div id="preview-wrapper" style="max-width:700px; margin: 0 auto; padding: 8px 24px 0;">
+  <div id="image-preview" class="image-preview-container"></div>
+  <div id="file-preview" class="preview-area hidden"></div>
+
+</div>
+
+  <div id="input-area">
+    <div class="chat-bar">
+<div class="plus-container">
+  <button onclick="togglePlusMenu()" class="plus-toggle-btn">
+    <i data-lucide="plus"></i>
+  </button>
+  <div id="plus-menu" class="plus-menu">
+    <button class="plus-menu-item" onclick="showLanguageSelector()">
+      <i data-lucide="code-2"></i>
+      <span>Chọn ngôn ngữ viết code</span>
+    </button>
+    <button class="plus-menu-item" onclick="toggleTheme()">
+      <i data-lucide="sun" id="theme-icon"></i>
+      <span>Chế độ sáng/tối</span>
+    </button>
+<button class="plus-menu-item" onclick="window.location.href='/rules'">
+  <i data-lucide="file-text"></i>
+  <span>Điều khoản sử dụng</span>
+</button>
+    <button class="plus-menu-item" onclick="startNewChat()">
+      <i data-lucide="plus-circle"></i>
+      <span>Đoạn chat mới</span>
+    </button>
+  </div>
+</div>
+
+      <div id="file-preview"></div>
+<div id="chat-input"
+     contenteditable="true"
+     placeholder="Nhập tin nhắn..."
+     onkeydown="handleKey(event)"
+     style="flex:1;min-height:38px;max-height:120px;overflow-y:auto;padding:8px 12px;border-radius:20px;background:#ffffff;color:#000;font-size:15px;white-space:pre-wrap;word-break:break-word;">
+</div>
+
+      <button id="upload-btn" onclick="document.getElementById('upload-input').click()">
+        <i data-lucide="image"></i>
+      </button>
+      <input type="file" id="upload-input" accept="image/*" multiple style="display:none;" />
+
+      <div id="mic-wrapper" style="display:inline-block; border-radius:50%;">
+        <button id="micBtn" onclick="startVoiceRecognition()"><i data-lucide="mic"></i></button>
+      </div>
+<button id="send-btn" data-api="/chat_ai_lite"
+  class="group bg-zinc-900 border border-zinc-700 hover:border-green-500 hover:bg-zinc-800 text-green-400 rounded-xl px-4 py-2 flex items-center gap-2 transition duration-150 shadow-md">
+  <i data-lucide="send-horizontal" class="w-5 h-5 group-hover:text-green-400 transition duration-150"></i>
+</button>
+
+    </div>
+  </div>
+<p id="devcode-notice" class="notice-devcode" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; text-align:center;">
+  <span class="product">DevCode</span>
+  <span class="version">v0.6</span>
+  <span id="devcode-id-text"></span>
+</p>
+
+<script>
+  const path = window.location.pathname;
+  const slug = path.startsWith("/solvervietCode/") ? path.split("/")[2] : null;
+
+  const notice = slug
+    ? `– AI lập trình đang thử nghiệm s/c: <b>${slug}</b>`
+    : `– AI lập trình đang thử nghiệm.`;
+
+  document.getElementById("devcode-id-text").innerHTML = notice;
+</script>
+
+  <script>
+    lucide.createIcons();
+  </script>
+  <script>
+
+  function togglePlusMenu() {
+  const menu = document.getElementById("plus-menu");
+  menu.style.display = (menu.style.display === "block") ? "none" : "block";
+}
+
+function showVipWarning() {
+  const popup = document.createElement("div");
+  popup.textContent = "🚫 Tính năng này chỉ dành cho SLV (Premium)!";
+  popup.style.position = "fixed";
+  popup.style.bottom = "30px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#e74c3c";
+  popup.style.color = "white";
+  popup.style.padding = "10px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  popup.style.zIndex = "9999";
+  popup.style.fontWeight = "bold";
+  popup.style.animation = "fadeInOut 2.4s ease";
+
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2400);
+}
+
+function startNewChat() {
+  fetch("/new_code_chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      location.href = data.redirect;
+    } else {
+      alert(data.error || "⚠️ Không thể tạo đoạn chat mới.");
+    }
+  })
+  .catch(err => {
+    console.error("Lỗi:", err);
+    alert("❌ Lỗi hệ thống.");
+  });
+}
+
+const toastFade = document.createElement("style");
+toastFade.innerHTML = `
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(10px); }
+}`;
+document.head.appendChild(toastFade);
+const MAX_IMAGES = 1;
+let serverRenderedMessages = [];
+let selectedImages = [];
+
+document.getElementById("upload-input").addEventListener("change", handleImages);
+document.addEventListener("paste", handlePasteClipboard);
+
+function handleImages(event) {
+  const files = Array.from(event.target.files);
+  addImages(files);
+}
+
+function handlePasteClipboard(e) {
+  const items = Array.from(e.clipboardData.items);
+  const imageItems = items.filter(item => item.type.startsWith("image/"));
+
+  if (imageItems.length === 0) return;
+
+  const newFiles = imageItems.map(item => item.getAsFile());
+  addImages(newFiles);
+}
+
+function addImages(files) {
+  if (selectedImages.length >= MAX_IMAGES) {
+    showToast(" Tối đa 1 ảnh cho mỗi tin nhắn!");
+    return;
+  }
+
+  const availableSlots = MAX_IMAGES - selectedImages.length;
+  const filteredFiles = [];
+
+  for (let file of files) {
+    if (!file || !file.name) continue;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast(`⚠️ Ảnh "${file.name}" vượt quá 5MB!`);
+      continue;
+    }
+
+    const isDuplicate = selectedImages.some(
+      f => f.name === file.name && f.size === file.size
+    );
+
+    if (isDuplicate) {
+      showToast(`⚠️ Ảnh "${file.name}" đã tồn tại!`);
+      continue;
+    }
+
+    filteredFiles.push(file);
+    if (filteredFiles.length >= availableSlots) break;
+  }
+
+  if (filteredFiles.length === 0) return;
+
+  selectedImages = [...selectedImages, ...filteredFiles];
+  renderImagePreview();
+
+  if (filteredFiles.length < files.length) {
+    showToast(`⚠️ Một số ảnh bị loại do giới hạn hoặc trùng lặp.`);
+  }
+}
+
+function renderImagePreview() {
+  const container = document.getElementById("image-preview");
+  container.innerHTML = "";
+
+  selectedImages.forEach((file, index) => {
+    const wrapper = document.createElement("div");
+    wrapper.className = "img-wrapper";
+    wrapper.title = file.name;
+
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+
+    const removeBtn = document.createElement("span");
+    removeBtn.className = "remove-btn";
+    removeBtn.textContent = "×";
+    removeBtn.title = "Xóa ảnh";
+    removeBtn.onclick = () => removeImage(index);
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(removeBtn);
+    container.appendChild(wrapper);
+  });
+}
+
+function removeImage(index) {
+  selectedImages.splice(index, 1);
+  renderImagePreview();
+}
+
+window.resetImagePreview = function () {
+  selectedImages = [];
+  renderImagePreview();
+};
+
+function showToast(msg) {
+  const popup = document.createElement("div");
+  popup.textContent = msg;
+  popup.style.position = "fixed";
+  popup.style.bottom = "30px";
+  popup.style.left = "50%";
+  popup.style.transform = "translateX(-50%)";
+  popup.style.background = "#333";
+  popup.style.color = "white";
+  popup.style.padding = "10px 20px";
+  popup.style.borderRadius = "8px";
+  popup.style.fontWeight = "bold";
+  popup.style.boxShadow = "0 4px 10px rgba(0,0,0,0.3)";
+  popup.style.zIndex = "9999";
+  popup.style.animation = "fadeInOut 2.4s ease";
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 2400);
+}
+let recognition;
+let isListening = false;
+let isSending = false;
+let attachedTextFiles = [];
+function startVoiceRecognition() {
+  if (!('webkitSpeechRecognition' in window)) {
+    showToast("Trình duyệt không hỗ trợ giọng nói.");
+    return;
+  }
+
+  if (isListening) {
+    recognition.stop();
+    isListening = false;
+    return;
+  }
+
+  recognition = new webkitSpeechRecognition();
+  recognition.lang = 'vi-VN'; 
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    isListening = true;
+    showToast(" Đang lắng nghe...");
+    document.getElementById("mic-wrapper").classList.add("active");
+  };
+
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript.trim();
+    document.getElementById("chat-input").innerText = transcript;
+    showToast("\u2705 Đã nhận diện xong. Bạn có thể gửi.");
+  };
+
+  recognition.onerror = (event) => {
+    console.error("Lỗi mic:", event.error);
+    showToast("\u274C Lỗi mic: " + event.error);
+  };
+
+  recognition.onend = () => {
+    isListening = false;
+    document.getElementById("mic-wrapper").classList.remove("active");
+  };
+
+  recognition.start();
+}
+function toggleTheme() {
+  const current = document.body.classList.contains("dark") ? "dark" : "light";
+  const newMode = current === "dark" ? "light" : "dark";
+  document.body.classList.remove(current);
+  document.body.classList.add(newMode);
+  localStorage.setItem("theme_mode", newMode);
+  updateThemeIcon(newMode);
+}
+
+function updateThemeIcon(mode) {
+  const icon = document.getElementById("theme-icon");
+  icon.setAttribute("data-lucide", mode === "dark" ? "sun" : "moon");
+  lucide.createIcons(); 
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  const savedMode = localStorage.getItem("theme_mode");
+  if (savedMode === "light") {
+    document.body.classList.remove("dark");
+    document.body.classList.add("light");
+    updateThemeIcon("light");
+  } else {
+    document.body.classList.add("dark");
+    updateThemeIcon("dark");
+  }
+  document.getElementById("send-btn").addEventListener("click", sendMessage);
+});
+function getCleanInputContent() {
+  const input = document.getElementById("chat-input");
+  let html = input.innerHTML;
+
+  return html
+    .replace(/<div><br><\/div>/g, "\n")
+    .replace(/<div>/g, "\n")            
+    .replace(/<\/div>/g, "")
+    .replace(/<br>/g, "\n")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&amp;/g, "&")
+    .trim();
+}
+function toBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = error => reject(error);
+  });
+}
+document.getElementById("chat-input").addEventListener("paste", function (e) {
+  e.preventDefault();
+  const text = (e.clipboardData || window.clipboardData).getData("text/plain");
+  document.execCommand("insertText", false, text);
+});
+
+function readTextFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve({ name: file.name, content: e.target.result });
+    reader.onerror = err => reject(err);
+    reader.readAsText(file);
+  });
+}
+
+async function sendMessage() {
+  const session_id = document.getElementById("chat-container")?.dataset?.sessionId || "";
+  const filePreview = document.getElementById("file-preview");
+  if (isSending) return;
+  isSending = true;
+  document.getElementById("send-btn").disabled = true;
+
+  const input = document.getElementById("chat-input");
+  const message = getCleanInputContent();
+
+  if (!message && selectedImages.length === 0) {
+    showToast("Vui lòng nhập nội dung hoặc chọn ảnh!");
+    return;
+  }
+  
+  const extraImage = document.querySelector(".image-data");
+if (extraImage && extraImage.value) {
+  const base64Image = extraImage.value;
+  const blob = await (await fetch(base64Image)).blob();
+  const file = new File([blob], "pasted.png", { type: blob.type });
+  selectedImages.push(file);
+}
+let imagesToSend = [...selectedImages];
+  input.innerText = "";
+  selectedImages = [];
+  document.getElementById("image-preview").innerHTML = "";
+
+  const clonedAttachedFiles = attachedTextFiles.map(file => ({ ...file })); 
+  addUserMessage(message, imagesToSend, attachedTextFiles);
+  showLoadingBubble(message, imagesToSend);
+
+
+  const formData = new FormData();
+  formData.append("message", message);
+  const base64Images = await Promise.all(imagesToSend.map(file => toBase64(file)));
+  formData.append("images", JSON.stringify(base64Images));
+  formData.append("session_id", session_id);
+  formData.append("files", JSON.stringify(attachedTextFiles));
+  resetPreview();
+  formData.append("history", JSON.stringify(serverRenderedMessages || []));
+  const fileInput = document.getElementById("upload-input");
+for (let file of fileInput.files) {
+  formData.append("files", file);  
+}
+  const selectedLanguage = localStorage.getItem("codeLanguage") || "python";
+  formData.append("language", selectedLanguage);
+
+  imagesToSend.forEach((file, i) => {
+    formData.append(`image_${i}`, file);
+  });
+
+  try {
+    const res = await fetch("/code_infer", {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    removeLoadingBubble();
+
+    if (data.blocks && Array.isArray(data.blocks)) {
+      serverRenderedMessages.push({
+        role: "user",
+        type: "text",
+        content: message
+      });
+
+      data.blocks.forEach(block => {
+        serverRenderedMessages.push({
+          role: "assistant",
+          type: block.type,
+          content: block.content,
+          language: block.language || "plaintext"
+        });
+        addBotMessage(block.content, block.type, block.language || "plaintext");
+      });
+    }
+
+    else if (data.reply) {
+      serverRenderedMessages.push({
+        role: "user",
+        type: "text",
+        content: message
+      });
+
+      const parts = data.reply.split(/```(\w+)?\n([\s\S]*?)```/g);
+      for (let i = 0; i < parts.length; i++) {
+        if (i % 3 === 0) {
+          const normalText = parts[i].trim();
+          if (normalText) {
+            serverRenderedMessages.push({
+              role: "assistant",
+              type: "text",
+              content: normalText
+            });
+            addBotMessage(normalText, "text");
+          }
+        } else if (i % 3 === 1) {
+          const lang = parts[i] || "plaintext";
+          const code = escapeHtml(parts[i + 1] || "");
+          serverRenderedMessages.push({
+            role: "assistant",
+            type: "code",
+            content: code,
+            language: lang
+          });
+          addBotMessage(code, "code", lang);
+          i++;
+        }
+      }
+    }
+
+    else {
+      addBotMessage("Không nhận được phản hồi từ AI.", "text");
+    }
+  } catch (err) {
+    removeLoadingBubble();
+    addBotMessage("Lỗi hệ thống khi gửi. Vui lòng thử lại sau.");
+    console.error("Lỗi gửi:", err);
+  } finally {
+    isSending = false;
+    document.getElementById("send-btn").disabled = false;
+  }
+  document.getElementById("chat-input").innerHTML = "";
+}
+function addUserMessage(text, images, attachedFiles = []) {
+  const container = document.getElementById("chat-container");
+
+  const messageDiv = document.createElement("div");
+  messageDiv.className = "message user";
+  let html = "";
+
+  if (text && text.trim() !== "") {
+    const escaped = escapeHtml(text);
+    if (text.trim().startsWith("def ") || text.includes("\n")) {
+      html += `<pre><code>${escaped}</code></pre>`;
+    } else {
+      html += `<p>${escaped.replace(/\n/g, "<br>")}</p>`;
+    }
+  }
+  if (html !== "" || (attachedFiles && attachedFiles.length > 0)) {
+    messageDiv.innerHTML = html;
+    container.appendChild(messageDiv);
+  }
+if (attachedFiles && attachedFiles.length > 0) {
+  attachedFiles.forEach(file => {
+    const name = escapeHtml(file.name || file.filename || "file.txt");
+    const ext = name.split('.').pop().toLowerCase();
+
+    let icon = "file-text";
+    if (["png", "jpg", "jpeg", "gif", "bmp", "svg", "webp"].includes(ext)) icon = "image";
+    else if (["html", "htm"].includes(ext)) icon = "globe";
+    else if (["py", "js", "ts", "java", "cpp", "c", "cs", "rb", "go", "php", "sh", "json"].includes(ext)) icon = "code";
+
+    const fileBlock = document.createElement("div");
+    fileBlock.className = "file-bubble";
+    fileBlock.innerHTML = `
+      <div class="file-info-line">
+        <i class="lucide lucide-${icon} mr-1"></i> ${name}
+      </div>
+    `;
+
+    container.appendChild(fileBlock);
+    lucide.createIcons(); 
+  });
+}
+  if (images && images.length > 0) {
+    const imgWrapper = document.createElement("div");
+    imgWrapper.className = "msg-imgs msg-imgs-outside";
+
+    images.forEach(file => {
+      const isFile = typeof file !== "string";
+      const url = isFile ? URL.createObjectURL(file) : file;
+      const img = document.createElement("img");
+      img.src = url;
+      img.className = "inline-img";
+      imgWrapper.appendChild(img);
+    });
+
+    resetPreview();
+    container.appendChild(imgWrapper);
+  }
+
+  scrollToBottom();
+}
+
+function escapeHtml(str) {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function appendBotBubble(content, type = "text", language = "plaintext") {
+  const container = document.getElementById("chat-container");
+  const parts = content.split(/```(\w+)?\n([\s\S]*?)```/g);
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 3 === 0 && parts[i].trim()) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "message bot";
+
+      let rawText = parts[i].trim();
+      if (isDangerousHTML(rawText)) {
+        rawText = escapeHtml(rawText);
+      } else {
+        rawText = escapeAndHighlightInlineCode(rawText);
+      }
+
+      wrapper.innerHTML = `<div class="message-content">${rawText}</div>`;
+      container.appendChild(wrapper);
+    }
+    if (i % 3 === 2 && parts[i]) {
+      const lang = parts[i - 1] || language;
+      const codeWrapper = document.createElement("div");
+      codeWrapper.className = "message bot";
+
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.className = `language-${lang}`;
+      code.textContent = parts[i].trim();
+
+      pre.appendChild(code);
+      codeWrapper.appendChild(pre);
+      container.appendChild(codeWrapper);
+
+      if (window.hljs) hljs.highlightElement(code);
+    }
+  }
+
+  if (window.MathJax && typeof MathJax.typesetPromise === "function") {
+  MathJax.typesetPromise();
+}
+
+  scrollToBottom();
+
+}
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeAndHighlightInlineCode(text) {
+  return escapeHtml(text).replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+function isDangerousHTML(text) {
+  const lower = text.toLowerCase();
+  return /<\s*(html|style|script|head|body|form|link|meta)/.test(lower);
+}
+
+function showLoadingBubble(messageText, imagesArray) {
+  const container = document.getElementById("chat-container");
+  const div = document.createElement("div");
+  div.className = "message bot";
+  div.id = "loading-bubble";
+
+  const text = (messageText || "").toLowerCase();
+  const mathKeywords = ["giải", "tính", "phân tích", "phương trình", "bài toán", "đáp án", "chứng minh", "số học"];
+  const isMath = mathKeywords.some(keyword => text.includes(keyword));
+  const hasImages = imagesArray && imagesArray.length > 0;
+
+
+  if (isMath || hasImages) {
+    div.innerHTML = `<i>Đang phân tích</i> <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>`;
+  } else {
+
+    div.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <svg width="50" height="16" viewBox="0 0 120 30" xmlns="http://www.w3.org/2000/svg" fill="#00bcd4">
+          <circle cx="15" cy="15" r="15">
+            <animate attributeName="r" from="15" to="15"
+                     begin="0s" dur="0.8s"
+                     values="15;9;15" calcMode="linear"
+                     repeatCount="indefinite" />
+          </circle>
+          <circle cx="60" cy="15" r="9" fill-opacity="0.3">
+            <animate attributeName="r" from="9" to="9"
+                     begin="0.2s" dur="0.8s"
+                     values="9;15;9" calcMode="linear"
+                     repeatCount="indefinite" />
+          </circle>
+          <circle cx="105" cy="15" r="15">
+            <animate attributeName="r" from="15" to="15"
+                     begin="0.4s" dur="0.8s"
+                     values="15;9;15" calcMode="linear"
+                     repeatCount="indefinite" />
+          </circle>
+        </svg>
+      </div>`;
+  }
+
+  container.appendChild(div);
+if (window.MathJax && MathJax.typesetPromise) {
+  MathJax.typesetPromise().catch((err) => console.error("MathJax error:", err));
+}
+
+
+  scrollToBottom();
+  
+}
+
+function removeLoadingBubble() {
+  const loading = document.getElementById("loading-bubble");
+  if (loading) loading.remove();
+}
+
+function scrollToBottom() {
+  const container = document.getElementById("chat-container");
+  setTimeout(() => {
+    container.scrollTop = container.scrollHeight;
+  }, 100);
+}
+function escapeHtml(str) {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("inline-img")) {
+    const src = e.target.getAttribute("src");
+    const popup = document.getElementById("image-popup");
+    const popupImg = document.getElementById("popup-img");
+    popupImg.src = src;
+    popup.style.display = "flex";
+  }
+  if (e.target.id === "image-popup") {
+    document.getElementById("image-popup").style.display = "none";
+    document.getElementById("popup-img").src = "";
+  }
+});
+function handleKey(event) {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    sendMessage();
+  }
+}
+
+</script>
+
+<div id="image-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:9999;">
+  <img id="popup-img" src="" style="max-width:90vw; max-height:90vh; border-radius:12px; box-shadow:0 0 12px rgba(0,0,0,0.6);" />
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const chatContainer = document.getElementById("chat-container");
+  const slug = "{{ slug }}";
+
+  fetch(`/get_code_history/${slug}`)
+    .then(res => res.json())
+    .then(data => {
+      if (!data.success) return;
+
+      const history = data.messages || [];
+      let tempText = "";
+      let tempImages = [];
+      let tempFiles = [];
+
+      for (let i = 0; i < history.length; i++) {
+        const item = history[i];
+        const next = history[i + 1] || {};
+
+        const isAlreadyRendered = serverRenderedMessages.some(msg =>
+          msg.role === item.role &&
+          msg.content === item.content &&
+          msg.type === item.type &&
+          (msg.language || "plaintext") === (item.language || "plaintext")
+        );
+
+        if (!isAlreadyRendered) {
+          if (item.role === "user") {
+            if (item.type === "text" && typeof item.content === "string") {
+              tempText = item.content;
+            } else if (item.type === "image_url" && item.image_url?.url) {
+              tempImages.push(item.image_url.url);
+            } else if (item.type === "file") {
+              tempFiles.push({
+                name: item.filename || "file.txt",
+                content: item.content || ""
+              });
+            }
+
+            const isLast = i === history.length - 1;
+            const nextIsNotUser = next.role !== "user";
+
+            if (isLast || nextIsNotUser) {
+              addUserMessage(tempText.trim(), tempImages, tempFiles);
+              tempText = "";
+              tempImages = [];
+              tempFiles = [];
+            }
+
+          } else if (item.role === "assistant") {
+            addBotMessage(item.content, item.type, item.language || "plaintext");
+          }
+
+          serverRenderedMessages.push({
+            role: item.role,
+            content: item.content,
+            type: item.type,
+            language: item.language || "plaintext"
+          });
+        }
+      }
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    })
+    .catch(err => {
+      console.error("Lỗi khi lấy lại history:", err);
+    });
+});
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+
+
+function showLanguageSelector() {
+  document.getElementById("language-selector-popup").style.display = "block";
+}
+
+function hideLanguageSelector() {
+  document.getElementById("language-selector-popup").style.display = "none";
+}
+
+function saveLanguageChoice() {
+  const selected = document.getElementById("language-select").value;
+  localStorage.setItem("codeLanguage", selected);
+  updateCurrentLanguage();
+  hideLanguageSelector();
+}
+function updateCurrentLanguage() {
+  const lang = localStorage.getItem("codeLanguage") || "python";
+  const langText = {
+    python: "Python",
+    javascript: "JavaScript",
+    html: "HTML / CSS",
+    flutter: "Flutter (Dart)",
+    sql: "SQL",
+    java: "Java",
+    cpp: "C++"
+  };
+
+  const display = document.getElementById("current-language");
+  display.dataset.lang = lang;
+  display.innerHTML = `Bạn đang dùng ngôn ngữ <span class="lang-colored">${langText[lang] || lang}</span>`;
+}
+updateCurrentLanguage();
+
+</script>
+<div id="language-selector-popup" class="modern-popup hidden">
+  <div class="popup-header">
+    <i class="lucide lucide-terminal-square"></i>
+    <h2>Chọn Mode</h2>
+  </div>
+  <p>Chọn ngôn ngữ lập trình bạn muốn sử dụng:</p>
+
+  <select id="language-select">
+    <option value="python">Python</option>
+    <option value="javascript">JavaScript</option>
+    <option value="html">HTML / CSS</option>
+    <option value="flutter">Flutter (Dart)</option>
+    <option value="sql">SQL</option>
+    <option value="java">Java</option>
+    <option value="cpp">C++</option>
+  </select>
+
+  <div class="popup-buttons">
+    <button onclick="saveLanguageChoice()" class="btn-apply">Áp dụng</button>
+    <button onclick="hideLanguageSelector()" class="btn-close"> Đóng</button>
+  </div>
+</div>
+<script>
+function addBotMessage(text) {
+  const chatContainer = document.getElementById("chat-container");
+  const parts = text.split(/```(\w+)?\n([\s\S]*?)```/g);
+  for (let i = 0; i < parts.length; i++) {
+    if (i % 3 === 0 && parts[i].trim()) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "message bot";
+      wrapper.innerHTML = `<div class="message-content">${parts[i].trim()}</div>`;
+      chatContainer.appendChild(wrapper);
+    }
+    if (i % 3 === 2 && parts[i]) {
+      const lang = parts[i - 1] || "plaintext";
+      const codeWrapper = document.createElement("div");
+      codeWrapper.className = "message bot";
+      const pre = document.createElement("pre");
+      const code = document.createElement("code");
+      code.className = `language-${lang}`;
+      code.textContent = parts[i].trim();
+
+      pre.appendChild(code);
+      codeWrapper.appendChild(pre);
+      chatContainer.appendChild(codeWrapper);
+    }
+  }
+ if (window.MathJax && typeof MathJax.typesetPromise === "function") {
+    MathJax.typesetPromise().catch((err) => console.error("MathJax Error:", err));
+  }
+  scrollToBottom();
+}
+function escapeHtml(str) {
+  if (!str) return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const input = document.getElementById("chat-input");
+  const filePreview = document.getElementById("file-preview");
+  const popup = document.getElementById("file-loading-popup");
+  const fileListPreview = document.getElementById("file-list-preview");
+  const popupTitle = document.getElementById("file-popup-title");
+
+  input.addEventListener("dragover", e => {
+    e.preventDefault();
+    input.style.border = "2px dashed #4ade80";
+  });
+
+  input.addEventListener("dragleave", () => {
+    input.style.border = "";
+  });
+
+  input.addEventListener("drop", async function (e) {
+    e.preventDefault();
+    input.style.border = "";
+
+    const files = Array.from(e.dataTransfer.files);
+    const total = attachedTextFiles.length + selectedImages.length + files.length;
+    if (total > 1) {
+      showToast("Tối đa 1 file (ảnh hoặc .html) mỗi tin nhắn!");
+      return;
+    }
+    fileListPreview.innerHTML = "";
+    popupTitle.innerText = "Đang tải...";
+    popup.style.display = "flex";
+
+    for (let file of files) {
+      const icon = getLucideIconByExtension(file.name);
+      fileListPreview.innerHTML += `<div><i class="lucide lucide-${icon}"></i> ${file.name}</div>`;
+    }
+    lucide.createIcons();
+    let totalDelay = 0;
+    files.forEach(file => {
+      const sizeKB = file.size / 1024;
+      if (sizeKB <= 20) totalDelay += 2000;
+      else if (sizeKB <= 50) totalDelay += 4000;
+      else if (sizeKB <= 100) totalDelay += 6000;
+      else if (sizeKB <= 200) totalDelay += 7000;
+      else totalDelay += 1000;
+    });
+    await new Promise(r => setTimeout(r, totalDelay));
+
+    const promises = [];
+
+    for (let file of files) {
+      const previewItem = document.createElement("div");
+      previewItem.className = "preview-item";
+
+      const removeBtn = document.createElement("button");
+      removeBtn.className = "remove-btn";
+      removeBtn.innerText = "×";
+
+      const span = document.createElement("span");
+      span.className = "filename";
+      span.innerText = file.name;
+
+      const fileIcon = document.createElement("i");
+      fileIcon.className = `lucide lucide-${getLucideIconByExtension(file.name)}`;
+
+      if (file.name.endsWith(".html")) {
+        promises.push(
+          readTextFile(file).then(fileData => {
+            attachedTextFiles.push(fileData);
+            removeBtn.onclick = () => {
+              previewItem.remove();
+              attachedTextFiles = attachedTextFiles.filter(f => f.name !== file.name);
+              checkHidePreview();
+            };
+            previewItem.append(fileIcon, span, removeBtn);
+            filePreview.appendChild(previewItem);
+            filePreview.classList.remove("hidden");
+            lucide.createIcons();
+          })
+        );
+      } else if (file.type.startsWith("image/")) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          selectedImages.push(file);
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          img.className = "inline-img";
+          img.style.maxWidth = "48px";
+          img.style.maxHeight = "48px";
+          img.style.borderRadius = "6px";
+
+          removeBtn.onclick = () => {
+            previewItem.remove();
+            selectedImages = selectedImages.filter(f => f.name !== file.name);
+            checkHidePreview();
+          };
+
+          previewItem.append(img, span, removeBtn);
+          filePreview.appendChild(previewItem);
+          filePreview.classList.remove("hidden");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        showToast("Chỉ hỗ trợ ảnh hoặc file .html");
+      }
+    }
+
+    await Promise.all(promises);
+
+    popupTitle.innerText = "Downloaded successfully!";
+    const flashingDot = popup.querySelector(".dot-flashing");
+    if (flashingDot) flashingDot.style.display = "none";
+
+    setTimeout(() => {
+      popup.style.display = "none";
+      popupTitle.innerText = "Loading...";
+      if (flashingDot) flashingDot.style.display = "block";
+    }, 1200);
+  });
+
+  function readTextFile(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve({ name: file.name, content: e.target.result });
+      reader.onerror = err => reject(err);
+      reader.readAsText(file);
+    });
+  }
+
+  function getLucideIconByExtension(filename) {
+    const ext = filename.split('.').pop().toLowerCase();
+    if (["html", "htm"].includes(ext)) return "globe";
+    if (["js", "ts", "py", "java", "json", "cpp", "c", "sh"].includes(ext)) return "code";
+    if (["png", "jpg", "jpeg", "gif", "svg", "webp"].includes(ext)) return "image";
+    return "file-text";
+  }
+
+  function checkHidePreview() {
+    if (filePreview.children.length === 0) {
+      filePreview.classList.add("hidden");
+    }
+  }
+
+  window.resetPreview = function () {
+    filePreview.innerHTML = "";
+    filePreview.classList.add("hidden");
+    attachedTextFiles = [];
+    selectedImages = [];
+  };
+});
+
+</script>
+<div id="file-loading-popup" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center;">
+
+  <div style="background:white; padding:20px 30px; border-radius:12px; box-shadow:0 0 20px rgba(0,0,0,0.4); text-align:center; font-weight:bold;">
+    <div id="file-popup-title">Đang tải...</div>
+    <div id="file-list-preview" style="margin-top:12px; font-size:14px;"></div>
+    <div class="dot-flashing" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<style>
+.dot-flashing {
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #00bcd4;
+  animation: dotFlashing 1s infinite alternate;
+  margin: 0 auto;
+}
+@keyframes dotFlashing {
+  0% { opacity: 0.2; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.2; transform: scale(0.9); }
+}
+</style>
+
+
+</body>
+</html>

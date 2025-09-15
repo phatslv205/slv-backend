@@ -1,6 +1,29 @@
+# ENV
 .env
+*.env
+*.env.*
+
+# Python
 __pycache__/
 *.pyc
-*.log
-*.sqlite3
+*.pyo
+
+# Virtual env
+venv/
+ENV/
+env/
+
+# Database / dump
 *.db
+*.sqlite3
+*.sql
+*.dump
+*.bak
+
+# Log files
+*.log
+*.log.*
+
+# System
+.DS_Store
+now

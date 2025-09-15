@@ -1,0 +1,1 @@
+function handleKey(e) {if (e.key === 'Enter' && !e.shiftKey) {e.preventDefault();sendMessage();}}

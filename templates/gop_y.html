@@ -1,164 +1,24 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <title> Góp Ý / Báo Lỗi - SolverViet</title>
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
-
-  <!-- Header -->
-  <div class="bg-white py-6 shadow">
-    <h1 class="text-3xl font-bold text-center text-red-600">TRUNG TÂM HỖ TRỢ SOLVERVIET</h1>
-  </div>
-
-  <!-- Form Container -->
-  <div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg">
-    <h2 class="text-xl font-bold text-red-600 mb-4 border-b border-red-300 pb-2">📢 Góp Ý / Báo Lỗi Cho SolverViet</h2>
-    <a href="/" class="inline-block mb-4 text-sm text-blue-500 hover:underline">← Quay lại trang chủ</a>
-
-    <p class="text-sm text-gray-600 mb-6">Đây là biểu mẫu dành cho người dùng gặp sự cố, lỗi hệ thống hoặc cần hỗ trợ nhanh chóng từ quản trị viên SolverViet. Hãy điền thông tin chính xác để chúng tôi có thể phản hồi sớm nhất.</p>
-
-    {% if not success %}
-    <form method="POST" action="/gop-y" enctype="multipart/form-data">
-
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"> Bạn muốn gửi gì?</label>
-        <select name="category" required class="w-full p-3 rounded bg-gray-100 border border-gray-300">
-          <option value="">-- Chọn loại góp ý --</option>
-          <option value="Gợi ý thêm tính năng">Gợi ý thêm tính năng</option>
-          <option value="Báo lỗi"> Báo lỗi</option>
-          <option value="Góp ý nội dung">Góp ý nội dung</option>
-          <option value="Khiếu nại"> Khiếu nại</option>
-          <option value="Khác"> Khác?</option>
-        </select>
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"> Họ và tên *</label>
-        <input type="text" name="full_name" required class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400">
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"> Mã ID người dùng SolverViet</label>
-        <input type="text" name="user_id" placeholder="VD: d360e94a-..." class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400">
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"> Email nhận phản hồi *</label>
-        <input type="email" name="user_email" required placeholder="your.email@example.com" class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400">
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"> Nội dung góp ý hoặc báo lỗi *</label>
-        <textarea name="message" rows="6" required placeholder="Nhập nội dung tại đây..." class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400"></textarea>
-      </div>
-
-      <div class="mb-4">
-        <label class="block text-sm font-semibold mb-1"> Đính kèm hình ảnh (tối đa 5 ảnh)</label>
-        <input type="file" id="image-input" name="images" accept="image/*" multiple class="w-full p-2 bg-gray-100 border border-gray-300 rounded" />
-        <div id="image-preview" class="mt-2 flex flex-wrap gap-2"></div>
-      </div>
-
-      <div class="flex justify-end gap-4 mt-6">
-        <button type="reset" class="bg-gray-200 hover:bg-gray-300 text-black px-6 py-2 rounded">Nhập lại</button>
-        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold">Gửi</button>
-      </div>
-    </form>
-    {% else %}
-    <div class="bg-green-100 text-green-800 p-6 mt-6 rounded-xl border border-green-300 text-center text-lg shadow">
-      {% if category == "Gợi ý thêm tính năng" %}
-   Cảm ơn bạn đã gợi ý cho SolverViet tính năng mới, hệ thống đã ghi nhận.  
-  Hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để nhận phản hồi của SolverViet và trải nghiệm tốt hơn nhé!
-{% elif category == "Báo lỗi" %}
-  Cảm ơn bạn đã báo lỗi giúp SolverViet cải thiện hệ thống. Đội ngũ sẽ kiểm tra và xử lý sớm nhất.  
-  Hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để nhận phản hồi của SolverViet sớm nhất nhé.
-{% elif category == "Góp ý nội dung" %}
-  Cảm ơn bạn đã góp ý nội dung, chúng tôi rất trân trọng điều đó.  
-  Bạn hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để nhận cập nhật phản hồi của SolverViet nhé.
-{% elif category == "Khiếu nại" %}
- Chúng tôi rất tiếc về trải nghiệm không tốt. Chúng tôi sẽ xử lý khiếu nại sớm nhất có thể.  
- Bạn hãy theo dõi <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> để không bỏ lỡ phản hồi của SolverViet nhé!
-{% else %}
-   Cảm ơn bạn đã liên hệ với SolverViet. Hệ thống đã ghi nhận phản hồi của bạn.  
-  Bạn sẽ nhận phản hồi qua <span class="text-yellow-600 font-semibold">📬 hòm thư nội bộ</span> nếu cần thiết.
-{% endif %}
-
-      <p class="mt-3 italic text-sm text-gray-600">Trân trọng chào bạn.</p>
-  <a href="/" class="inline-flex items-center justify-center mt-6 px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition duration-200">
-  ← Quay lại trang chủ
-</a>
-
-
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- Footer -->
-  <footer class="text-center text-gray-600 text-sm mt-10 pb-6">
-    <p>📞 Zalo hỗ trợ: <a href="tel:0865645752" class="text-blue-500">0865645752</a> | 📧 Email: <a href="mailto:phatth.viettel@gmail.com" class="text-blue-500">phatth.viettel@gmail.com</a></p>
-    <p class="mt-1">SolverViet &copy; 2025. All rights reserved.</p>
-  </footer>
-
-  <!-- JS xử lý preview ảnh -->
-  <script>
-    const input = document.getElementById("image-input");
-    const preview = document.getElementById("image-preview");
-    let files = [];
-
-    if (input) {
-      input.addEventListener("change", () => {
-        const selected = Array.from(input.files);
-        const total = files.length + selected.length;
-
-        if (total > 5) {
-          alert("❌ Bạn chỉ được gửi tối đa 5 ảnh!");
-          input.value = "";
-          return;
-        }
-
-        selected.forEach(file => {
-          if (!file.type.startsWith("image/")) return;
-
-          const reader = new FileReader();
-          reader.onload = e => {
-            const wrapper = document.createElement("div");
-            wrapper.className = "relative w-24 h-24 border rounded overflow-hidden";
-
-            const img = document.createElement("img");
-            img.src = e.target.result;
-            img.className = "object-cover w-full h-full";
-
-            const del = document.createElement("button");
-            del.innerText = "✕";
-            del.className = "absolute top-0 right-0 bg-red-500 text-white text-xs px-1 rounded-bl";
-            del.onclick = () => {
-              preview.removeChild(wrapper);
-              files = files.filter(f => f !== file);
-              updateInputFiles();
-            };
-
-            wrapper.appendChild(img);
-            wrapper.appendChild(del);
-            preview.appendChild(wrapper);
-
-            files.push(file);
-            updateInputFiles();
-          };
-          reader.readAsDataURL(file);
-        });
-
-        input.value = "";
-      });
-
-      function updateInputFiles() {
-        const dataTransfer = new DataTransfer();
-        files.forEach(f => dataTransfer.items.add(f));
-        input.files = dataTransfer.files;
-      }
-    }
-  </script>
-
-</body>
-</html>
+<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title> Góp Ý / Báo Lỗi - SolverViet</title><link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}"><link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"><script src="https://unpkg.com/lucide@latest"></script></head>
+<body class="bg-gray-100 min-h-screen text-gray-800 font-sans"><div class="bg-gray py-6 shadow"> <h1 class="text-3xl font-bold text-center text-red-600">TRUNG TÂM HỖ TRỢ SOLVERVIET</h1> </div>
+<div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow-lg"><h2 class="text-xl font-bold text-red-600 mb-4 border-b border-red-300 pb-2 flex items-center gap-2"><i data-lucide="mail" class="w-5 h-5"></i> Góp Ý / Báo Lỗi Cho SolverViet</h2><a href="/" class="inline-block mb-6 text-base font-medium text-blue-500 hover:underline hover:text-blue-600 transition">← Quay lại trang chủ</a><p class="text-sm text-gray-600 mb-6">Đây là biểu mẫu dành cho người dùng gặp sự cố, lỗi hệ thống hoặc cần hỗ trợ nhanh chóng từ SolverViet. Hãy điền thông tin chính xác để chúng tôi có thể phản hồi sớm nhất.</p>
+{% if not success %}
+<form method="POST" action="/gop-y" enctype="multipart/form-data">
+<div class="mb-4"><label class="block text-sm font-semibold mb-1"> Bạn muốn gửi gì?</label><select name="category" required class="w-full p-3 rounded bg-gray-100 border border-gray-300"><option value="">-- Chọn loại góp ý --</option><option value="Gợi ý thêm tính năng" {% if request.args.get('category') == 'Gợi ý thêm tính năng' %}selected{% endif %}>Gợi ý thêm tính năng</option><option value="Báo lỗi" {% if request.args.get('category') == 'Báo lỗi' %}selected{% endif %}>Báo lỗi</option><option value="Góp ý nội dung" {% if request.args.get('category') == 'Góp ý nội dung' %}selected{% endif %}>Góp ý nội dung</option><option value="Khiếu nại" {% if request.args.get('category') == 'Khiếu nại' %}selected{% endif %}>Khiếu nại</option><option value="Tố cáo người dùng" {% if request.args.get('category') == 'Tố cáo người dùng' %}selected{% endif %}>Tố cáo người dùng</option><option value="Yêu cầu đổi email" {% if request.args.get('category') == 'Yêu cầu đổi email' %}selected{% endif %}>Yêu cầu đổi email</option><option value="Khác" {% if request.args.get('category') == 'Khác' %}selected{% endif %}>Khác?</option></select></div>
+<div class="mb-4"><label class="block text-sm font-semibold mb-1"> Họ và tên </label><input type="text" name="full_name" required class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400"></div>
+<div id="change-email-note" class="mb-4 hidden"> <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded text-sm"> Nếu bạn không thể xác thực email hiện tại, vui lòng gửi yêu cầu đổi email tại đây. Đội ngũ sẽ xem xét và xử lý trong vòng 24 giờ. </div> </div>
+<div class="mb-4"><label class="block text-sm font-semibold mb-1">Mã ID của bạn</label><input type="text" name="user_id" placeholder="VD: d360e94a-..." value="{{ user_id }}" readonly class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400"></div>
+<div id="change-email-inputs" class="mb-4 hidden"> <label class="block text-sm font-semibold mb-1">Email hiện tại (nếu còn truy cập được)</label> <input type="email" name="old_email_optional" placeholder="your.old@email.com" class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-yellow-400 mb-4"> <label class="block text-sm font-semibold mb-1">Email mới muốn thay đổi sang</label> <input type="email" name="new_email" placeholder="email mới của bạn..." required class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-yellow-400"> </div>
+<div class="mb-4"><label class="block text-sm font-semibold mb-1"> Email nhận phản hồi </label><input type="email" name="user_email" required placeholder="your.email@example.com" class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400"></div><div id="report-user-section" class="mb-4 {% if request.args.get('category') != 'Tố cáo người dùng' %}hidden{% endif %}"><label class="block text-sm font-semibold mb-1">Nhập ID người dùng bạn muốn tố cáo </label><input type="text" name="reported_user" placeholder="VD: https://solverviet.vn/user/abc123 hoặc abc123" value="{{ request.args.get('reported_user', '') }}" class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-red-400"></div>
+<div id="feedback-message-box" class="mb-4"> <label class="block text-sm font-semibold mb-1"> Nội dung bạn cần góp ý</label> <textarea name="message" rows="6" required placeholder="Nhập nội dung tại đây..." class="w-full p-3 rounded bg-gray-100 text-gray-800 border border-gray-300 outline-none focus:ring-2 focus:ring-cyan-400"></textarea> </div>
+<div class="mb-4"><label class="block text-sm font-semibold mb-1"> Đính kèm hình ảnh (tối đa 5 ảnh)</label><input type="file" id="image-input" name="images" accept="image/*" multiple class="w-full p-2 bg-gray-100 border border-gray-300 rounded" /><div id="image-preview" class="mt-2 flex flex-wrap gap-2"></div></div>
+<div class="flex justify-end gap-4 mt-6"><button type="reset" class="bg-gray-200 hover:bg-gray-300 text-black px-6 py-2 rounded">Nhập lại</button><button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded font-semibold">Gửi</button></div>
+<button type="button" id="faq-toggle-btn" class="text-sm text-blue-600 hover:underline mt-6"> Xem Câu hỏi thường gặp (FAQ)</button>
+<div id="faq-section" class="hidden mt-4 border-t pt-4"> <h3 class="text-lg font-semibold text-red-600 mb-3">Câu hỏi thường gặp (FAQ)</h3> <div class="space-y-4 text-sm text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-lg border border-gray-200"> <div><strong> Tại sao tôi không được đổi email khi đã xác thực?</strong><br> → Để bảo vệ an toàn cho tài khoản, email đã xác thực sẽ được cố định vĩnh viễn. Điều này giúp ngăn chặn hành vi chiếm quyền và đổi email trái phép từ bên thứ ba.</div> <div><strong> Tại sao chưa xác thực mà vẫn không thể tự đổi email?</strong><br> → Vì hệ thống cần xác minh danh tính người dùng trước khi cho phép thay đổi. Việc đổi email chưa xác thực có thể gây nhầm lẫn, mất quyền truy cập hoặc bị lạm dụng.</div> <div><strong> Tại sao tôi phải xác thực tài khoản?</strong><br> → Việc xác thực giúp bảo vệ tài khoản khỏi bị giả mạo, đồng thời đảm bảo bạn nhận được thông báo và phản hồi từ SolverViet một cách chính xác, nhanh chóng.</div> <div><strong> Tại sao tôi không thấy lại đoạn chat cũ?</strong><br> → SolverViet không lưu lịch sử hội thoại để đảm bảo quyền riêng tư. Bạn nên sao chép nội dung hoặc chụp màn hình nếu cần lưu giữ.</div> <div><strong> Tôi đã gửi góp ý rồi nhưng không thấy phản hồi?</strong><br> → Đội ngũ sẽ xem xét và phản hồi qua email nếu cần. Vui lòng kiểm tra hộp thư của bạn trong vài giờ hoặc tối đa 1 ngày làm việc.</div> <div><strong> Tôi có thể gửi ảnh chụp lỗi không?</strong><br> → Có, bạn có thể đính kèm tối đa <strong>5 ảnh</strong>. Hãy gửi ảnh rõ nét, có thể hiện lỗi cụ thể để chúng tôi dễ xử lý.</div> <div><strong> Tôi bị chặn hoặc không gửi được tin nhắn AI?</strong><br> → Có thể bạn đã vượt quá giới hạn lượt sử dụng mỗi ngày hoặc hệ thống đang tạm ngưng để bảo trì. Vui lòng quay lại sau ít phút.</div> <div><strong> Tại sao tôi không tạo được ảnh bằng AI?</strong><br> → Nếu bạn đang dùng gói AI Lite hoặc lượt miễn phí, chức năng tạo ảnh có thể bị giới hạn. Bạn cần nâng cấp gói để sử dụng đầy đủ.</div> <div><strong> Tôi quên mật khẩu hoặc không đăng nhập được?</strong><br> → Hãy dùng chức năng <strong>"Quên mật khẩu"</strong> tại trang đăng nhập. Nếu không nhận được email, hãy liên hệ qua biểu mẫu này.</div> </div> </div> </div> </form>
+{% else %} <div class="bg-green-100 text-green-800 p-6 mt-6 rounded-xl border border-green-300 text-center text-lg shadow"> {% if category == "Gợi ý thêm tính năng" %} Cảm ơn bạn đã gợi ý cho SolverViet tính năng mới, hệ thống đã ghi nhận. Hãy kiểm tra <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> để nhận phản hồi từ SolverViet nếu cần thiết. {% elif category == "Báo lỗi" %} Cảm ơn bạn đã báo lỗi giúp SolverViet cải thiện hệ thống. Đội ngũ sẽ kiểm tra và xử lý sớm nhất. Hãy kiểm tra <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> để nhận phản hồi từ SolverViet. {% elif category == "Góp ý nội dung" %} Cảm ơn bạn đã góp ý nội dung, chúng tôi rất trân trọng điều đó. Bạn hãy kiểm tra <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> để theo dõi phản hồi từ SolverViet nhé. {% elif category == "Khiếu nại" %} Chúng tôi rất tiếc về trải nghiệm không tốt. Chúng tôi sẽ xử lý khiếu nại sớm nhất có thể. Bạn hãy kiểm tra <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> để không bỏ lỡ phản hồi từ SolverViet nhé. {% elif category == "Tố cáo người dùng" %} Cảm ơn bạn đã tố cáo hành vi sai phạm. SolverViet sẽ kiểm tra và xử lý nghiêm minh nếu phát hiện vi phạm. Bạn hãy kiểm tra <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> để nhận kết quả phản hồi từ chúng tôi. {% elif category == "Yêu cầu đổi email" %} Yêu cầu đổi email của bạn đã được ghi nhận. SolverViet sẽ xác minh và phản hồi trong vòng <span class="font-semibold text-yellow-600">24 giờ</span>. Vui lòng kiểm tra <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> để nhận phản hồi. {% else %} Cảm ơn bạn đã liên hệ với SolverViet. Hệ thống đã ghi nhận phản hồi của bạn. Bạn sẽ nhận phản hồi qua <span class="text-yellow-600 font-semibold">email bạn đã cung cấp</span> nếu cần thiết. {% endif %} <p class="mt-3 italic text-sm text-gray-600">Trân trọng chào bạn.</p> </div>
+<a href="/" class="inline-flex items-center justify-center mt-6 px-6 py-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-sm font-semibold rounded-full shadow-lg hover:opacity-90 transition duration-200">← Quay lại trang chủ</a>
+</div>{% endif %}</div>
+<footer class="text-center text-gray-600 text-sm mt-10 pb-6"> <p>📧 Email: <a href="mailto:solverviet@gmail.com" class="text-blue-500">solverviet@gmail.com</a></p> <p class="mt-1">SolverViet &copy; 2025. All rights reserved.</p> </footer>
+<script src="{{ url_for('static', filename='rp_oxpika/a9Lk2_solverviet_slv_rp_jx167xo_w5Pn8T1mQ4.js') }}"></script>
+<script src="{{ url_for('static', filename='rp_oxpika/m3Rz7_solverviet_slv_rp_jx167xo_v6Yq2B9nK8.js') }}"></script>
+<script src="{{ url_for('static', filename='rp_oxpika/t8Wx5_solverviet_slv_rp_jx167xo_p4Gh1L7cE3.js') }}"></script>
+</body></html>

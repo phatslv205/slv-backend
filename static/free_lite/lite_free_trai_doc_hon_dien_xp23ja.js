@@ -1,0 +1,2 @@
+document.addEventListener("click",e=>{if(e.target.classList.contains("chat-image")){const viewer=document.getElementById("image-viewer"),viewerImg=document.getElementById("image-viewer-img");viewerImg.src=e.target.src;viewer.style.display="flex"}});
+function copyMessage(btn){const message=btn.closest('.message').querySelector('.message-text').innerText;navigator.clipboard.writeText(message).then(()=>{const toast=document.getElementById("copy-toast");toast.style.display="block";setTimeout(()=>{toast.style.display="none"},2000)})}

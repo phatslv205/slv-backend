@@ -1,3 +1,5 @@
+import eventlet
+eventlet.monkey_patch() 
 import os
 import sys
 import json
@@ -25,20 +27,18 @@ from models.transaction import Transaction
 from sqlalchemy import func
 from models.friend import Friend
 from models.message import Message
-from models.inbox import Inbox
-from flask_login import login_required
-
+from models.friend_request import FriendRequest
+from flask_socketio import SocketIO, join_room, emit
+from flask_socketio import SocketIO, emit, join_room
+from flask_socketio import emit 
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
-
-# Khởi tạo client OpenAI
-client = OpenAI(api_key=api_key)
 from utils_shared import normalize_package
-
-from paypal_routes import paypal
-
-
-import rename_keys  # Gọi file rename_keys.py một lần khi chạy app
+from pytz import timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo          # (Python ≥3.9) – không cần cài thêm
+VN_TZ = ZoneInfo("Asia/Ho_Chi_Minh")   # múi giờ VN
+UTC_TZ = ZoneInfo("UTC")
 
 from datetime import timedelta
 from flask import request, jsonify
@@ -49,7 +49,7 @@ from openai_config import call_gpt_lite
 def generate_image_from_prompt(prompt_text):
     try:
         print("📤 Đang gửi prompt vẽ hình tới DALL·E:", prompt_text)
-
+        client = create_openai_client()
         response = client.images.generate(
             model="dall-e-3",
             prompt=prompt_text,
@@ -94,6 +94,7 @@ def rewrite_prompt_for_image(user_text):
     )
 
     try:
+        client = create_openai_client()
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
@@ -161,9 +162,8 @@ def auto_cleaner_loop():
 
 Thread(target=auto_cleaner_loop, daemon=True).start()
 
+from openai_config import create_openai_client
 
-import easyocr
-from openai_config import client
 
 import smtplib
 from email.mime.text import MIMEText
@@ -220,26 +220,7 @@ import string
 def generate_otp():
     from random import randint
     return str(random.randint(100000, 999999))
-ALLOWED_FUNCTIONS = {
-    "sqrt": math.sqrt,
-    "root": lambda x, n: x ** (1/float(n)),
-    "abs": abs,
-    "round": round,
-    "floor": math.floor,
-    "ceil": math.ceil,
-    "exp": math.exp,
-    "sin": math.sin,
-    "cos": math.cos,
-    "tan": math.tan,
-    "pi": math.pi,
-    "e": math.e,
-    "log": math.log,
-    "log10": math.log10,
-    "log2": math.log2,
 
-}
-def safe_eval(expr):
-    return eval(expr, {"__builtins__": None}, ALLOWED_FUNCTIONS)
 
 TELEGRAM_TOKEN = "7580016404:AAHoWnvRElJD3BXkZyxZQ4A4z34qXB-3s54"
 TELEGRAM_CHAT_ID = "6894067779"
@@ -312,10 +293,11 @@ from flask import Flask
 from config import Config
 
 
+from extensions import db
 
 # ====== FLASK APP ======
 app = Flask(__name__)
-app.register_blueprint(paypal)
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 app.config.from_object(Config)
 db.init_app(app)
 migrate.init_app(app, db)
@@ -1221,6 +1203,9 @@ def change_password():
 
 
 # TRANG CHỦ
+from sqlalchemy import distinct
+from models import Message, User  # đảm bảo đã import model Message
+
 @app.route("/")
 def home_page():
     if is_maintenance("home"):
@@ -1247,9 +1232,20 @@ def home_page():
     if user.is_blocked:
         session.clear()
         return render_template("login.html", error="🚫 Tài khoản của bạn đã bị khóa...")
-
-    user_id = str(user.user_id)
     user_messages = []
+
+    # ✅ Lấy danh sách người đã gửi tin chưa đọc
+    unread_senders = (
+        db.session.query(distinct(Message.sender))
+        .filter(Message.receiver == user.username, Message.read == False)
+        .all()
+    )
+    sender_usernames = [
+            sender_id[0]
+            for sender_id in unread_senders
+            if sender_id[0] != user.username
+        ]
+
 
     user_vip_status = {
         "vip_gpt": user.vip_gpt_ai,
@@ -1263,16 +1259,20 @@ def home_page():
 
     session.pop("just_logged_in", None)
 
+    has_slv = bool(user.vip_gpt_ai) and bool(user.vip_until_gpt)
     return render_template(
         "home.html",
         username=username,
         avatar_url=avatar_url,
         display_name=display_name,
+        has_slv=has_slv,
         user=user,
         user_vip_status=user_vip_status,
         user_messages=user_messages,
+        user_unread_senders=sender_usernames,  # ✅ truyền xuống template
         is_maintenance=is_maintenance("home"),
     )
+
 
 #TỔNG QUÁT
 from flask import render_template, request, session, redirect, abort
@@ -1784,9 +1784,8 @@ def delete_chat(friend):
     if not username:
         return jsonify({"success": False, "error": "Chưa đăng nhập"})
 
-    from models.message import Message  # nếu chưa có thì bạn tạo sau
+    from models.message import Message
 
-    # Xác định đoạn hội thoại 2 chiều
     msgs = Message.query.filter(
         db.or_(
             db.and_(Message.sender == username, Message.receiver == friend),
@@ -1797,12 +1796,23 @@ def delete_chat(friend):
     if not msgs:
         return jsonify({"success": False, "error": "Không tìm thấy đoạn chat."})
 
-    # Giữ lại những tin có ảnh, xoá các tin còn lại
     for msg in msgs:
-        if not msg.image_urls:
-            db.session.delete(msg)
+        # ✅ Xoá ảnh thật nếu có
+        if msg.image_urls:
+            for url in msg.image_urls:
+                try:
+                    # Giả sử đường dẫn là /static/uploads/abc.jpg
+                    image_path = os.path.join(app.root_path, url.strip("/"))  # chuyển về đường thật
+                    if os.path.exists(image_path):
+                        os.remove(image_path)
+                except Exception as e:
+                    print("Lỗi khi xoá ảnh:", e)
 
+        # Xoá message khỏi database
+        db.session.delete(msg)
+     
     db.session.commit()
+    
     return jsonify({"success": True})
 
 
@@ -1841,7 +1851,6 @@ def get_profile():
 
     return jsonify({
         "fullname": user.fullname or "",
-        "school": user.school or "",
         "birthday": user.birthday or "",
         "bio": user.bio or "",
         "privacy": user.privacy or {}
@@ -1860,7 +1869,6 @@ def update_profile():
         return jsonify({"success": False, "message": "Không tìm thấy user"})
 
     user.fullname = data.get("fullname", "")
-    user.school = data.get("school", "")
     user.birthday = data.get("birthday", "")
     user.bio = data.get("bio", "")
     user.bio_updated_at = datetime.utcnow()
@@ -1904,7 +1912,8 @@ def users_search():
         for u in results
     ])
 def auto_offline():
-    timeout = datetime.utcnow() - timedelta(minutes=5)
+    timeout = datetime.datetime.utcnow() - datetime.timedelta(minutes=5)
+
     users_to_update = User.query.filter(User.last_seen < timeout, User.online == True).all()
 
     for user in users_to_update:
@@ -1929,7 +1938,8 @@ def update_last_seen():
         user = User.query.filter_by(username=username).first()
         if user:
             user.online = True
-            user.last_seen = datetime.utcnow()
+            user.last_seen = datetime.datetime.utcnow()
+
             db.session.commit()
 
 
@@ -1938,35 +1948,45 @@ def friends_page():
     current_username = session.get("username")
     if not current_username:
         return redirect("/login")
-
-    # Lấy thông tin user hiện tại
+    
     current_user = User.query.filter_by(username=current_username).first()
     if not current_user:
         return redirect("/login")
 
-    # Auto offline nếu muốn
     auto_offline()
+ 
+    # ✅ Lấy tất cả quan hệ có liên quan tới current_user
+    friend_links = Friend.query.filter(
+        (Friend.user_id == current_user.user_id) | (Friend.friend_id == current_user.user_id)
+    ).all()
 
-    # Tìm danh sách bạn bè từ bảng Friend
-    friend_links = Friend.query.filter_by(user_id=current_user.user_id).all()
     friend_list = []
-    for link in friend_links:
-        friend = User.query.filter_by(user_id=link.friend_id).first()
-        if friend:
-            display_name = friend.fullname or friend.username
-            online, status_text = get_status(friend.last_seen)
-            friend_list.append({
-                "username": friend.username,
-                "name": friend.fullname,
-                "display_name": display_name,
-                "fullname": friend.fullname,
-                "avatar_url": friend.avatar_url or "/static/logos/logo.png",
-                "last_message": "...",
-                "online": online,
-                "friend_status": status_text
-            })
+    seen = set()  # Để tránh bị trùng bạn bè
 
-    # Thông tin user hiện tại
+    for link in friend_links:
+        friend_id = link.friend_id if link.user_id == current_user.user_id else link.user_id
+        friend = User.query.filter_by(user_id=friend_id).first()
+
+        if not friend or friend.username in seen:
+            continue
+        seen.add(friend.username)
+
+        display_name = friend.fullname or friend.username
+        print("[CHECK] User:", friend.username, "| Fullname:", friend.fullname)
+
+        online, status_text = get_status(friend.last_seen)
+        friend_list.append({
+            "username": friend.username,
+            "name": friend.fullname,
+            "display_name": display_name,
+            "fullname": friend.fullname,
+            "avatar_url": friend.avatar_url or "/static/logos/logo.png",
+            "last_message": "...",
+            "online": online,
+            "friend_status": status_text
+        })
+    
+    # Thông tin người dùng hiện tại
     display_name = current_user.fullname or current_user.username
     user_avatar = current_user.avatar_url or url_for('static', filename='logos/logo.png')
     is_online = current_user.online
@@ -1980,6 +2000,9 @@ def friends_page():
                 show_bio = True
         except:
             pass
+    print("🔍 Current username:", current_username)
+    print("🔍 Current user_id:", current_user.user_id)
+    pending_invites = FriendRequest.query.filter_by(to_user_id=current_user.user_id).count()
 
     return render_template("friends.html",
         friends=friend_list,
@@ -1989,7 +2012,8 @@ def friends_page():
         is_online=is_online,
         bio=bio if show_bio else "",
         current_user=current_user,
-        user_id=user_id
+        user_id=user_id,
+        pending_invites=pending_invites  
     )
 
 
@@ -2017,33 +2041,35 @@ def load_messages():
     return messages_by_chat
 
 def save_messages(data):
-    # Xóa toàn bộ tin nhắn cũ trong bảng (nếu muốn đồng bộ hoàn toàn)
     Message.query.delete()
 
-    # Thêm lại tất cả tin nhắn từ dict `data`
-    for chat_key, messages in data.items():
-        for msg in messages:
+    for chat_key, msgs in data.items():
+        for m in msgs:
+            sender = m.get("sender", "")
+            u1, u2  = chat_key.split("__")
+            receiver = u2 if u1 == sender else u1
+
+            # json lưu timestamp dạng “2024-06-19 17:45:00” – mặc định coi là VN
+            vn_time   = datetime.strptime(m["timestamp"], "%Y-%m-%d %H:%M:%S")
+            utc_time  = vn_time.replace(tzinfo=VN_TZ).astimezone(UTC_TZ).replace(tzinfo=None)
+
             new_msg = Message(
-                chat_key=chat_key,
-                sender=msg.get("sender", ""),
-                content=msg.get("content", ""),
-                image_urls=msg.get("image_urls", []),
-                timestamp=datetime.strptime(msg.get("timestamp"), "%Y-%m-%d %H:%M:%S")
+                chat_key = chat_key,
+                sender   = sender,
+                receiver = receiver,
+                content  = m.get("content", ""),
+                image_urls = m.get("image_urls", []),
+                voice_url  = m.get("voice_url"),            # thêm nếu có
+                timestamp  = utc_time
             )
             db.session.add(new_msg)
-
     db.session.commit()
 
-def get_status(last_seen_str):
-    if not last_seen_str:
+def get_status(last_seen):
+    if not last_seen:
         return False, "offline"
 
-    try:
-        last_seen = datetime.strptime(last_seen_str, "%Y-%m-%d %H:%M:%S")
-    except:
-        return False, "offline"
-
-    now = datetime.now()
+    now = datetime.utcnow()
     delta = now - last_seen
 
     if delta < timedelta(minutes=5):
@@ -2056,6 +2082,7 @@ def get_status(last_seen_str):
         return False, f"Đã offline {hours} giờ trước"
     else:
         return False, "Đã offline"
+
 @app.route("/chat/send/<username>", methods=["POST"])
 def send_message(username):
     current_username = session.get("username")
@@ -2072,15 +2099,19 @@ def send_message(username):
     if sender in receiver.blocked_users:
         return jsonify({"success": False, "error": "BẠN ĐÃ BỊ CHẶN"})
 
-    # Cập nhật last_seen
+    # Cập nhật trạng thái hoạt động
     sender.last_seen = datetime.utcnow()
     db.session.commit()
 
-    # Nhận nội dung gửi
+    # Nhận dữ liệu gửi
     text = request.form.get("text", "").strip()
     images = request.files.getlist("images")
+    voice_file = request.files.get("voice")  # 👈 THÊM voice
 
     image_urls = []
+    voice_url = None
+
+    # ✅ Xử lý ảnh
     for image in images:
         if image and image.filename:
             ext = image.filename.rsplit(".", 1)[-1].lower()
@@ -2091,18 +2122,36 @@ def send_message(username):
 
                 try:
                     image.save(save_path)
-                    # Đợi file ổn định
                     start_time = time.time()
                     while not os.path.exists(save_path) or os.path.getsize(save_path) == 0:
                         if time.time() - start_time > 2.0:
                             raise Exception("File save timeout")
                         time.sleep(0.05)
-
                     image_urls.append(f"/static/images/uploads/{filename}")
                 except Exception as e:
                     print("❌ Lỗi khi lưu ảnh:", e)
 
-    if not text and not image_urls:
+    # ✅ Xử lý voice
+    if voice_file and voice_file.filename:
+        ext = voice_file.filename.rsplit(".", 1)[-1].lower()
+        if ext in ["mp3", "wav", "m4a", "ogg", "webm"]:
+            filename = f"{uuid.uuid4().hex}.{ext}"
+            save_path = os.path.join("static", "voices", filename)
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+
+            try:
+                voice_file.save(save_path)
+                start_time = time.time()
+                while not os.path.exists(save_path) or os.path.getsize(save_path) == 0:
+                    if time.time() - start_time > 2.0:
+                        raise Exception("Voice save timeout")
+                    time.sleep(0.05)
+                voice_url = f"/static/voices/{filename}"
+            except Exception as e:
+                print("❌ Lỗi khi lưu voice:", e)
+
+    # Nếu không có gì gửi thì trả lỗi
+    if not text and not image_urls and not voice_url:
         return jsonify({"error": "No content"}), 400
 
     # Tạo chat_key
@@ -2110,24 +2159,41 @@ def send_message(username):
     chat_key_2 = f"{username}__{current_username}"
     chat_key = chat_key_1 if current_username < username else chat_key_2
 
-    # Lưu vào PostgreSQL
+    # ✅ Lưu vào PostgreSQL
     msg = Message(
         chat_key=chat_key,
         sender=current_username,
+        receiver=username,
         content=text if text else None,
         image_urls=image_urls,
-        timestamp=datetime.utcnow()
+        voice_url=voice_url,
+        timestamp=datetime.now(VN_TZ),
+        read=False
     )
     db.session.add(msg)
     db.session.commit()
 
-    # Trả về JSON
+    # ✅ Emit đến người nhận
+    socketio.emit("private_message", {
+        "from": current_username,
+        "to": username,
+        "text": msg.content,
+        "image_urls": msg.image_urls,
+        "voice_url": msg.voice_url,
+        "time": msg.timestamp.strftime("%H:%M")
+    }, room=f"user_{username}")
+
+    socketio.emit("new_unread_message", {
+        "from": current_username
+    }, room=f"user_{username}")
+    print("➡️ voice_url trả về:", voice_url)
     return jsonify({
         "success": True,
         "message": {
             "sender": msg.sender,
             "text": msg.content,
             "image_urls": msg.image_urls,
+            "voice_url": msg.voice_url,
             "time": msg.timestamp.strftime("%H:%M"),
             "time_full": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
         }
@@ -2160,33 +2226,39 @@ def chat(username):
     # Truy vấn toàn bộ tin nhắn theo chat_key
     messages = Message.query.filter_by(chat_key=chat_key).order_by(Message.timestamp).all()
 
-    messages_list = []
-    now = datetime.utcnow()
+    now = datetime.now(UTC_TZ)             # dùng UTC có tzinfo
 
+    messages_list = []
     for msg in messages:
-        # Cảnh báo xoá sau 30 ngày
-        try:
-            days_since = (now - msg.timestamp).days
-            days_left = 30 - days_since if days_since >= 25 else None
-        except:
-            days_left = None
+        # chuyển timestamp từ DB (giả sử lưu UTC naïve) ➜ UTC aware ➜ VN
+        utc_time = msg.timestamp.replace(tzinfo=UTC_TZ)
+        vn_time  = utc_time.astimezone(VN_TZ)
+
+        # cảnh báo xoá 30 ngày
+        days_since = (now - utc_time).days
+        days_left  = 30 - days_since if days_since >= 25 else None
 
         messages_list.append({
-            "sender": msg.sender,
-            "text": msg.content,
+            "sender":     msg.sender,
+            "text":       msg.content,
             "image_urls": msg.image_urls or [],
-            "time": msg.timestamp.strftime("%H:%M"),
-            "time_full": msg.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "days_left": days_left
+            "voice_url":  msg.voice_url,
+            "time":       vn_time.strftime("%H:%M"),
+            "time_full":  vn_time.strftime("%Y-%m-%d %H:%M:%S"),
+            "days_left":  days_left
         })
 
-    # Lấy tên hiển thị
-    data = load_data()  # 👈 nếu bạn vẫn dùng nickname lưu ngoài file
-    nickname = data.get(current_username, {}).get("nicknames", {}).get(username)
-    friend_name = nickname or friend_user.fullname or friend_user.username
 
-    # Trạng thái online
-    online, status_text = get_status(friend_user.last_seen)
+    
+    friend_name = friend_user.fullname or friend_user.username
+
+    hide_online = friend_user.privacy.get("hide_online", False) if friend_user.privacy else False
+
+    if hide_online:
+        online = False
+        status_text = ""  # 👈 không hiển thị gì luôn
+    else:
+        online, status_text = get_status(friend_user.last_seen)
 
     return render_template("chat.html",
         username=current_username,
@@ -2197,6 +2269,7 @@ def chat(username):
         friend_status=status_text,
         messages=messages_list,
         online=online,
+        hide_online=hide_online
     )
 
 @app.route("/api/album-images")
@@ -2314,48 +2387,79 @@ def get_username():
 
 @app.route('/friends/request', methods=['POST'])
 def send_friend_request():
-    data = load_data()
-    current_user = get_username()
-    to_user = request.json.get('to_user')
-    if not current_user or not to_user:
+    current_username = session.get("username")
+    to_username = request.json.get('to_user')
+
+    if not current_username or not to_username:
         return jsonify({'success': False, 'message': 'Thiếu thông tin'}), 400
-    if current_user == to_user:
+    if current_username == to_username:
         return jsonify({'success': False, 'message': 'Không thể gửi lời mời cho chính mình'}), 400
 
-    user_data = data.setdefault(current_user, {'friends': [], 'pending_requests': [], 'sent_requests': []})
-    to_user_data = data.setdefault(to_user, {'friends': [], 'pending_requests': [], 'sent_requests': []})
+    from_user = User.query.filter_by(username=current_username).first()
+    to_user = User.query.filter_by(username=to_username).first()
 
-    # Kiểm tra nếu đã là bạn bè
-    if to_user in user_data['friends']:
+    if not from_user or not to_user:
+        return jsonify({'success': False, 'message': 'Người dùng không tồn tại'}), 404
+
+    # Đã là bạn bè
+    existing = Friend.query.filter_by(user_id=from_user.user_id, friend_id=to_user.user_id).first()
+    if existing:
         return jsonify({'success': False, 'message': 'Đã là bạn bè'}), 400
 
-    # Kiểm tra nếu đã gửi lời mời trước đó
-    if to_user in user_data['sent_requests']:
+    # Đã gửi lời mời
+    already_sent = FriendRequest.query.filter_by(from_user_id=from_user.user_id, to_user_id=to_user.user_id).first()
+    if already_sent:
         return jsonify({'success': False, 'message': 'Đã gửi lời mời trước đó'}), 400
 
-    # Thêm lời mời cho to_user
-    to_user_data['pending_requests'].append(current_user)
-    # Ghi nhận lời mời đã gửi ở current_user
-    user_data['sent_requests'].append(to_user)
-
-    save_data(data)
+    fr = FriendRequest(from_user_id=from_user.user_id, to_user_id=to_user.user_id)
+    db.session.add(fr)
+    db.session.commit()
     return jsonify({'success': True, 'message': 'Đã gửi lời mời kết bạn'})
+
 
 @app.route('/friends/requests', methods=['GET'])
 def get_friend_requests():
-    data = load_data()
-    current_user = get_username()
+    current_username = session.get("username")
+    current_user = User.query.filter_by(username=current_username).first()
+
     if not current_user:
         return jsonify([])
 
-    user_data = data.get(current_user, {'pending_requests': []})
-    pending = user_data.get('pending_requests', [])
+    requests = FriendRequest.query.filter_by(to_user_id=current_user.user_id).all()
+    results = []
+    for r in requests:
+        from_user = User.query.filter_by(user_id=r.from_user_id).first()
+        if from_user:
+            results.append({
+                'from_username': from_user.username,
+                'from_name': from_user.fullname
+            })
 
-    # Trả về danh sách user gửi lời mời (chỉ username, bạn có thể mở rộng)
-    return jsonify([{'from_username': u} for u in pending])
+    return jsonify(results)
+
+@app.route('/friends/remove', methods=['POST'])
+def remove_friend():
+    current_username = session.get("username")
+    target_username = request.json.get('target_user')
+
+    if not current_username or not target_username:
+        return jsonify({'success': False, 'message': 'Thiếu thông tin'}), 400
+
+    current_user = User.query.filter_by(username=current_username).first()
+    target_user = User.query.filter_by(username=target_username).first()
+
+    if not current_user or not target_user:
+        return jsonify({'success': False, 'message': 'Người dùng không tồn tại'}), 404
+
+    # ❌ Xóa cả 2 chiều
+    Friend.query.filter_by(user_id=current_user.user_id, friend_id=target_user.user_id).delete()
+    Friend.query.filter_by(user_id=target_user.user_id, friend_id=current_user.user_id).delete()
+
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': f'Đã xoá bạn với {target_username}'})
 
 @app.route('/friends/requests/accept', methods=['POST'])
-@login_required
 def accept_friend_request():
     current_username = session.get("username")
     from_username = request.json.get('from_user')
@@ -2369,7 +2473,6 @@ def accept_friend_request():
     if not current_user or not from_user:
         return jsonify({'success': False, 'message': 'Người dùng không tồn tại'}), 404
 
-    # ✅ Check xem đã là bạn chưa
     already_friends = Friend.query.filter_by(user_id=current_user.user_id, friend_id=from_user.user_id).first()
     if already_friends:
         return jsonify({'success': False, 'message': 'Đã là bạn bè'}), 400
@@ -2377,34 +2480,39 @@ def accept_friend_request():
     # ✅ Thêm 2 chiều
     db.session.add(Friend(user_id=current_user.user_id, friend_id=from_user.user_id))
     db.session.add(Friend(user_id=from_user.user_id, friend_id=current_user.user_id))
+
+    # ✅ Xoá lời mời kết bạn
+    FriendRequest.query.filter_by(from_user_id=from_user.user_id, to_user_id=current_user.user_id).delete()
+
     db.session.commit()
 
-    return jsonify({'success': True, 'message': 'Đã chấp nhận lời mời', 'from_username': from_username})
-
-
+    return jsonify({'success': True, 'message': 'Đã chấp nhận lời mời', 'from_username': from_username, 'from_name': from_user.fullname})
 
 @app.route('/friends/requests/reject', methods=['POST'])
 def reject_friend_request():
-    data = load_data()
-    current_user = get_username()
-    from_user = request.json.get('from_user')
-    if not current_user or not from_user:
+    current_username = session.get("username")
+    from_username = request.json.get('from_user')
+
+    if not current_username or not from_username:
         return jsonify({'success': False, 'message': 'Thiếu thông tin'}), 400
 
-    user_data = data.setdefault(current_user, {'friends': [], 'pending_requests': [], 'sent_requests': []})
-    from_user_data = data.setdefault(from_user, {'friends': [], 'pending_requests': [], 'sent_requests': []})
+    current_user = User.query.filter_by(username=current_username).first()
+    from_user = User.query.filter_by(username=from_username).first()
 
-    if from_user not in user_data['pending_requests']:
+    if not current_user or not from_user:
+        return jsonify({'success': False, 'message': 'Người dùng không tồn tại'}), 404
+
+    req = FriendRequest.query.filter_by(from_user_id=from_user.user_id, to_user_id=current_user.user_id).first()
+    if not req:
         return jsonify({'success': False, 'message': 'Không có lời mời từ người này'}), 400
 
-    # Xóa lời mời
-    user_data['pending_requests'].remove(from_user)
-    from_user_data['sent_requests'].remove(current_user)
+    db.session.delete(req)
+    db.session.commit()
 
-    save_data(data)
     return jsonify({'success': True, 'message': 'Đã từ chối lời mời'})
 
-@app.route('/friends/list', methods=['GET'])
+
+@app.route("/friends/list", methods=["GET"])
 def get_friends_list():
     current_username = session.get("username")
     if not current_username:
@@ -2417,52 +2525,84 @@ def get_friends_list():
     now = datetime.utcnow()
     result = []
 
-    # ✅ Lấy danh sách dòng Friend (user đã thêm)
-    friends = current_user.friends.all()  # relationship đã khai báo trong model User
+    friend_links = Friend.query.filter(
+        (Friend.user_id == current_user.user_id) | (Friend.friend_id == current_user.user_id)
+    ).all()
 
-    for friend_link in friends:
-        # ✅ Lấy user thật từ friend_id
-        friend = User.query.filter_by(user_id=friend_link.friend_id).first()
-        if not friend:
+    seen = set()
+
+    for link in friend_links:
+        friend_id = link.friend_id if link.user_id == current_user.user_id else link.user_id
+        friend = User.query.filter_by(user_id=friend_id).first()
+        if not friend or friend.username in seen:
             continue
+        seen.add(friend.username)
 
-        # ✅ Trạng thái online
+        # ------ trạng thái online ------
         last_active = friend.last_seen
         is_online = (now - last_active) < timedelta(seconds=60) if last_active else False
 
-        # ✅ Chat key
+        # ------ xác định chat_key ------
         chat_key_1 = f"{current_username}__{friend.username}"
         chat_key_2 = f"{friend.username}__{current_username}"
         chat_key = chat_key_1 if current_username < friend.username else chat_key_2
 
-        # ✅ Tin nhắn mới nhất
-        messages = Message.query.filter_by(chat_key=chat_key).order_by(Message.timestamp.desc()).all()
+        # ------ Đếm tin nhắn CHƯA đọc gửi tới current user ------
+        unread = Message.query.filter_by(
+            chat_key=chat_key,
+            receiver=current_username,
+            read=False
+        ).count()
 
-        unread = 0
+        # ------ Kiểm tra tin chưa đọc mới nhất có phải chỉ 1 ảnh ------
         image_only = False
+        if unread:
+            newest = Message.query.filter_by(
+                        chat_key=chat_key,
+                        receiver=current_username,
+                        read=False
+                     ).order_by(Message.timestamp.desc()).first()
+            if newest and newest.image_urls and not newest.content:
+                image_only = len(newest.image_urls) == 1
 
-        for msg in messages:
-            if msg.sender != friend.username:
-                continue
-            if current_username not in (msg.read_by or []):
-                unread += 1
-                if unread == 1 and msg.image_urls and not msg.content:
-                    if len(msg.image_urls) == 1:
-                        image_only = True
-                break  # Chỉ quan tâm tin chưa đọc đầu tiên
-
+        # ------ Gộp vào kết quả ------
         result.append({
             "username": friend.username,
+            "display_name": friend.fullname or friend.username,
             "name": friend.fullname or friend.username,
             "unread": unread,
             "image_only": image_only,
             "is_online": is_online,
             "avatar_url": friend.avatar_url or "/static/logos/logo.png",
             "hide_avatar": friend.privacy.get("hide_avatar") if friend.privacy else False,
-            "chat_key": chat_key  # ✅ Thêm vào để frontend dùng
+            "chat_key": chat_key
         })
 
     return jsonify(result)
+@app.route("/chat/mark_read/<username>", methods=["POST"])
+def mark_messages_as_read(username):
+    current_username = session.get("username")
+    if not current_username:
+        return jsonify({"error": "Not logged in"}), 403
+
+    chat_key_1 = f"{current_username}__{username}"
+    chat_key_2 = f"{username}__{current_username}"
+    chat_key = chat_key_1 if current_username < username else chat_key_2
+
+    # ✅ Cập nhật tất cả tin gửi tới current_user và chưa đọc
+    Message.query.filter_by(chat_key=chat_key, receiver=current_username, read=False).update({"read": True})
+    db.session.commit()
+
+    return jsonify({"success": True})
+
+@app.route("/chat/unread_status")
+def unread_status():
+    username = session.get("username")
+    if not username:
+        return jsonify({})
+
+    unread = Message.query.filter_by(receiver=username, read=False).all()
+    return jsonify({m.sender: True for m in unread})
 
 
 @app.route("/rename", methods=["POST"])
@@ -2764,6 +2904,7 @@ Không thêm chữ, không giải thích.
 """
 
     try:
+        client = create_openai_client()
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
@@ -3301,6 +3442,7 @@ Hãy tiếp tục phản hồi mạch lạc, dựa vào câu trước. Nếu có
 
 
     # Gọi GPT
+    client = create_openai_client()
     response = client.chat.completions.create(
     model="gpt-4o",
     messages=[{"role": "user", "content": prompt}]
@@ -3423,39 +3565,6 @@ def admin_gopy():
 
 
 
-@app.route("/phan-hoi", methods=["POST"])
-@admin_only
-def phan_hoi():
-    user_email = request.form.get("user_email")
-    user_id = request.form.get("user_id")
-    reply_content = request.form.get("reply_content")
-    feedback_index = int(request.form.get("entry_index"))
-
-    if not user_email or not user_id or not reply_content:
-        return "Thiếu thông tin", 400
-
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    message = f"📬 Phản hồi từ admin ({timestamp}):\n{reply_content}"
-
-    inbox = Inbox(user_id=user_id, message=message, category="admin_reply")
-    db.session.add(inbox)
-    db.session.commit()
-
-    # Xóa góp ý khỏi file
-    try:
-        with open("feedback_log.txt", "r", encoding="utf-8") as f:
-            blocks = f.read().split("---\n\n")
-    except FileNotFoundError:
-        blocks = []
-
-    if 0 <= feedback_index - 1 < len(blocks):
-        del blocks[feedback_index - 1]
-        with open("feedback_log.txt", "w", encoding="utf-8") as f:
-            f.write("---\n\n".join(blocks).strip() + "\n")
-
-    return redirect("/admin/gop-y")
-
-
 
 
 @app.route("/bo-qua", methods=["POST"])
@@ -3479,65 +3588,7 @@ def bo_qua():
             f.write("---\n\n".join(blocks).strip() + "\n")
 
     return redirect("/admin/gop-y")
-@app.route("/xoa-het-thu", methods=["POST"])
-def xoa_het_thu():
-    username = session.get("username")
-    user = User.query.filter_by(username=username).first()
 
-    if user:
-        Inbox.query.filter_by(user_id=user.user_id).delete()
-        db.session.commit()
-
-    return redirect("/")
-
-
-@app.route("/xoa-thu", methods=["POST"])
-def xoa_thu():
-    msg_id = request.form.get("msg_id")  # dùng ID thực tế
-    username = session.get("username")
-    user = User.query.filter_by(username=username).first()
-
-    if user:
-        Inbox.query.filter_by(user_id=user.user_id, id=msg_id).delete()
-        db.session.commit()
-
-    return redirect("/")
-
-#Gửi Thông Báo
-@app.route("/admin/gui-thong-bao", methods=["GET", "POST"])
-@admin_only
-def admin_gui_thong_bao():
-    if request.method == "POST":
-        title = request.form.get("title", "").strip()
-        content = request.form.get("content", "").strip()
-        user_id = request.form.get("user_id", "").strip()
-        gui_all = request.form.get("gui_all") == "on"
-
-        if not title or not content:
-            return "❌ Thiếu tiêu đề hoặc nội dung thông báo."
-
-        msg = f"📢 {title}:\n{content}"
-        count = 0
-
-        if gui_all:
-            all_users = User.query.all()
-            for user in all_users:
-                inbox = Inbox(user_id=user.user_id, message=msg, category="announcement")
-                db.session.add(inbox)
-                count += 1
-            db.session.commit()
-
-        elif user_id:
-            inbox = Inbox(user_id=user_id, message=msg, category="announcement")
-            db.session.add(inbox)
-            db.session.commit()
-            count = 1
-        else:
-            return "❌ Bạn cần nhập ID người dùng hoặc chọn gửi toàn bộ."
-
-        return render_template("thanh_cong.html", msg=f"✅ Đã gửi thông báo đến {count} người dùng.")
-
-    return render_template("gui_thong_bao.html")
 
 #Bảo mật tối thượng
 # ====== BẢO MẬT MỞ CỔNG ADMIN ======
@@ -3597,7 +3648,87 @@ def appeal():
 with app.app_context():
     from models.user import User  # import các model ở đây
     db.create_all() 
-# ====== RUN APP ======
-if __name__ == "__main__":
-    app.run(debug=True) 
-    
+from flask_socketio import join_room, emit
+import datetime
+
+# --------------------------
+# JOIN ROOM MẶC ĐỊNH KHI VỪA CONNECT
+# --------------------------
+@socketio.on("join")
+def handle_join(data):
+    username = data.get("username")
+    user_id = data.get("user_id")
+    device = data.get("device")  # ex: 'web', 'android', 'ios' nếu muốn dùng sau này
+
+    if not username:
+        return  # thiếu thông tin, không join
+
+    room = f"user_{username}"  # dùng prefix để tránh trùng với room khác
+    join_room(room)
+
+    print(f"[JOIN] User {username} (user_id: {user_id}) joined room {room} at {datetime.datetime.now()}")
+
+
+# --------------------------
+# JOIN ROOM TUỲ Ý (Group, phòng chat, v.v.)
+# --------------------------
+@socketio.on("join_room")
+def handle_join_room(data):
+    room = data.get("room")
+    if room:
+        join_room(room)
+        print(f"[ROOM] Joined custom room: {room}")
+
+
+# --------------------------
+# NGHE GỌI 1-1
+# --------------------------
+@socketio.on("call-user")
+def handle_call_user(data):
+    to = data.get("to")
+    from_user = data.get("from")
+    call_type = data.get("type")
+
+    if to:
+        emit("incoming-call", {
+            "from": from_user,
+            "type": call_type
+        }, room=f"user_{to}")  # dùng room có prefix
+
+
+@socketio.on("reject-call")
+def handle_reject_call(data):
+    to = data.get("to")
+    if to:
+        emit("call-rejected", {}, room=f"user_{to}")
+
+
+@socketio.on("cancel-call")
+def handle_cancel_call(data):
+    to = data.get("to")
+    if to:
+        emit("call-cancelled", {}, room=f"user_{to}")
+
+
+# --------------------------
+# SIGNALING (WebRTC)
+# --------------------------
+@socketio.on("offer")
+def handle_offer(data):
+    to = data.get("to")
+    if to:
+        emit("receive-offer", data, room=f"user_{to}")
+
+
+@socketio.on("answer")
+def handle_answer(data):
+    to = data.get("to")
+    if to:
+        emit("receive-answer", data, room=f"user_{to}")
+
+
+@socketio.on("ice-candidate")
+def handle_ice_candidate(data):
+    to = data.get("to")
+    if to:
+        emit("ice-candidate", data, room=f"user_{to}")

@@ -1,0 +1,1 @@
+const toggleBtn=document.getElementById("faq-toggle-btn");const faqSection=document.getElementById("faq-section");if(toggleBtn&&faqSection){toggleBtn.addEventListener("click",()=>{faqSection.classList.toggle("hidden");});}

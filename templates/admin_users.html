@@ -6,109 +6,246 @@
   <meta charset="UTF-8">
   <title>👥 Quản lý người dùng</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      padding: 20px;
-      background-color: #f8f9fa;
-    }
-    .table-container {
-      overflow-x: auto;
-    }
-    #searchInput {
-      width: 300px;
-      margin-bottom: 20px;
-    }
-    td input {
-      width: 100%;
-      border: none;
-      background: transparent;
-    }
-    .online {
-      color: green;
-      font-weight: bold;
-    }
-    .offline {
-      color: gray;
-    }
-  </style>
+
+<style>body { padding: 20px; background-color: #1e293b; color: #f1f5f9; font-family: 'Segoe UI', sans-serif; }
+.table-container { overflow-x: auto; }
+table { background-color: #334155; border-radius: 8px; overflow: hidden; }
+th { background-color: #0f172a; color: #38bdf8; }
+td { background-color: #000000; color: #f1f5f9; }
+td input[type="text"] { width: 100%; background-color: #ffffff !important; border: 1px solid #475569; padding: 6px 8px; border-radius: 4px; font-size: 14px; color: #000000; font-family: 'Segoe UI', sans-serif; }
+td input[type="text"]::placeholder { color: #94a3b8; font-style: italic; }
+td input[type="text"]:focus { outline: none; border-color: #38bdf8; background-color: #0f172a; }
+td input { width: 100%; border: none; background: transparent; color: white; }
+td select { width: 100%; background-color: white; color: black; border: 1px solid black; border-radius: 4px; padding: 5px 8px; font-size: 14px; margin-top: 6px; font-family: 'Segoe UI', sans-serif; }
+#searchInput { width: 300px; margin-bottom: 20px; background-color: #fafafa; color: white; border: 1px solid #000000; border-radius: 4px; padding: 5px 10px; }
+.btn { padding: 5px 10px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+.btn-outline-primary { background-color: transparent; color: #38bdf8; border: 1px solid #38bdf8; }
+.btn-outline-primary:hover { background-color: #38bdf8; color: #0f172a; }
+.btn-secondary { background-color: #475569; color: white; }
+.online { color: #4ade80; font-weight: bold; }
+.offline { color: #94a3b8; }
+.badge { border-radius: 6px; padding: 6px 10px; font-size: 13px; display: inline-block; }
+.badge-green { background-color: #22c55e; color: #fff; }
+.badge-yellow { background-color: #eab308; color: #000; }
+.badge-red { background-color: #ef4444; color: #fff; }
+.card-box { background-color: #1e293b; border: 1px solid #475569; color: #f8fafc; border-radius: 10px; padding: 10px 15px; margin: 5px; }
+#searchInput{ width:300px; margin-bottom:20px; background:#0f172a !important; color:#e5e7eb !important; border:1px solid #334155 !important; border-radius:10px; padding:10px 14px; caret-color:#22d3ee; transition:border-color .2s, box-shadow .2s, background .2s; }
+#searchInput::placeholder{ color:#94a3b8; opacity:.9; }
+#searchInput:focus{ outline:none; background:#0b1324 !important; border-color:#22d3ee !important; box-shadow:0 0 0 3px rgba(34,211,238,.25); }
+</style>
+
+
 </head>
 <body>
   <a href="/solverviet_control_x2025" class="btn btn-secondary mb-3">
   ⬅️ Quay về điều hướng
 </a>
 
-  <h2 class="mb-4">👥 Quản lý người dùng</h2>
-<div class="d-flex align-items-center gap-2 mb-3">
-  <span class="fs-5">👤 Tổng người dùng:</span>
-  <span id="userCountDisplay" class="badge bg-primary fs-5">{{ user_count }}</span>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2>👥 Quản lý người dùng</h2>
+  <div>
+    <button class="btn btn-outline-secondary me-2" onclick="showNote()">📘 Ghi chú</button>
+<button id="refreshBtn" class="btn btn-sm btn-outline-primary" onclick="reloadNow()">
+  🔄 Làm mới bảng
+</button>
+  </div>
 </div>
 
-  <input id="searchInput" class="form-control" type="text" placeholder="🔍 Tìm kiếm theo tên người dùng..." onkeyup="filterTable()">
+<div class="row mt-2 mb-4">
+  <!-- 👥 Tổng -->
+  <div class="col-md-2 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #e3f2fd;">
+      <div class="card-body p-2">
+        <div class="text-muted small">👥 Tổng</div>
+        <div class="fw-bold fs-5 text-primary" id="stat-total">{{ stats.total }}</div>
+      </div>
+    </div>
+  </div>
 
- 
+  <!-- 🟢 Online -->
+  <div class="col-md-2 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #e8f5e9;">
+      <div class="card-body p-2">
+        <div class="text-muted small">🟢 Online</div>
+        <div class="fw-bold fs-5 text-success" id="stat-online">{{ stats.active }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ⚡ Gói GPT -->
+  <div class="col-md-2 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #e0f7fa;">
+      <div class="card-body p-2">
+        <div class="text-muted small">⚡ Gói GPT</div>
+        <div class="fw-bold fs-5 text-info" id="stat-gpt">{{ stats.gpt }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🚫 Bị chặn -->
+  <div class="col-md-2 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #ffebee;">
+      <div class="card-body p-2">
+        <div class="text-muted small">🚫 Bị chặn</div>
+        <div class="fw-bold fs-5 text-danger" id="stat-blocked">{{ stats.blocked }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔥 >100 lượt GPT hôm nay -->
+  <div class="col-md-4 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #fff3e0;">
+      <div class="card-body p-2">
+        <div class="text-muted small">🔥 >100 lượt GPT hôm nay</div>
+        <div class="fw-bold fs-5" style="color:#ff9900" id="stat-heavy">{{ stats.heavy }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🧠 Số lượt SLV hôm nay -->
+  <div class="col-md-4 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #fffde7;">
+      <div class="card-body p-2">
+        <div class="text-muted small">🧠 Số lượt SLV hôm nay</div>
+        <div class="fw-bold fs-5 text-warning" id="stat-slv">{{ stats_today.slv_count }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 💡 Số lượt AI Lite hôm nay -->
+  <div class="col-md-4 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #e8f5e9;">
+      <div class="card-body p-2">
+        <div class="text-muted small">💡 Số lượt AI Lite hôm nay</div>
+        <div class="fw-bold fs-5 text-success" id="stat-lite">{{ stats_today.lite_count }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📊 Tổng lượt dùng AI hôm nay -->
+  <div class="col-md-4 mb-2">
+    <div class="card text-center shadow-sm border-0" style="background-color: #e3f2fd;">
+      <div class="card-body p-2">
+        <div class="text-muted small">📊 Tổng lượt dùng AI hôm nay</div>
+        <div class="fw-bold fs-5 text-primary" id="stat-total-ai">
+          {{ stats_today.slv_count + stats_today.lite_count }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<form class="d-flex mb-3" onsubmit="return false;">
+<!-- Nút khoá -->
+
+
+  <input id="searchInput" name="search" class="form-control me-2" type="text"
+         placeholder=" Tìm theo tên và ID" value="{{ search or '' }}">
+  <button class="btn btn-primary" type="submit">Tìm</button>
+</form>
+<div id="quota-alert-box">
+  {% include 'admin/_quota_alert_partial.html' %}
+</div>
+
 
 <table class="table table-bordered table-hover align-middle text-center" id="userTable">
+{% set needing_manual_block = users | selectattr("quota_alert", "equalto", true) | list %}
+{% if needing_manual_block | length > 0 %}
+  <div class="alert alert-danger">
+    ⚠️ Một số người dùng đã vượt quá giới hạn SLV/ngày. Vui lòng kiểm tra!
+  </div>
+{% endif %}
+
+
   <thead class="table-dark">
   <tr>
-    <th class="text-nowrap">Tên người dùng</th>
+    <th class="text-nowrap">STT</th>
+    <th class="text-nowrap">Tên tài khoản</th>
+    <th class="text-nowrap">Họ tên</th>
+    <th class="text-nowrap">Tính cách AI</th>
     <th class="text-nowrap">ID</th>
+    <th class="text-nowrap">Mã giới thiệu</th> 
     <th class="text-nowrap">Hạn SOLVER</th>
     <th class="text-nowrap">Hạn LITE</th>
-    <th class="text-nowrap">Không giới hạn GPT</th> 
     <th class="text-nowrap">Số lượt GPT còn</th>
     <th class="text-nowrap">Số lượt Lite</th>
     <th class="text-nowrap">Trạng thái</th>
     <th class="text-nowrap" style="width: 80px;">Lưu</th>
+    <th>Chặn</th>
     <th class="text-nowrap" style="width: 90px;">Khoá / Mở</th>
+ 
+
   </tr>
 </thead>
   <tbody>
     {% for info in users %}
-<tr>
+<tr 
+  data-username="{{ info.username | lower }}" 
+  data-fullname="{{ info.fullname | lower }}" 
+  data-userid="{{ info.user_id | lower }}"
+>
+  <td>{{ loop.index + ((pagination.page - 1) * pagination.per_page) }}</td>
+
+  <!-- Form cập nhật (gói gọn đúng trong td cần) -->
   <td>
     <form method="POST" action="/admin_users/update" class="d-flex flex-column gap-1">
       <input type="hidden" name="username" value="{{ info.username }}">
-    {{ info.username }}
-
+      {{ info.username }}
   </td>
-  <td>{{ info.get("user_id", "Không có") }}</td>
-  <td>
-  <input name="vip_gpt" value="{{ info.vip_gpt_display or '' }}" placeholder="yyyy-mm-dd hh:mm:ss">
-  <select name="vip_gpt_type" class="form-select form-select-sm mt-1">
+
+<td>{{ info.fullname or "Không có" }}</td>
+<td>{{ info.ai_personality }}</td>
+
+<td>{{ info.user_id or "Không có" }}</td>
+<td>{{ info.referral_code or "—" }}</td>
+
+<td>
+  <input type="text" name="vip_gpt" value="{{ info.vip_gpt_display or '' }}" placeholder="yyyy-mm-dd hh:mm:ss">
+  <select name="vip_gpt_type">
     <option value="">Không có</option>
-    <option value="5day" {% if info.get("vip_gpt") == "5day" %}selected{% endif %}>5 ngày</option>
-    <option value="15day" {% if info.get("vip_gpt") == "15day" %}selected{% endif %}>15 ngày</option>
-    <option value="30day" {% if info.get("vip_gpt") == "30day" %}selected{% endif %}>30 ngày</option>
+    <option value="5day" {% if info.vip_gpt == "5day" %}selected{% endif %}>5 ngày</option>
+    <option value="15day" {% if info.vip_gpt == "15day" %}selected{% endif %}>15 ngày</option>
+    <option value="30day" {% if info.vip_gpt == "30day" %}selected{% endif %}>30 ngày</option>
   </select>
 </td>
 
+<td>
+  <input type="text" name="vip_lite" value="{{ info.vip_lite_display or '' }}" placeholder="yyyy-mm-dd hh:mm:ss">
+  <select name="vip_lite_type">
+    <option value="none" {% if not info.vip_lite_display or info.vip_lite_display == "Không có" %}selected{% endif %}>Không có</option>
+    <option value="7day">7 ngày</option>
+  </select>
+</td>
 
-  <td><input name="vip_lite" value="{{ info.vip_lite_display or 'Không có' }}">
+<td data-quota>
+  {% if info.gpt_quota %}
+    <div>
+      <b>{{ info.gpt_quota }}</b>
+    </div>
+    {% if info.gpt_usage_today is not none and info.vip_gpt in ["5day", "15day", "30day"] %}
+      <div style="font-size:12px;color:#888;">Đã dùng: {{ info.gpt_usage_today }}</div>
+    {% endif %}
+  {% else %}
+    <span class="text-muted">Không có</span>
+  {% endif %}
+</td>
+
+<td data-lite>
+  {% if info.lite_remaining != "Không có" %}
+    <div><b>{{ info.lite_remaining }}</b></div>
+    {% if info.lite_usage is not none %}
+      <div style="font-size:12px;color:#888;">Đã dùng: {{ info.lite_usage }}</div>
+    {% endif %}
+  {% else %}
+    <span class="text-muted">Không có</span>
+  {% endif %}
+</td>
 
   <td>
-      <input type="checkbox" name="gpt_unlimited" {% if info.get("gpt_unlimited") %}checked{% endif %}>
-  </td>
-  <td>
-{% if info.gpt_remaining == "∞" %}
-  <span style="color: green;">∞</span>
-{% elif info.gpt_remaining %}
-  {{ info.gpt_remaining }}
-{% else %}
-  <span class="text-muted">Không có</span>
-{% endif %}
-
-</td>
-<td>
-{% if info.lite_remaining %}
-  {{ info.lite_remaining }}
-{% else %}
-  <span class="text-muted">Không có</span>
-{% endif %}
-
-</td>
-<td>
-
-    {% if info.get("online") %}
+    {% if info.online %}
       <span class="online">Đang hoạt động</span>
     {% else %}
       <span class="offline">Ngoại tuyến</span>
@@ -116,14 +253,47 @@
   </td>
 
   <td>
-      <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
-    </form>
+    <button type="submit" class="btn btn-sm btn-outline-primary">Lưu</button>
+    </form> <!-- ✅ Đóng form update tại đây -->
   </td>
+
+<td data-action>
+  {% if info.over_quota_block %}
+    {% set dt = info.over_quota_block_at %}
+    <span class="text-danger">
+  🚫 Đã auto chặn lúc 
+  {% if dt %}{{ dt.strftime('%Y-%m-%d %H:%M:%S') }}{% else %}không rõ thời gian{% endif %}
+</span>
+
+    <form method="POST" action="/admin_users/block_chat_quota" style="display:inline;">
+      <input type="hidden" name="username" value="{{ info.username }}">
+      <input type="hidden" name="block_chat" value="0">
+      <button type="submit" class="btn btn-sm btn-outline-secondary mt-1">Gỡ chặn</button>
+    </form>
+
+  {% elif info.quota_alert %}
+    <form method="POST" action="/admin_users/block_chat_quota" style="display:inline;" class="auto-block-form">
+      <input type="hidden" name="username" value="{{ info.username }}">
+      <input type="hidden" name="block_chat" value="1">
+      <button type="submit" class="btn btn-sm btn-warning">Chặn chat</button>
+      <label class="ms-2" style="font-size: 12px;">
+        <input type="checkbox" class="auto-block-checkbox" data-username="{{ info.username }}">
+        Tự động
+      </label>
+    </form>
+
+  {% else %}
+    <span class="text-muted">—</span>
+  {% endif %}
+</td>
+
+
+
+  <!-- Khoá/mở user -->
   <td>
     <form method="POST" action="/admin_users/toggle_block">
-      <input type="text" name="new_username" value="{{ info.username }}">
-
-      {% if info.get("is_blocked") %}
+      <input type="hidden" name="username" value="{{ info.username }}">
+      {% if info.is_blocked %}
         <button type="submit" class="btn btn-sm btn-success">Mở khoá</button>
       {% else %}
         <button type="submit" class="btn btn-sm btn-danger">Khoá</button>
@@ -132,24 +302,171 @@
   </td>
 </tr>
 
-
     {% endfor %}
   </tbody>
 </table>
 
+
+
+<!-- PHÂN TRANG -->
+{% if pagination.pages > 1 %}
+<div class="d-flex justify-content-center mt-4">
+  <nav>
+    <ul class="pagination">
+      {% if pagination.has_prev %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('admin_users', page=pagination.prev_num, search=search) }}">«</a>
+
+        </li>
+      {% endif %}
+
+      {% for p in range(1, pagination.pages + 1) %}
+        <li class="page-item {% if p == pagination.page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('admin_users', page=p, search=search) }}">{{ p }}</a>
+
+        </li>
+      {% endfor %}
+
+      {% if pagination.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="{{ url_for('admin_users', page=pagination.next_num, search=search) }}">»</a>
+
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endif %}
+
     </form>
   </div>
 
-  <script>
-    function filterTable() {
-      const input = document.getElementById("searchInput").value.toLowerCase();
-      const rows = document.querySelectorAll("#userTable tbody tr");
-      rows.forEach(row => {
-        const username = row.cells[0].querySelector('input').value.toLowerCase();
-        row.style.display = username.includes(input) ? "" : "none";
-      });
+<script>
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", function () {
+    const keyword = this.value.trim().toLowerCase();
+    const rows = document.querySelectorAll("#userTable tbody tr");
+
+    rows.forEach(row => {
+      const username = row.getAttribute("data-username") || "";
+      const fullname = row.getAttribute("data-fullname") || "";
+      const userid = row.getAttribute("data-userid") || "";
+
+      const match = username.includes(keyword) || fullname.includes(keyword) || userid.includes(keyword);
+      row.style.display = match ? "" : "none";
+    });
+  });
+</script>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+const socket = io();
+
+// Tham gia room admin khi là admin
+socket.emit("join_admin");
+
+socket.on("user_usage_update", function(data) {
+   const row = document.querySelector(`[data-userid="${data.user_id}"]`);
+  if (!row) return;
+
+  // 🎯 1. Cập nhật quota GPT
+
+  const quotaCell = row.querySelector("[data-quota]");
+  if (quotaCell) {
+    let quotaText = "<span class='text-muted'>Không có</span>";
+    let usage = data.gpt_usage || 0;
+
+    if (data.vip_gpt === "5day") {
+      quotaText = `<strong>${100 - usage}/100</strong>`;
+    } else if (["15day", "30day"].includes(data.vip_gpt)) {
+      quotaText = `<strong>${200 - usage}/200</strong>`;
     }
-  </script>
+
+    quotaCell.innerHTML = `
+      ${quotaText}
+      <br><small class="text-muted">Đã dùng: ${usage}</small>
+    `;
+  }
+
+  // 🎯 2. Cập nhật quota Lite nếu có
+  const liteCell = row.querySelector("[data-lite]");
+  if (liteCell) {
+    if (data.vip_lite) {
+      const liteLimit = 50;
+      const liteRemain = liteLimit - (data.lite_usage || 0);
+      liteCell.textContent = `${liteRemain}/${liteLimit}`;
+    } else {
+      liteCell.textContent = "Không có";
+    }
+  }
+    // 🎯 3. Cập nhật vùng Chặn chat
+   // 🎯 3. Cập nhật vùng Chặn chat
+const actionCell = row.querySelector("[data-action]");
+if (actionCell) {
+  if (data.over_quota_block) {
+    let blockedTime = "không rõ thời gian";
+    if (data.over_quota_block_at) {
+      const dt = new Date(data.over_quota_block_at);
+      blockedTime = dt.toLocaleString("vi-VN", { hour12: false });
+    }
+
+    actionCell.innerHTML = `
+      <span class="text-danger">
+        🚫 Đã auto chặn lúc ${blockedTime}
+      </span>
+      <form method="POST" action="/admin_users/block_chat_quota" style="display:inline;">
+        <input type="hidden" name="username" value="${data.username}">
+        <input type="hidden" name="block_chat" value="0">
+        <button type="submit" class="btn btn-sm btn-outline-secondary mt-1">Gỡ chặn</button>
+      </form>
+    `;
+  } else if (data.quota_alert) {
+    actionCell.innerHTML = `
+      <form method="POST" action="/admin_users/block_chat_quota" style="display:inline;" class="auto-block-form">
+        <input type="hidden" name="username" value="${data.username}">
+        <input type="hidden" name="block_chat" value="1">
+        <button type="submit" class="btn btn-sm btn-warning">Chặn chat</button>
+        <label class="ms-2" style="font-size: 12px;">
+          <input type="checkbox" class="auto-block-checkbox" data-username="${data.username}" checked>
+          Tự động
+        </label>
+      </form>
+    `;
+
+    const cb = actionCell.querySelector(".auto-block-checkbox");
+    if (cb) {
+      cb.addEventListener("change", () => {
+        const form = cb.closest("form");
+        if (cb.checked && form) {
+          form.submit();
+        }
+      });
+
+      // 🔥 CHÍNH ĐÂY: Nếu đã check sẵn thì submit luôn
+      if (cb.checked) {
+        const form = cb.closest("form");
+        if (form) form.submit();
+      }
+    }
+
+  } else {
+    actionCell.innerHTML = `<span class="text-muted">—</span>`;
+  }
+}
+  // 🎯 4. Cập nhật bảng alert nếu có chặn/quota
+  if (data.over_quota_block || data.gpt_usage >= 200) {
+    fetch("/admin_users/quota_alert")
+      .then(res => res.text())
+      .then(html => {
+        const alertBox = document.getElementById("quota-alert-box");
+        if (alertBox) alertBox.innerHTML = html;
+      });
+  }
+
+});
+</script>
+
+
   <script>
   const countTarget = {{ user_count }};
   const display = document.getElementById("userCountDisplay");
@@ -163,6 +480,137 @@
       clearInterval(animate);
     }
   }, 15);  // tốc độ tăng (ms)
+</script>
+<script>
+function animateNumber(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  let current = 0;
+  const interval = setInterval(() => {
+    current += Math.ceil((target - current) / 5);
+    if (current >= target) {
+      el.textContent = target;
+      clearInterval(interval);
+    } else {
+      el.textContent = current;
+    }
+  }, 40);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  animateNumber("stat-total", {{ stats.total }});
+  animateNumber("stat-online", {{ stats.active }});
+  animateNumber("stat-gpt", {{ stats.gpt }});
+  animateNumber("stat-blocked", {{ stats.blocked }});
+  animateNumber("stat-heavy", {{ stats.heavy }});
+  animateNumber("stat-slv", {{ stats_today.slv_count }});
+  animateNumber("stat-lite", {{ stats_today.lite_count }});
+  animateNumber("stat-total-ai", {{ stats_today.slv_count + stats_today.lite_count }});
+});
+</script>
+<script>
+document.querySelectorAll(".auto-block-checkbox").forEach(cb => {
+  cb.addEventListener("change", () => {
+    if (cb.checked) {
+      const form = cb.closest("form");
+      if (form) form.submit();
+    }
+  });
+});
+
+</script>
+<script>
+function showNote() {
+  document.getElementById("noteModal").style.display = "flex";
+}
+function hideNote() {
+  document.getElementById("noteModal").style.display = "none";
+}
+</script>
+<!-- Ghi chú hướng dẫn -->
+<div id="noteModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+  <div style="max-width:600px; width:90%; background-color:#111827; color:white; padding:20px; border-radius:8px; box-shadow: 0 0 10px #000;">
+    <h5 style="color: #38bdf8;">📘 Ghi chú dành cho quản trị viên</h5>
+    <ul style="font-size: 14px;">
+      <li><b>🔍 Cách tìm người dùng trong giao diện:</b>
+        <ul>
+          <li>Dùng ô tìm kiếm để lọc theo <code>username</code>, <code>fullname</code> hoặc <code>user_id</code></li>
+          <li>Tìm một phần tên hoặc ID đều được (không phân biệt hoa thường)</li>
+        </ul>
+      </li>
+      <li><b>✏️ Cách thay thế tên trong câu lệnh SQL:</b>
+        <ul>
+          <li>Trong câu như:
+            <code>SELECT * FROM users WHERE username = 'tên';</code>
+            → thay <code>'tên'</code> bằng tên thực tế như <code>'admin123'</code>
+          </li>
+          <li>Dùng toán tử <code>ILIKE</code> để tìm không phân biệt hoa thường, có thể dùng ký tự %:
+            <br>
+            <code>SELECT * FROM users WHERE fullname ILIKE '%phát%';</code>
+          </li>
+          <li>Khi tìm theo ID UUID, phải dán nguyên chuỗi:
+            <code>SELECT * FROM users WHERE user_id = '1a2b3c-xyz...';</code>
+          </li>
+        </ul>
+      </li>
+      <li><b>🧨 Câu lệnh xoá dữ liệu (cực kỳ cẩn thận):</b>
+        <ul>
+          <li>Xoá 1 người dùng:
+            <code>DELETE FROM users WHERE username = 'abc';</code>
+          </li>
+          <li>Xoá toàn bộ user (không hoàn tác):
+            <code>DELETE FROM users;</code>
+          </li>
+          <li>Xoá 1 cột (column) khỏi bảng:
+            <code>ALTER TABLE users DROP COLUMN ai_personality;</code>
+          </li>
+          <li>Xoá nguyên bảng (cẩn thận!):
+            <code>DROP TABLE users;</code>
+          </li>
+        </ul>
+        <div style="font-size: 13px; color: #f87171;">
+          ⚠️ Hãy sao lưu database trước khi xoá. Các lệnh trên KHÔNG thể hoàn tác nếu thực hiện sai!
+        </div>
+      </li>
+      <li><b>💾 Lưu chỉnh sửa nhanh trong bảng:</b>
+        <ul>
+          <li>Gõ ngày hạn gói GPT/LITE xong → bấm <b>Lưu</b> hoặc nhấn <kbd>Ctrl</kbd> + <kbd>S</kbd> để gửi</li>
+          <li>Đảm bảo định dạng: <code>YYYY-MM-DD HH:MM:SS</code></li>
+        </ul>
+      </li>
+      <li><b>⚠️ Cẩn thận khi thao tác:</b>
+        <ul>
+          <li>Không xoá user thủ công trừ khi xác minh rõ ràng</li>
+          <li>Khi người dùng vượt quota GPT → có thể bấm “Chặn chat” để ngắt kết nối</li>
+          <li>Gói GPT <code>5day</code> có 100 lượt/ngày; gói <code>15day</code>/<code>30day</code> có 200 lượt/ngày</li>
+        </ul>
+      </li>
+      <li><b>🧠 Một số trường đặc biệt:</b>
+        <ul>
+          <li><code>ai_personality</code>: Tính cách AI người dùng đã chọn</li>
+          <li><code>gpt_usage_today</code>: Số lượt GPT đã dùng hôm nay</li>
+          <li><code>over_quota_block</code>: Có bị chặn do vượt quota không</li>
+        </ul>
+      </li>
+      <li style="color: #cbd5e1; font-style: italic;">
+        ℹ️ <b>Ghi chú:</b> Nếu muốn đổi từ <code>SLV</code> qua <code>Lite</code> hoặc ngược lại thì cần bấm vào ô input chữ <b>"Không có"</b> và nhập thủ công rồi mới chuyển được.
+      </li>
+    </ul>
+    <div class="text-end mt-3" style="text-align: right;">
+      <button class="btn btn-secondary btn-sm" onclick="hideNote()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function reloadNow() {
+  const btn = document.getElementById("refreshBtn");
+  btn.innerText = "Đang làm mới...";
+  btn.disabled = true;
+  window.location.href = window.location.href;
+}
 </script>
 </body>
 </html>

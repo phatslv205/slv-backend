@@ -1,0 +1,50 @@
+{% if alert_users %}
+<div class="card border-danger mb-4">
+  <div class="card-header bg-danger text-white">
+    🚨 Người dùng vượt hạn hoặc bị chặn (hiển thị tối đa 50) nha thằng l
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-sm table-bordered mb-0 text-center">
+      <thead class="table-danger">
+  <tr>
+    <th>Tài khoản</th>
+    <th>Email</th>
+    <th>ID</th>
+    <th>Lượt GPT hôm nay</th>
+    <th>Tình trạng hiện tại</th>
+      <th>Sẽ tự mở khoá</th>
+  </tr>
+</thead>
+
+      <tbody>
+  {% for u in alert_users %}
+<tr>
+  <td>{{ u.username }}</td>
+  <td>{{ u.email }}</td>
+  <td>{{ u.user_id or "Không rõ" }}</td>
+  <td><strong style="color: red;">{{ u.gpt_usage_today }}</strong></td>
+  <td>
+    {% if u.over_quota_block %}
+      🚫 Đã bị chặn
+    {% elif u.gpt_usage_today >= 200 %}
+      ⚠️ Đã vượt quota
+    {% else %}
+      Bình thường
+    {% endif %}
+  </td>
+  <td>
+    {% if u.over_quota_block_at %}
+      {{ (u.over_quota_block_at + timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S') }}
+    {% else %}
+      —
+    {% endif %}
+  </td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+    </table>
+  </div>
+</div>
+{% endif %}

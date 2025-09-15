@@ -1,46 +1,61 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <title>Danh sách giao dịch chờ duyệt</title>
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
-    <style>
-        body { font-family: Arial; background: #f0f0f0; padding: 20px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
-        th { background: #007bff; color: white; }
-        tr:nth-child(even) { background: #f9f9f9; }
-        .btn-approve {
-            background: #28a745; color: white; padding: 6px 12px;
-            border: none; border-radius: 4px; text-decoration: none;
-        }
-        .btn-approve:hover { background: #218838; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Internal Request Review Panel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #1a1c24; color: #f1f1f1; padding: 20px; margin: 0; }
+    h2 { font-size: 22px; color: #00c4ff; margin-bottom: 20px; text-align: center; }
+    a { color: #00c4ff; text-decoration: none; font-weight: 500; }
+    a:hover { text-decoration: underline; }
+    .btn { display: inline-block; padding: 10px 16px; border-radius: 10px; background: #2c2f3a; color: #f1f1f1; margin-bottom: 20px; font-size: 15px; }
+    .btn:hover { background: #3a3d49; }
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; background-color: #2a2a2a; border-radius: 12px; overflow: hidden; min-width: 500px; }
+    th, td { padding: 12px 16px; text-align: left; }
+    th { background-color: #00bcd4; color: white; font-weight: bold; font-size: 15px; }
+    tr:nth-child(even) { background-color: #242424; }
+    tr:hover { background-color: #313131; }
+    .btn-approve { background: #00c853; color: white; padding: 6px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; }
+    .btn-approve:hover { background: #00e676; }
+    .otp-form { text-align: center; margin-bottom: 30px; }
+    .otp-form input { padding: 10px 14px; font-size: 16px; border-radius: 8px; border: none; width: 180px; }
+    .otp-form button { background: #00c4ff; color: white; padding: 10px 16px; border: none; border-radius: 8px; font-weight: bold; margin-left: 10px; cursor: pointer; }
+    .otp-form button:hover { background: #00aee0; }
+  </style>
 </head>
 <body>
-<a href="/solverviet_control_x2025" class="btn btn-secondary mb-3">
-  ⬅️ Quay về điều hướng
-</a>
+  <a href="/solverviet_control_x2025" class="btn">Reset to Navigation Protocol</a>
+  <h2>Internal Request Review Panel</h2>
 
-<h2>📋 Danh sách giao dịch chờ duyệt</h2>
+  {% if not session.get('review_authenticated') %}
+    <form method="POST" class="otp-form">
+      <input type="password" name="code" placeholder="Input security override token" maxlength="6" required>
+      <button type="submit">Proceed</button>
+    </form>
+  {% endif %}
 
-<!-- ✅ Bọc phần table vào đây -->
-<div id="request-list">
-  {% include 'admin/_requests_table.html' %}
-</div>
+  {% if session.get("review_authenticated") %}
+    <div class="table-wrapper">
+      <div id="request-list">
+        {% include 'admin/_requests_table.html' %}
+      </div>
+    </div>
 
-<script>
-function reloadRequests() {
-  fetch("/admin/review/requests")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("request-list").innerHTML = html;
-    });
-}
-
-// Tự động reload mỗi 5 giây
-setInterval(reloadRequests, 5000);
-</script>
-
+    <script>
+    function reloadRequests() {
+      fetch("/admin/review/requests")
+        .then(res => res.text())
+        .then(html => {
+          document.getElementById("request-list").innerHTML = html;
+        });
+    }
+    setInterval(reloadRequests, 5000);
+    </script>
+  {% endif %}
+  <script>document.addEventListener("contextmenu", function(e) { e.preventDefault(); });
+document.addEventListener("keydown", function(e) { if ( e.key === "F12" || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J")) || (e.ctrlKey && e.key === "U") ) { e.preventDefault(); } });</script>
 </body>
 </html>

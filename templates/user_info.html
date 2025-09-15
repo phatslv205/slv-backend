@@ -1,250 +1,48 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thông tin cá nhân - SolverViet</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-      <link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}">
+<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Thông tin cá nhân - SolverViet</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"><link rel="icon" type="image/png" href="{{ url_for('static', filename='logos/favicon.png') }}"><script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script></head><body>
 
+<div class="container"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;"><a href="/" class="back-home-btn">← Về trang chủ</a><a href="/logout" style="font-size:14px; font-weight:600; background:#ff4d4f; color:white; padding:8px 14px; border-radius:8px;  text-decoration:none;  transition:background 0.2s;"> Đăng xuất </a> </div><h1>Thông Tin Cá Nhân</h1>
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 40px 20px;
-    }
-    .container {
-      width: 100%;
-      max-width: 700px;
-      background: #141a1f;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 0 16px rgba(0, 255, 255, 0.2);
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
-      color: #00ffff;
-    }
-    label {
-      display: block;
-      margin: 14px 0 6px;
-      font-weight: 500;
-    }
-    .input-group {
-      position: relative;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="date"] {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      background: #1f2a33;
-      color: #fff;
-      font-size: 15px;
-    }
-    .email-warning {
-      color: #ff5252;
-      font-size: 13px;
-      margin-top: 4px;
-    }
-    .verify-link {
-      color: #00bcd4;
-      font-size: 13px;
-      text-decoration: underline;
-      cursor: pointer;
-      margin-left: 8px;
-    }
-    .password-toggle {
-      position: absolute;
-      top: 50%;
-      right: 12px;
-      transform: translateY(-50%);
-      color: #00bcd4;
-      cursor: pointer;
-      font-size: 13px;
-    }
-    button {
-      margin-top: 20px;
-      padding: 10px 16px;
-      background: #00bcd4;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover {
-      background: #00ffff;
-    }
-    .back-home-btn {
-      display: inline-block;
-      text-align: center;
-      padding: 8px 12px;
-      margin-bottom: 16px;
-      font-size: 14px;
-      font-weight: 600;
-      color: #00ffff;
-      background: #1f2a33;
-      border-radius: 8px;
-      text-decoration: none;
-      border: 1px solid #00bcd4;
-    }
-    .back-home-btn:hover {
-      background: #00bcd4;
-      color: #000;
-    }
-    .support-box {
-      margin-top: 40px;
-      padding: 16px;
-      background: #0f1114;
-      border: 1px solid #00bcd4;
-      border-radius: 12px;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .support-box a {
-      color: #00e5ff;
-      text-decoration: underline;
-    }
-    .support-box i {
-      color: #ffcc00;
-      margin-right: 6px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-  <a href="/" class="back-home-btn">← Trở về giao diện chính</a>
-  <a href="/logout"
-     style="font-size: 14px; font-weight: 600; background: #ff4d4f; color: white; padding: 8px 14px; border-radius: 8px; text-decoration: none; transition: background 0.2s;">
-     Đăng xuất
-  </a>
-</div>
+<div id="userFormContainer"></div>
 
+<script src="{{ url_for('static', filename='user_info/solverviet_user_info_engine_0x83a1p.js') }}"></script>
 
-    <h1> Thông Tin Cá Nhân</h1>
-    <form method="POST" action="/user-info" enctype="multipart/form-data">
-<div style="text-align: center; margin-bottom: 20px;">
-  <label for="avatarInput" style="cursor: pointer; display: inline-block; position: relative;">
-    <img id="previewAvatar"
-          src="{{ user.avatar_url if user.avatar_url else '/static/logos/logo.png' }}"
-         alt=""
-         style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #00ffff;">
-    <!-- Nút dấu cộng -->
-    <div style="position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); background: #00ffff; color: #000; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px;">+</div>
-  </label>
-  <input id="avatarInput" type="file" name="avatar" accept="image/*" onchange="previewAvt(this)" style="display: none;">
+<script src="{{ url_for('static', filename='user_info/solverviet_profile_core_0x72k9z.js') }}"></script>
 
+<script src="{{ url_for('static', filename='user_info/solverviet_display_router_0xv118d.js') }}"></script>
 
+<script src="{{ url_for('static', filename='user_info/solverviet_session_bridge_0xk239f.js') }}"></script>
 
-</div>
-      <label>Tên trang cá nhân</label>
-      <input type="text" name="fullname" value="{{ user.fullname }}">
+<div id="termsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#00000088; z-index:9999;"></div>
 
-      <label>Tên đăng nhập:</label>
-      <input type="text" value="{{ username }}" disabled>
-       <label>ID người dùng:</label>
-      <input type="text" value="{{ user.user_id }}" disabled>
+<script src="{{ url_for('static', filename='user_info/solverviet_avatar_switcher_0xcq818x.js') }}"></script>
 
-      <label>Mật khẩu:</label>
-      <div class="input-group">
-        <input type="password" value="{{ user.password }}" id="maskedPassword" disabled>
-        <span class="password-toggle" onclick="toggleMaskedPassword()">👁</span>
-      </div>
-      {% if user.is_verified %}
-        <div style="font-size: 13px; margin-top: 4px;">
-          <a href="/change-password" style="color: #00e5ff; text-decoration: underline;">Đổi mật khẩu</a>
-        </div>
-      {% else %}
-        <div style="font-size: 13px; color: #ff5252; margin-top: 4px;">
-          Cần xác thực email để đổi mật khẩu
-        </div>
-      {% endif %}
+<script src="{{ url_for('static', filename='user_info/solverviet_badge_decoder_0x991pz.js') }}"></script>
 
-      <label>Email:</label>
-      <div class="input-group">
-        <input type="email" name="email" value="{{ user.email }}" {% if not user.email_verified %}required{% else %}readonly{% endif %}>
-        {% if not user.is_verified %}
+<script src="{{ url_for('static', filename='user_info/solverviet_status_syncer_0xk29pp.js') }}"></script>
+{% if user.method == "stk" and not user.referral_code %}
+<script src="{{ url_for('static', filename='user_info/solverviet_quota_tracker_0xa1d09v.js') }}"></script>
+{% endif %}
+<div id="popup-marketing" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:#111; color:white; padding:20px 28px; border-radius:14px; width:90%; max-width:420px; z-index:9999; box-shadow: 0 0 12px #00f7ff;"> <h2 style="color:#00f7ff; font-size:20px; margin-bottom:10px; text-align:center;"> Giới thiệu bạn bè – Nhận tiền ngay! </h2> <p style="font-size:14px; margin-bottom:12px; line-height:1.6;"> Mỗi người bạn nhập <b>mã giới thiệu</b> của bạn và thanh toán gói AI, bạn sẽ nhận được tiền thưởng: </p> <ul style="font-size:14px; padding-left:18px; margin-bottom:12px; line-height:1.6;"> <ul style="font-size:14px; padding-left:18px; margin-bottom:12px; line-height:1.6;"> <li>👉 Gói <b>Lite (25K)</b>: bạn nhận <b>20%</b></li> <li>👉 Gói <b>49K</b>: bạn nhận <b>20%</b></li> <li>👉 Gói <b>109K</b>: bạn nhận <b>~14%</b></li> <li>👉 Gói <b>149K</b>: bạn nhận <b>~17%</b></li> </ul> </ul> <p style="font-size:13.5px; color:#ccc; margin-bottom:16px;"> Hệ thống sẽ tự động thanh toán cho bạn sau 24h <b>ngay sau khi người được giới thiệu thanh toán thành công</b> và nhập mã của bạn vào ô <i>"Referral code"</i>. </p> <p style="color: #ffcc00; font-size: 13px; text-align: center; margin-top: 12px;"> * Chỉ áp dụng khi thanh toán bằng <b>STK</b>. </p> <div style="text-align:center;"> <button onclick="closeMarketingPopup()" style="padding:9px 16px; background:#00f7ff; border:none; border-radius:8px; color:#000; font-weight:bold; font-size:14px;"> Tôi đã hiểu! </button> </div> </div>
 
-          <div class="email-warning">
-            Chưa xác thực ✖ <a href="/verify-otp" class="verify-link">Xác thực ngay</a>
-          </div>
-        {% else %}
-          <div style="font-size: 13px; margin-top: 4px;">
-            <a href="/change-email" class="verify-link">🔁 Đổi email</a>
-          </div>
-        {% endif %}
-      </div>
+<script src="{{ url_for('static', filename='user_info/solverviet_modal_controller_0x328rf.js') }}"></script>
 
-      <label>Ngày sinh:</label>
-      <input type="date" name="birthday" value="{{ user.birthday }}">
+<div id="toast-message" style=" position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: #222; color: white; padding: 10px 20px; border-radius: 8px; opacity: 0; transition: all 0.4s ease; z-index: 9999; box-shadow: 0 0 10px rgba(0,0,0,0.5); font-size: 14px; "></div>
 
-  <label>Gói AI hiện tại:</label>
-    <div class="input-group">
-      <input type="text" readonly value="
-        {% if user.vip_gpt_ai and user.vip_until_gpt %}
-          SLV  - {{ (user.vip_until_gpt - now).days + 1 }} ngày
-        {% elif user.vip_ai_lite and user.vip_until_lite %}
-          Lite - {{ (user.vip_until_lite - now).days + 1 }} ngày
-        {% else %}
-          Chưa đăng ký gói
-        {% endif %}
-      ">
-    </div>
+<div id="reward-popup" style="display:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;"> <div style="background: #1e1e1e; padding: 22px; border-radius: 16px; width: 92%; max-width: 400px; color: white; box-shadow: 0 0 12px rgba(0,0,0,0.4); font-size: 14px;"> <h2 style="margin-top: 0; text-align: center; color: #4ea6ff; font-size: 18px;"> Nhập thông tin nhận thưởng</h2> <label> Họ và tên:</label> <input type="text" id="reward-fullname" placeholder="VD: Nguyễn Văn A" value="{{ user.reward_fullname or '' }}" style="width:100%; padding:8px; margin:6px 0 12px; background:#111; color:white; border:1px solid #444; border-radius:6px;"> <label> Tên ngân hàng:</label> <input type="text" id="reward-bank" placeholder="VD: MB Bank" value="{{ user.reward_bank or '' }}" style="width:100%; padding:8px; margin:6px 0 12px; background:#111; color:white; border:1px solid #444; border-radius:6px;"> <label>Số tài khoản:</label> <input type="text" id="reward-stk" placeholder="VD: 1234567890" value="{{ user.reward_stk or '' }}" style="width:100%; padding:8px; margin:6px 0 16px; background:#111; color:white; border:1px solid #444; border-radius:6px;"> <button onclick="saveRewardInfo()" style="margin-top: 4px; background: #4ea6ff; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%;">Lưu</button> <button onclick="closeRewardPopup()" style="margin-top: 10px; background: #333; color: white; padding: 8px; border: none; border-radius: 8px; cursor: pointer; width: 100%;"> Đóng</button> <p style="font-size: 13px; color: #aaa; margin-top: 10px;"> Nếu sau 24h vẫn chưa nhận được tiền, vui lòng góp ý tại <a href="/gop-y" style="color: #4ea6ff;">đây</a>. </p><p style="text-align: center; margin-top: 10px;"> <span onclick="openRulesPopup()" style="color: #4ea6ff; cursor: pointer; text-decoration: underline;"> Quy định quảng bá </span> </p></div> </div>
 
-    <label>Hết hạn lúc:</label>
-    <div class="input-group">
-      <input type="text" readonly value="
-        {% if user.vip_gpt_ai and user.vip_until_gpt %}
-          {{ user.vip_until_gpt.strftime('%H:%M:%S • %d/%m/%Y') }}
-        {% elif user.vip_ai_lite and user.vip_until_lite %}
-          {{ user.vip_until_lite.strftime('%H:%M:%S • %d/%m/%Y') }}
-        {% else %}
-          Không có
-        {% endif %}
-      ">
-    </div>
+<div id="rules-popup" style="display:none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); z-index: 9999; justify-content: center; align-items: center;"> <div style="background: #1e1e1e; padding: 20px; border-radius: 12px; width: 92%; max-width: 500px; color: white; box-shadow: 0 0 16px rgba(0,0,0,0.5); font-size: 14px; max-height: 90vh; overflow-y: auto;"> <h2 style="margin-top: 0; text-align: center; color: #4ea6ff;">Quy định khi tham gia quảng bá</h2> <ul style="padding-left: 18px; line-height: 1.6;"> <li>Mỗi người dùng chỉ được nhập mã giới thiệu **tối đa 1 lần duy nhất**.</li> <li>Khi người dùng nhập mã giới thiệu, hệ thống sẽ **ghi nhận và lưu lại** để phục vụ đối soát thưởng.</li> <li>**Thông tin người giới thiệu và người được giới thiệu** đều sẽ được bảo mật.</li> <li>Tiền thưởng sẽ được xử lý **tự động sau khi giao dịch thành công và hợp lệ**.</li> <li>Nếu sau 24h không nhận được thưởng, bạn có thể gửi phản hồi tại trang <a href="/gop-y" target="_blank" style="color:#4ea6ff;">Góp ý</a>.</li> <li>Chỉ áp dụng khi người được giới thiệu **thanh toán bằng hình thức chuyển khoản STK**.</li> </ul> <button onclick="closeRulesPopup()" style="margin-top: 16px; background: #4ea6ff; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%;">Tôi đã hiểu</button> </div> </div>
 
+<script src="{{ url_for('static', filename='user_info/solverviet_ui_mirror_0xm002s.js') }}"></script>
 
-      <label>Số điện thoại (nếu có):</label>
-      <input type="text" name="phone" value="{{ user.phone }}">
-      <button type="submit">Lưu thay đổi</button>  
-    </form>
-     <form method="POST" action="/user-info/delete-avatar" style="margin-top: 10px;">
-  <button type="submit" style="background: #ff4d4f; padding: 6px 12px; border-radius: 6px; border: none; color: white; font-weight: 600; cursor: pointer;">
-     Xoá ảnh đại diện
-  </button>
-</form>
-<script>
-  function previewAvt(input) {
-    if (input.files && input.files[0]) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        document.getElementById('previewAvatar').src = e.target.result;
-      };
-      reader.readAsDataURL(input.files[0]);
-    }
-  }
-</script>
+<script src="{{ url_for('static', filename='user_info/solverviet_data_flex_0xcr12e.js') }}"></script>
 
-  <script>
-    function toggleMaskedPassword() {
-      const field = document.getElementById('maskedPassword');
-      field.type = field.type === 'password' ? 'text' : 'password';
-    }
-  </script>
-</body>
-</html>
+<style> .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: #333; color: #fff; padding: 14px 24px; border-radius: 8px; z-index: 9999; font-size: 15px; animation: fadeInOut 4s ease; } @keyframes fadeInOut { 0% { opacity: 0; bottom: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { opacity: 0; bottom: 0; } } .toast.warning { background-color: #ffffff; } .toast.info { background-color: #0ea5e9; } </style>
+
+<script src="{{ url_for('static', filename='user_info/solverviet_token_scanner_0xlz098.js') }}"></script>
+<!-- <--- SVT.UINFO_ENGINE_9X27BZ -->
+<!-- <--- SVT.UINFO_RENDER_QZ11K0 -->
+<!-- <--- SVT.UINFO_SYNCER_BC48X7 -->
+<!-- <--- SVT.UINFO_VAULT_XP21M9 -->
+<!-- <--- SVT.UINFO_STATUS_003XRV -->
+<!-- <--- SVT.UINFO_BLOCK_TRK98F -->
+</body></html>

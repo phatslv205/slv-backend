@@ -1,0 +1,35 @@
+<div id="share-link-popup" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+  <div style="
+    background:#1e1e1e;
+    color:white;
+    padding:24px;
+    border-radius:16px;
+    width:100%;
+    max-width:460px;
+    box-sizing:border-box;
+    box-shadow:0 10px 30px rgba(0,0,0,0.6);
+    margin: 12px;
+  ">
+<h3 style="font-size:18px; margin-bottom:16px; display:flex; align-items:center; gap:10px; font-weight:600; color:f0f0f0;">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="ff6b6b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 21C12 21 5 13.5 5 8.5A4.5 4.5 0 0 1 9.5 4A5.7 5.7 0 0 1 12 6A5.7 5.7 0 0 1 14.5 4A4.5 4.5 0 0 1 19 8.5C19 13.5 12 21 12 21Z"/>
+  </svg>
+   Chia sẻ đoạn chat với người khác
+</h3>
+    <input id="share-link-input" type="text" readonly 
+      style="width:100%;padding:10px 14px;border-radius:8px;border:none;background:#2c2c2c;color:white;font-size:15px;box-sizing:border-box;">
+
+    <div style="text-align:right;margin-top:18px;display:flex;justify-content:flex-end;gap:10px;">
+      <button onclick="copyShareLink()" 
+        style="display:flex;align-items:center;gap:6px;padding:6px 14px;background:#27ae60;border:none;border-radius:8px;color:white;cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" height="18" viewBox="0 0 24 24" fill="white">
+          <path d="M16 1H4C2.9 1 2 1.9 2 3v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        </svg>
+        Sao chép
+      </button>
+
+      <button onclick="hideSharePopup()" 
+        style="padding:6px 14px;background:#444;border:none;border-radius:8px;color:white;">Đóng</button>
+    </div>
+  </div>
+</div>
