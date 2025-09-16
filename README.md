@@ -70,7 +70,7 @@ Backend source code for **SolverViet** – a Vietnamese AI assistant & smart pla
 ## 📬 Contact
 
 Developed by [phatslv205](https://github.com/phatslv205).
-For questions or custom deployment: **[phatslv205@gmail.com](mailto:phatth.viettel@gmail.com)**
+For questions or custom deployment: **[phatth.viettel@gmail.com](mailto:phatth.viettel@gmail.com)**
 
 ---
 
